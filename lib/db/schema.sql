@@ -1,34 +1,27 @@
-CREATE TABLE countries (
-    id UUID PRIMARY KEY,
-    name TEXT NOT NULL,
-    code VARCHAR(10) NOT NULL UNIQUE
+CREATE TABLE groups (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    parent_id BIGINT REFERENCES groups(id) ON DELETE SET NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE country_emissions (
-    id UUID PRIMARY KEY,
-    country_id UUID NOT NULL REFERENCES countries(id) ON DELETE CASCADE,
-    year_month VARCHAR(7) NOT NULL,
-    emissions NUMERIC NOT NULL
+CREATE TABLE emission_records (
+    id BIGSERIAL PRIMARY KEY,
+    group_id BIGINT NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+    scope_type VARCHAR(20) NOT NULL CHECK (
+        scope_type IN ('SCOPE1', 'SCOPE2', 'SCOPE3')
+    ),
+    amount NUMERIC(15, 2) NOT NULL,
+    unit VARCHAR(20) NOT NULL DEFAULT 'tCO2e',
+    recorded_at DATE NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE companies (
-    id UUID PRIMARY KEY,
-    country_id UUID NOT NULL REFERENCES countries(id) ON DELETE CASCADE,
-    name TEXT NOT NULL,
-    country VARCHAR(10) NOT NULL
-);
+CREATE INDEX idx_emission_records_group_id
+ON emission_records(group_id);
 
-CREATE TABLE company_emissions (
-    id UUID PRIMARY KEY,
-    company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
-    year_month VARCHAR(7) NOT NULL,
-    emissions NUMERIC NOT NULL
-);
+CREATE INDEX idx_emission_records_recorded_at
+ON emission_records(recorded_at);
 
-CREATE TABLE posts (
-    id UUID PRIMARY KEY,
-    title TEXT NOT NULL,
-    resource_uid UUID NOT NULL,
-    date_time TIMESTAMP NOT NULL,
-    content TEXT NOT NULL
-);
+CREATE INDEX idx_emission_records_scope_type
+ON emission_records(scope_type);

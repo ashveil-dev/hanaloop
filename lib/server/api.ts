@@ -1,8 +1,8 @@
 // lib/api.ts
-import { db } from "./db"
-import type { Country } from "../types/country"
-import type { Company } from "../types/company"
-import type { Post } from "../types/post"
+import { db } from "@server/db"
+import type { Country } from "@server/types/country"
+import type { Company } from "@server/types/company"
+import type { Post } from "@server/types/post"
 
 const countries: Country[] = []
 const companies: Company[] = []

@@ -1,8 +1,14 @@
-import Image from "next/image";
-import { fetchCountries } from "@/lib/server/api";
+"use client";
 
-export default async function Home() {
-  const posts = await fetchCountries();
+import { useEffect } from "react";
+
+export default function Home() {
+  useEffect(() => {
+    fetch("/api/groups")
+      .then((res) => res.json())
+      .then((data) => console.log(data));
+  }, []);
+  
 
   return (
     <div>

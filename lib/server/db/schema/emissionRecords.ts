@@ -1,14 +1,14 @@
 import { bigint, bigserial, check, date, index, numeric, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
-import { GroupsSchema } from "@server/db/schema/groups";
+import { GroupsTable } from "@server/db/schema/groups";
 import { sql } from "drizzle-orm";
 
-export const EmissionRecordsSchema = pgTable(
+export const EmissionRecordsTable = pgTable(
   "emission_records",
   {
     id: bigserial("id", { mode: "number" }).primaryKey(),
     groupId: bigint("group_id", { mode: "number" })
       .notNull()
-      .references(() => GroupsSchema.id, { onDelete: "cascade" }),
+      .references(() => GroupsTable.id, { onDelete: "cascade" }),
 
     scopeType: varchar("scope_type", { length: 20 }).notNull(),
     amount: numeric("amount", {

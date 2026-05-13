@@ -1,22 +1,30 @@
 import { db } from "@server/db"
+import { GroupsSchema } from "../../db/schema/groups";
 
 type createGroupParameterType = {
     name: string,
-    parent_id: string | null
+    parentId?: string,
 }
 
 export async function createGroup({
     name,
-    parent_id
+    parentId
 }: createGroupParameterType) {
-    const result = await db.query(
-        `
-            insert into groups(name, parent_id)
-            values ($1, $2)
-        `, [name, parent_id]
-    )
+    const group: typeof GroupsSchema.$inferInsert = {
+        name : name,
+        parentId : parentId === undefined ? null : parseInt(parentId)
+    };
 
-    console.log(result.rowCount);
+    try {
+        const result = await db.insert(GroupsSchema).values(group).returning();
+        return Response.json(result[0])
+    } catch(e) {
+        return Response.json(
+        {
+            message : "group create failed"
+        }, {
+            status : 500
+        })
+    }
 
-    return true;
 }

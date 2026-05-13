@@ -53,24 +53,20 @@ export async function GET() {
  *           properties:
  *             name:
  *               type: string
- *             parent_id:
+ *             parentId:
  *               type: string
  *               nullable: true
  */
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { name, parent_id } = body;
+  const { name, parentId } = body;
 
   const result = await createGroup({
       name, 
-      parent_id : parent_id ?? null
+      parentId,
     })
 
 
-  return Response.json(
-    {
-      success : "success"
-    }
-  );
+  return result;
 }

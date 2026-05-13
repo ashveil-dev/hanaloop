@@ -1,3 +1,4 @@
+import { createGroup } from "@/lib/server/services/groups/createGroup";
 import { getGroups } from "@/lib/server/services/groups/getGroups";
 
 /**
@@ -34,8 +35,42 @@ export async function GET() {
   );
 }
 
-export async function POST() {
+
+/**
+ * @swagger
+ * /api/groups:
+ *   post:
+ *     summary: 그룹 추가하기
+ *     consumes:
+ *       application/json
+ *     parameters:
+ *       - in: body
+ *         description: 추가할 그룹의 정보
+ *         schema:
+ *           type: object
+ *           required:
+ *             name
+ *           properties:
+ *             name:
+ *               type: string
+ *             parent_id:
+ *               type: string
+ *               nullable: true
+ */
+
+export async function POST(request: Request) {
+  const body = await request.json();
+  const { name, parent_id } = body;
+
+  const result = await createGroup({
+      name, 
+      parent_id : parent_id ?? null
+    })
+
+
   return Response.json(
-    await getGroups()
+    {
+      success : "success"
+    }
   );
 }

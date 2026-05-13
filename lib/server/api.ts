@@ -12,29 +12,6 @@ const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 const jitter = () => 200 + Math.random() * 600; // 로딩 중일때 어떻게 UI를 표현할 것인가?
 const maybeFail = () => Math.random() < 0.15; // 실패했을 경우 어떻게 처리할 것인가?
 
-export async function fetchCountries() {
-  await delay(jitter());
-  const result = await db.query(`SELECT * FROM countries`);
-
-  return result.rows;
-
-}
-
-export async function fetchCompanies() {
-  await delay(jitter());
-  const result = await db.query(`SELECT * FROM comapines`);
-
-  return result.rows;
-}
-
-export async function fetchPosts() {
-  await delay(jitter());
-  const result = await db.query(`SELECT * FROM posts`);
-
-  return result.rows;
-}
-
-
 export async function createOrUpdatePost(p: Omit<Post, "id"> & { id?: string }) {
   await delay(jitter());
   if (maybeFail()) throw new Error("Save failed");

@@ -1,8 +1,9 @@
 import { OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 import { registry } from "@/lib/server/openapi/registry";
 
-import "./paths/groups.openapi";
-import "./paths/emission-records.openapi"
+import "@/lib/server/openapi/paths/groups.openapi";
+import "@/lib/server/openapi/paths/emission-records.openapi"
+import "@/lib/server/openapi/paths/dashbard.openapi"
 
 export function generateOpenApiDocument() {
   const generator = new OpenApiGeneratorV3(registry.definitions);

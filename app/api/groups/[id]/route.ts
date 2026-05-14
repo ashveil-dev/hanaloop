@@ -6,6 +6,50 @@ import { ValidationError } from "@/lib/server/errors/ValidationError";
 import { ApiError } from "@server/errors/ApiError";
 import { DrizzleQueryError } from "drizzle-orm/errors";
 import { DatabaseError } from "pg";
+import { getGroup } from "@/lib/server/services/groups/getGroup";
+
+const getGroupSchema = z.object({
+    id: z.number()
+})
+
+export async function GET(
+    request: Request,
+    context: { params: Promise<{ id: string }> }
+) {
+    try {
+        const id = parseInt((await context.params).id);
+        const parsed = getGroupSchema.safeParse({ id });
+        if (!parsed.success) {
+            throw new ValidationError({
+                errors: z.treeifyError(parsed.error),
+            })
+        }
+
+        const result = await getGroup(parsed.data);
+
+        return NextResponse.json(result)
+    } catch (e) {
+        if (e instanceof ValidationError) {
+            return NextResponse.json({
+                message: e.message,
+                errros: e.errors
+            }, {
+                status: 400
+            })
+        }
+        else if (e instanceof ApiError) {
+            return NextResponse.json({
+                message: e.message,
+            }, {
+                status: e.status
+            })
+        }
+        return NextResponse.json(
+            { message: "Internal Server Error" },
+            { status: 500 }
+        )
+    }
+}
 
 /**
  * @swagger

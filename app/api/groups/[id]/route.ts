@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { deleteGroup } from "@/lib/server/services/groups/deleteGroup";
 import { updateGroup } from "@/lib/server/services/groups/updateGroup";
 
@@ -16,14 +17,31 @@ import { updateGroup } from "@/lib/server/services/groups/updateGroup";
  *           type: integer
  *           required: true
  */
+
+const deleteGroupSchema = z.object({
+  id : z.string()
+})
+
 export async function DELETE(
     request: Request,
     context: { params: Promise<{ id: string }> }
 ) {
     const { id } = await context.params;
-    const result = await deleteGroup({ id });
+    const parsed = deleteGroupSchema.safeParse({id});
 
-    return result;
+    if (!parsed.success) {
+        return Response.json({
+          message: "invalid input",
+          errors: parsed.error.flatten()
+        }, {
+          status: 400
+        }
+        )
+      }
+    
+      const result = await deleteGroup(parsed.data)
+    
+      return result;
 }
 
 /**

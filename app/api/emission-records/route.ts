@@ -4,6 +4,7 @@ import { createEmissionRecord } from "@/lib/server/services/emission-record/crea
 import { NextResponse } from "next/server";
 import { DrizzleQueryError } from "drizzle-orm";
 import { DatabaseError } from "pg";
+import { getEmissionRecords } from "@/lib/server/services/emission-record/getEmissionRecords";
 
 const createEmissionRecordSchema = z.object({
     groupId: z.number(),
@@ -58,4 +59,17 @@ export async function POST(request: Request) {
             { status: 500 }
         )
     }
+}
+
+export async function GET() {
+  try {
+    const result = await getEmissionRecords();
+
+    return NextResponse.json(result)
+  } catch (e) {
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    )
+  }
 }

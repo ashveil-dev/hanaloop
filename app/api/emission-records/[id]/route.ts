@@ -6,8 +6,52 @@ import { NextResponse } from "next/server";
 import { updateEmissionRecord } from "@/lib/server/services/emission-record/updateEmissionRecord";
 import { DrizzleQueryError } from "drizzle-orm/errors";
 import { DatabaseError } from "pg";
+import { getEmissionRecord } from "@/lib/server/services/emission-record/getEmissionRecord";
 
-const deleteGroupSchema = z.object({
+const getEmissionRecordSchema = z.object({
+    id: z.number()
+})
+
+export async function GET(
+    request: Request,
+    context: { params: Promise<{ id: string }> }
+) {
+    try {
+        const id = parseInt((await context.params).id);
+        const parsed = getEmissionRecordSchema.safeParse({ id });
+        if (!parsed.success) {
+            throw new ValidationError({
+                errors: z.treeifyError(parsed.error),
+            })
+        }
+
+        const result = await getEmissionRecord(parsed.data);
+
+        return NextResponse.json(result)
+    } catch (e) {
+        if (e instanceof ValidationError) {
+            return NextResponse.json({
+                message: e.message,
+                errros: e.errors
+            }, {
+                status: 400
+            })
+        }
+        else if (e instanceof ApiError) {
+            return NextResponse.json({
+                message: e.message,
+            }, {
+                status: e.status
+            })
+        }
+        return NextResponse.json(
+            { message: "Internal Server Error" },
+            { status: 500 }
+        )
+    }
+}
+
+const deleteEmissionRecordSchema = z.object({
     id: z.number()
 })
 
@@ -17,7 +61,7 @@ export async function DELETE(
 ) {
     try {
         const id = parseInt((await context.params).id);
-        const parsed = deleteGroupSchema.safeParse({ id });
+        const parsed = deleteEmissionRecordSchema.safeParse({ id });
 
         if (!parsed.success) {
             throw new ValidationError({

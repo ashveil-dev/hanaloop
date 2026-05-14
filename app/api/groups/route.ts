@@ -33,7 +33,7 @@ export async function POST(request: Request) {
 
     const result = await createGroup(parsed.data)
 
-    return result;
+    return NextResponse.json(result)
   } catch (e) {
     // 입력값이 올바르지 않은 경우
     if (e instanceof ValidationError) {

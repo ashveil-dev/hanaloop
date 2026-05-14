@@ -1,5 +1,7 @@
+import z from "zod";
 import { createGroup } from "@/lib/server/services/groups/createGroup";
 import { getGroups } from "@/lib/server/services/groups/getGroups";
+
 
 /**
  * @swagger
@@ -58,15 +60,43 @@ export async function GET() {
  *               nullable: true
  */
 
+/*
+{
+    "message": "입력값이 올바르지 않습니다.",
+    "errors": {
+        "formErrors": [],
+        "fieldErrors": {
+            "name": [
+                "Invalid input: expected string, received undefined"
+            ]
+        }
+    }
+}
+*/
+
+const createGroupSchema = z.object({
+  name: z.string(),
+  parentId: z.string().nullable().default(null).transform(v => v ? parseInt(v) : null)
+})
+
+
 export async function POST(request: Request) {
   const body = await request.json();
-  const { name, parentId } = body;
+  const parsed = createGroupSchema.safeParse(body);
 
-  const result = await createGroup({
-      name, 
-      parentId,
-    })
+  if (!parsed.success) {
+    return Response.json({
+      message: "invalid input",
+      errors: parsed.error.flatten()
+    }, {
+      status: 400
+    }
+    )
+  }
 
+
+  const result = await createGroup(parsed.data)
 
   return result;
+
 }

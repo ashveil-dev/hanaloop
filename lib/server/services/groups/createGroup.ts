@@ -1,9 +1,10 @@
 import { db } from "@server/db"
+import { z } from "zod";
 import { GroupsTable } from "@server/db/schema/groups";
 
 type createGroupParameterType = {
-    name: string,
-    parentId?: string,
+    name : string,
+    parentId : number | null
 }
 
 export async function createGroup({
@@ -11,8 +12,8 @@ export async function createGroup({
     parentId
 }: createGroupParameterType) {
     const group: typeof GroupsTable.$inferInsert = {
-        name : name,
-        parentId : parentId === undefined ? null : parseInt(parentId)
+        name,
+        parentId
     };
 
     try {
@@ -21,7 +22,7 @@ export async function createGroup({
     } catch(e) {
         return Response.json(
         {
-            message : "group create failed"
+            message : "그룹 생성을 실패하였습니다."
         }, {
             status : 500
         })

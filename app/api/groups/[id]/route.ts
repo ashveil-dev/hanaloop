@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/server/zod"
 import { deleteGroup } from "@/lib/server/services/groups/deleteGroup";
 import { updateGroup } from "@/lib/server/services/groups/updateGroup";
 import { NextResponse } from "next/server";
@@ -7,10 +7,7 @@ import { ApiError } from "@server/errors/ApiError";
 import { DrizzleQueryError } from "drizzle-orm/errors";
 import { DatabaseError } from "pg";
 import { getGroup } from "@/lib/server/services/groups/getGroup";
-
-const getGroupSchema = z.object({
-    id: z.number()
-})
+import { deleteGroupSchema, getGroupSchema, updateGroupSchema } from "@/lib/server/schema/GroupsSchema";
 
 export async function GET(
     request: Request,
@@ -50,26 +47,6 @@ export async function GET(
         )
     }
 }
-
-/**
- * @swagger
- * /api/groups/{id}:
- *   delete:
- *     summary: 그룹 삭제하기
- *     consumes:
- *       application/json
- *     parameters:
- *       - in: path
- *         name: id
- *         description: 삭제할 그룹의 id
- *         schema:
- *           type: integer
- *           required: true
- */
-
-const deleteGroupSchema = z.object({
-  id: z.number()
-})
 
 export async function DELETE(
   request: Request,
@@ -113,38 +90,6 @@ export async function DELETE(
 
 }
 
-/**
- * @swagger
- * /api/groups/{id}:
- *   patch:
- *     summary: 그룹 수정하기
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: 수정할 그룹의 id
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: Samsung Electronics
- *               parentId:
- *                 type: integer
- *                 nullable: true
- *                 example: 4
- */
-const updateGroupSchema = z.object({
-  id: z.number(),
-  name: z.string().optional(),
-  parentId: z.number().optional(),
-})
 export async function PATCH(
   request: Request,
   context: { params: Promise<{ id: string }> }

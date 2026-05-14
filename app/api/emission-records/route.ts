@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/server/zod"
 import { ValidationError } from "@server/errors/ValidationError";
 import { createEmissionRecord } from "@/lib/server/services/emission-record/createEmissionRecord";
 import { NextResponse } from "next/server";

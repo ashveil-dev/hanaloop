@@ -3,17 +3,17 @@ import { GroupsTable } from "@server/db/schema/groups"
 import { eq } from "drizzle-orm";
 
 type updateGroupParameterType = {
-    id: string,
-    name: string,
-    parentId: string
+    id: number,
+    name?: string,
+    parentId?: number
 }
 
 export async function updateGroup({ id, name, parentId }: updateGroupParameterType) {
     try {
         const result = await db.update(GroupsTable).set({
             name,
-            parentId : parseInt(parentId)
-        }).where(eq(GroupsTable.id, parseInt(id)))
+            parentId
+        }).where(eq(GroupsTable.id, id))
         .returning();
 
 

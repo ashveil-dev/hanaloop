@@ -71,13 +71,30 @@ export async function DELETE(
  *                 nullable: true
  *                 example: 4
  */
+const updateGroupSchema = z.object({
+  id : z.string().transform(v => parseInt(v)),
+  name : z.string().optional(),
+  parentId : z.number().optional(),
+})
 export async function PATCH(
     request: Request,
     context: { params: Promise<{ id: string }> }
 ) {
     const { id } = await context.params;
     const { name, parentId } = await request.json();
-    const result = await updateGroup({ id, name, parentId });
+
+    const parsed = updateGroupSchema.safeParse({id, name, parentId});
+    if (!parsed.success) {
+        return Response.json({
+          message: "invalid input",
+          errors: parsed.error.flatten()
+        }, {
+          status: 400
+        }
+        )
+      }
+
+    const result = await updateGroup(parsed.data);
 
     return result;
 }

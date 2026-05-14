@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { deleteGroup } from "@/lib/server/services/groups/deleteGroup";
 import { updateGroup } from "@/lib/server/services/groups/updateGroup";
+import { NextResponse } from "next/server";
+import { ValidationError } from "@/lib/server/errors/ValidationError";
 
 /**
  * @swagger
@@ -19,29 +21,42 @@ import { updateGroup } from "@/lib/server/services/groups/updateGroup";
  */
 
 const deleteGroupSchema = z.object({
-  id : z.string()
+  id: z.string()
 })
 
 export async function DELETE(
-    request: Request,
-    context: { params: Promise<{ id: string }> }
+  request: Request,
+  context: { params: Promise<{ id: string }> }
 ) {
+  try {
     const { id } = await context.params;
-    const parsed = deleteGroupSchema.safeParse({id});
+    const parsed = deleteGroupSchema.safeParse({ id });
 
     if (!parsed.success) {
-        return Response.json({
-          message: "invalid input",
-          errors: parsed.error.flatten()
-        }, {
-          status: 400
-        }
-        )
-      }
-    
-      const result = await deleteGroup(parsed.data)
-    
-      return result;
+      throw new ValidationError({
+        errors: z.treeifyError(parsed.error),
+      })
+    }
+
+    const result = await deleteGroup(parsed.data)
+
+    return result;
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      return NextResponse.json({
+        message: e.message,
+        errros: e.errors
+      }, {
+        status: 400
+      })
+    }
+
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    )
+  }
+
 }
 
 /**
@@ -72,29 +87,42 @@ export async function DELETE(
  *                 example: 4
  */
 const updateGroupSchema = z.object({
-  id : z.string().transform(v => parseInt(v)),
-  name : z.string().optional(),
-  parentId : z.number().optional(),
+  id: z.string().transform(v => parseInt(v)),
+  name: z.string().optional(),
+  parentId: z.number().optional(),
 })
 export async function PATCH(
-    request: Request,
-    context: { params: Promise<{ id: string }> }
+  request: Request,
+  context: { params: Promise<{ id: string }> }
 ) {
+  try {
     const { id } = await context.params;
     const { name, parentId } = await request.json();
 
-    const parsed = updateGroupSchema.safeParse({id, name, parentId});
+    const parsed = updateGroupSchema.safeParse({ id, name, parentId });
     if (!parsed.success) {
-        return Response.json({
-          message: "invalid input",
-          errors: parsed.error.flatten()
-        }, {
-          status: 400
-        }
-        )
-      }
+      throw new ValidationError({
+        errors: z.treeifyError(parsed.error),
+      })
+    }
 
     const result = await updateGroup(parsed.data);
 
     return result;
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      return NextResponse.json({
+        message: e.message,
+        errros: e.errors
+      }, {
+        status: 400
+      })
+    }
+  }
+
+  return NextResponse.json(
+    { message: "Internal Server Error" },
+    { status: 500 }
+  )
 }
+

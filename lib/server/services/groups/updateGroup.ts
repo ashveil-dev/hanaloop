@@ -1,7 +1,7 @@
-import { db } from "@server/db"
-import { GroupsTable } from "@server/db/schema/groups"
+import { db } from "@/lib/server/db"
+import { GroupsTable } from "@/lib/server/db/schema/groups"
 import { eq } from "drizzle-orm";
-import { ApiError } from "@server/errors/ApiError";
+import { ApiError } from "@/lib/server/errors/ApiError";
 
 type updateGroupParameterType = {
     id: number,

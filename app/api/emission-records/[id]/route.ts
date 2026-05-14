@@ -1,4 +1,4 @@
-import { z } from "@/lib/server/zod"
+import { z } from "@/lib/server/openapi"
 import { ApiError } from "@/lib/server/errors/ApiError";
 import { ValidationError } from "@/lib/server/errors/ValidationError";
 import { deleteEmissionRecord } from "@/lib/server/services/emission-record/deleteEmissionRecord";

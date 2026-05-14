@@ -1,9 +1,9 @@
-import { z } from "@/lib/server/zod"
+import { z } from "@/lib/server/openapi"
 import { deleteGroup } from "@/lib/server/services/groups/deleteGroup";
 import { updateGroup } from "@/lib/server/services/groups/updateGroup";
 import { NextResponse } from "next/server";
 import { ValidationError } from "@/lib/server/errors/ValidationError";
-import { ApiError } from "@server/errors/ApiError";
+import { ApiError } from "@/lib/server/errors/ApiError";
 import { DrizzleQueryError } from "drizzle-orm/errors";
 import { DatabaseError } from "pg";
 import { getGroup } from "@/lib/server/services/groups/getGroup";

@@ -1,4 +1,4 @@
-import { db } from "@server/db"
+import { db } from "@/lib/server/db"
 import { eq } from "drizzle-orm";
 import { EmissionRecordsTable } from "@/lib/server/db/schema/emissionRecords";
 import { ApiError } from "@/lib/server/errors/ApiError";

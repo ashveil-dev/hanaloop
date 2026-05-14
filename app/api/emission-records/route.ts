@@ -1,5 +1,5 @@
-import { z } from "@/lib/server/zod"
-import { ValidationError } from "@server/errors/ValidationError";
+import { z } from "@/lib/server/openapi"
+import { ValidationError } from "@/lib/server/errors/ValidationError";
 import { createEmissionRecord } from "@/lib/server/services/emission-record/createEmissionRecord";
 import { NextResponse } from "next/server";
 import { DrizzleQueryError } from "drizzle-orm";

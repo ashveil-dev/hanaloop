@@ -1,5 +1,5 @@
-import { db } from "@server/db"
-import { EmissionRecordsTable } from "@server/db/schema/emissionRecords";
+import { db } from "@/lib/server/db"
+import { EmissionRecordsTable } from "@/lib/server/db/schema/emissionRecords";
 
 type createEmissionRecordParameterType = {
     groupId: number,

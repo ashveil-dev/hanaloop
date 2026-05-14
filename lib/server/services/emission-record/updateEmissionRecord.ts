@@ -1,6 +1,6 @@
-import { db } from "@server/db"
+import { db } from "@/lib/server/db"
 import { eq } from "drizzle-orm";
-import { ApiError } from "@server/errors/ApiError";
+import { ApiError } from "@/lib/server/errors/ApiError";
 import { EmissionRecordsTable } from "../../db/schema/emissionRecords";
 
 type updateEmissionRecordParameterType = {

@@ -7,6 +7,9 @@ const getGroupSchema = z.object({
 const createGroupSchema = z.object({
     name: z.string(),
     parentId: z.string().nullable().default(null).transform(v => v ? parseInt(v) : null)
+    .openapi({
+        example : "Samsung"
+    })
 })
 
 const updateGroupSchema = z.object({

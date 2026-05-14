@@ -1,4 +1,4 @@
-import { z } from "@/lib/server/zod"
+import { z } from "@/lib/server/openapi"
 import { DrizzleQueryError } from "drizzle-orm/errors";
 import { DatabaseError } from "pg";
 import { NextResponse } from "next/server";

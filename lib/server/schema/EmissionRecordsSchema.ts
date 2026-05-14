@@ -1,4 +1,4 @@
-import { z } from "@/lib/server/zod"
+import { z } from "@/lib/server/openapi"
 
 const createEmissionRecordSchema = z.object({
     groupId: z.number(),

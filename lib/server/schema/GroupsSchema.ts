@@ -1,4 +1,4 @@
-import { z } from "@/lib/server/zod"
+import { z } from "@/lib/server/openapi"
 
 const getGroupSchema = z.object({
     id: z.number()

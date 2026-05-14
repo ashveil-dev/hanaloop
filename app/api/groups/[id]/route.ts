@@ -1,4 +1,4 @@
-import { z } from "@/lib/server/zod"
+import { z } from "@/lib/server/openapi"
 import { deleteGroup } from "@/lib/server/services/groups/deleteGroup";
 import { updateGroup } from "@/lib/server/services/groups/updateGroup";
 import { NextResponse } from "next/server";

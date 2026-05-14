@@ -8,14 +8,22 @@ type getHierarchyParameterType = {
     id: number,
 }
 
+type Emission = {
+    scope1: number
+    scope2: number
+    scope3: number
+    total: number
+}
+
 type GroupNode = {
     id: number
     name: string,
     parent_id: number | null,
 
-    directEmission: number
-    totalEmission?: number
-    childrenEmission?: number
+    directEmission: Emission,
+    childrenEmission: Emission,
+    totalEmission: Emission
+
     children?: GroupNode[]
 }
 
@@ -29,13 +37,32 @@ export function makeHierarchy(id: number, groups: GroupNode[], groupsNode: Map<n
         }
     }
 
-    const childrenEmission = children.reduce((acc, cur) => acc + (cur.totalEmission ?? 0), 0)
-    const totalEmission = childrenEmission + currentGroup.directEmission
+
+    let scope1 = children.reduce((acc, cur) => acc + (cur.directEmission?.scope1 ?? 0), 0);
+    let scope2 = children.reduce((acc, cur) => acc + (cur.directEmission?.scope2 ?? 0), 0);
+    let scope3 = children.reduce((acc, cur) => acc + (cur.directEmission?.scope3 ?? 0), 0);
+    const childrenEmission: Emission = {
+        scope1,
+        scope2,
+        scope3,
+        total: scope1 + scope2 + scope3,
+    }
+
+    scope1 = currentGroup.directEmission?.scope1 + childrenEmission.scope1
+    scope2 = currentGroup.directEmission?.scope2 + childrenEmission.scope2
+    scope3 = currentGroup.directEmission?.scope3 + childrenEmission.scope3
+    const totalEmission: Emission = {
+        scope1,
+        scope2,
+        scope3,
+        total: scope1 + scope2 + scope3
+    }
+    totalEmission.total = totalEmission.scope1 + totalEmission.scope2 + totalEmission.scope3
 
     return {
         ...currentGroup,
-        totalEmission,
         childrenEmission,
+        totalEmission,
         children
     }
 }
@@ -44,11 +71,34 @@ export async function getHierarchy({
     id,
 }: getHierarchyParameterType) {
     const nodeMap = new Map<number, GroupNode>()
-    const groups: GroupNode[] = await db
+    const groups = await db
         .select({
             id: GroupsTable.id,
             name: GroupsTable.name,
             parent_id: GroupsTable.parentId,
+            scope1Emission: sql<number>`
+                COALESCE(SUM(CASE 
+                    WHEN ${EmissionRecordsTable.scopeType} = 'SCOPE1' 
+                    THEN ${EmissionRecordsTable.amount} 
+                    ELSE 0 
+                END), 0)`
+                .mapWith(Number),
+
+            scope2Emission: sql<number>`
+                COALESCE(SUM(CASE 
+                    WHEN ${EmissionRecordsTable.scopeType} = 'SCOPE2' 
+                    THEN ${EmissionRecordsTable.amount} 
+                    ELSE 0 
+                END), 0)`
+                .mapWith(Number),
+
+            scope3Emission: sql<number>`
+                COALESCE(SUM(CASE 
+                    WHEN ${EmissionRecordsTable.scopeType} = 'SCOPE3' 
+                    THEN ${EmissionRecordsTable.amount} 
+                    ELSE 0 
+                END), 0)`
+                .mapWith(Number),
             directEmission: sql<string>`COALESCE(SUM(${EmissionRecordsTable.amount}), 0)`.mapWith(Number)
         })
         .from(GroupsTable)
@@ -60,12 +110,34 @@ export async function getHierarchy({
         );
 
     // id로 해당 값을 조회할 수 있도록 nodeMap을 만들기
+    const tempGroups: GroupNode[] = []
     for (const group of groups) {
-        nodeMap.set(group.id, {
-            ...group,
-            directEmission: group.directEmission,
+        const tempGroup: GroupNode = {
+            id: group.id,
+            name: group.name,
+            parent_id: group.parent_id,
+            directEmission: {
+                scope1: group.scope1Emission,
+                scope2: group.scope2Emission,
+                scope3: group.scope3Emission,
+                total: group.scope1Emission + group.scope2Emission + group.scope3Emission
+            },
+            childrenEmission: {
+                scope1: 0,
+                scope2: 0,
+                scope3: 0,
+                total: 0,
+            },
+            totalEmission: {
+                scope1: 0,
+                scope2: 0,
+                scope3: 0,
+                total: 0,
+            },
             children: []
-        })
+        }
+        tempGroups.push(tempGroup)
+        nodeMap.set(group.id, tempGroup)
     }
 
     if (!nodeMap.has(id))
@@ -74,5 +146,5 @@ export async function getHierarchy({
             status: 400
         })
 
-    return makeHierarchy(id, groups, nodeMap)
+    return makeHierarchy(id, tempGroups, nodeMap)
 }

@@ -1,4 +1,4 @@
-import { ApiError } from "@server/errors/ApiError";
+import { ApiError } from "@/lib/server/errors/ApiError";
 import { ZodIssue } from "zod/v3";
 
 type ValidationErrorParams = {

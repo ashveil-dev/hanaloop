@@ -1,5 +1,5 @@
-import { db } from "@server/db"
-import { GroupsTable } from "@server/db/schema/groups";
+import { db } from "@/lib/server/db"
+import { GroupsTable } from "@/lib/server/db/schema/groups";
 
 export async function getGroups() {
     const result = await db

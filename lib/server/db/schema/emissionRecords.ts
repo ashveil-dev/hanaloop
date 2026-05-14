@@ -1,5 +1,5 @@
 import { bigint, bigserial, check, date, index, numeric, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
-import { GroupsTable } from "@server/db/schema/groups";
+import { GroupsTable } from "@/lib/server/db/schema/groups";
 import { sql } from "drizzle-orm";
 
 export const EmissionRecordsTable = pgTable(

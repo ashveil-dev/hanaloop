@@ -3,6 +3,9 @@ import { deleteGroup } from "@/lib/server/services/groups/deleteGroup";
 import { updateGroup } from "@/lib/server/services/groups/updateGroup";
 import { NextResponse } from "next/server";
 import { ValidationError } from "@/lib/server/errors/ValidationError";
+import { ApiError } from "@server/errors/ApiError";
+import { DrizzleQueryError } from "drizzle-orm/errors";
+import { DatabaseError } from "pg";
 
 /**
  * @swagger
@@ -21,7 +24,7 @@ import { ValidationError } from "@/lib/server/errors/ValidationError";
  */
 
 const deleteGroupSchema = z.object({
-  id: z.string()
+  id: z.number()
 })
 
 export async function DELETE(
@@ -29,7 +32,7 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await context.params;
+    const id = parseInt((await context.params).id);
     const parsed = deleteGroupSchema.safeParse({ id });
 
     if (!parsed.success) {
@@ -40,7 +43,7 @@ export async function DELETE(
 
     const result = await deleteGroup(parsed.data)
 
-    return result;
+    return NextResponse.json(result)
   } catch (e) {
     if (e instanceof ValidationError) {
       return NextResponse.json({
@@ -48,6 +51,13 @@ export async function DELETE(
         errros: e.errors
       }, {
         status: 400
+      })
+    }
+    else if (e instanceof ApiError) {
+      return NextResponse.json({
+        message: e.message,
+      }, {
+        status: e.status
       })
     }
 
@@ -87,7 +97,7 @@ export async function DELETE(
  *                 example: 4
  */
 const updateGroupSchema = z.object({
-  id: z.string().transform(v => parseInt(v)),
+  id: z.number(),
   name: z.string().optional(),
   parentId: z.number().optional(),
 })
@@ -96,7 +106,7 @@ export async function PATCH(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await context.params;
+    const id = parseInt((await context.params).id);
     const { name, parentId } = await request.json();
 
     const parsed = updateGroupSchema.safeParse({ id, name, parentId });
@@ -118,11 +128,33 @@ export async function PATCH(
         status: 400
       })
     }
-  }
 
-  return NextResponse.json(
-    { message: "Internal Server Error" },
-    { status: 500 }
-  )
+    else if (e instanceof ApiError) {
+      return NextResponse.json({
+        message: e.message,
+      }, {
+        status: e.status
+      })
+    }
+
+    else if (e instanceof DrizzleQueryError) {
+      if (e.cause instanceof DatabaseError) {
+        // Error Code 23503 === "Foreign Key Violation"
+        // 선택한 부모 객체가 존재하지 않을 때
+        if (e.cause.code === "23503") {
+          return NextResponse.json({
+            message: "The selected parent group could not be found."
+          }, {
+            status: 400
+          })
+        }
+      }
+    }
+
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    )
+  }
 }
 

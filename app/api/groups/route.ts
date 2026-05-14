@@ -3,6 +3,9 @@ import { NextResponse } from "next/server";
 import { createGroup } from "@/lib/server/services/groups/createGroup";
 import { getGroups } from "@/lib/server/services/groups/getGroups";
 import { ValidationError } from "@/lib/server/errors/ValidationError";
+import { DrizzleQueryError } from "drizzle-orm/errors";
+import { DatabaseError } from "pg";
+import { ApiError } from "@server/errors/ApiError";
 
 
 /**
@@ -36,6 +39,7 @@ import { ValidationError } from "@/lib/server/errors/ValidationError";
 export async function GET() {
   try {
     const groups = await getGroups();
+
     return NextResponse.json(groups)
   } catch (e) {
     return NextResponse.json(
@@ -102,6 +106,7 @@ export async function POST(request: Request) {
 
     return result;
   } catch (e) {
+    // 입력값이 올바르지 않은 경우
     if (e instanceof ValidationError) {
       return NextResponse.json({
         message: e.message,
@@ -109,6 +114,20 @@ export async function POST(request: Request) {
       }, {
         status: 400
       })
+    }
+
+    else if (e instanceof DrizzleQueryError) {
+      if (e.cause instanceof DatabaseError) {
+        // Error Code 23503 === "Foreign Key Violation"
+        // 선택한 부모 객체가 존재하지 않을 때
+        if (e.cause.code === "23503") {
+          return NextResponse.json({
+            message: "The selected parent group could not be found."
+          }, {
+            status: 400
+          })
+        }
+      }
     }
   }
 

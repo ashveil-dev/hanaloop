@@ -1,22 +1,24 @@
 import { db } from "@server/db"
 import { GroupsTable } from "@server/db/schema/groups"
 import { eq } from "drizzle-orm";
+import { ApiError } from "@server/errors/ApiError";
 
 type deleteGroupParameterType = {
-    id: string
+    id: number
 }
 
 export async function deleteGroup({ id }: deleteGroupParameterType) {
-    try {
-        const result = await db.delete(GroupsTable).where(eq(GroupsTable.id, parseInt(id))).returning();
+    const result = await db
+        .delete(GroupsTable)
+        .where(eq(GroupsTable.id, id))
+        .returning();
 
-        return Response.json(result[0]);
-    } catch (e) {
-        return Response.json(
-        {
-            message : "group delete failed"
-        }, {
-            status : 500
+    if(result.length === 0) {
+        throw new ApiError({
+            status : 400,
+            message : "The selected group does not exist."
         })
     }
+
+    return result[0]
 }

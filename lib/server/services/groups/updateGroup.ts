@@ -1,6 +1,7 @@
 import { db } from "@server/db"
 import { GroupsTable } from "@server/db/schema/groups"
 import { eq } from "drizzle-orm";
+import { ApiError } from "@server/errors/ApiError";
 
 type updateGroupParameterType = {
     id: number,
@@ -9,21 +10,18 @@ type updateGroupParameterType = {
 }
 
 export async function updateGroup({ id, name, parentId }: updateGroupParameterType) {
-    try {
-        const result = await db.update(GroupsTable).set({
-            name,
-            parentId
-        }).where(eq(GroupsTable.id, id))
+    const result = await db.update(GroupsTable)
+        .set({ name, parentId })
+        .where(eq(GroupsTable.id, id))
         .returning();
 
-
-        return Response.json(result[0]);
-    } catch (e) {
-        return Response.json(
-        {
-            message : "group update failed"
-        }, {
-            status : 500
+    if (result.length === 0) {
+        throw new ApiError({
+            status: 400,
+            message: "The selected group does not exist."
         })
     }
+
+
+    return result[0];
 }

@@ -7,10 +7,7 @@ import { updateEmissionRecord } from "@/lib/server/services/emission-record/upda
 import { DrizzleQueryError } from "drizzle-orm/errors";
 import { DatabaseError } from "pg";
 import { getEmissionRecord } from "@/lib/server/services/emission-record/getEmissionRecord";
-
-const getEmissionRecordSchema = z.object({
-    id: z.number()
-})
+import { deleteEmissionRecordSchema, getEmissionRecordSchema, updateEmissionRecordSchema } from "@/lib/server/schema/EmissionRecordsSchema";
 
 export async function GET(
     request: Request,
@@ -50,10 +47,6 @@ export async function GET(
         )
     }
 }
-
-const deleteEmissionRecordSchema = z.object({
-    id: z.number()
-})
 
 export async function DELETE(
     request: Request,
@@ -96,17 +89,6 @@ export async function DELETE(
     }
 }
 
-const updateEmissionRecordSchema = z.object({
-    id: z.number(),
-    groupId: z.number().optional(),
-    scopeType: z.enum(["SCOPE1", "SCOPE2", "SCOPE3"]).optional(),
-    amount: z.number().transform(v => v.toString()).optional(),
-    unit: z.string().optional(),
-    recordedAt: z.string()
-        .default(
-            new Date().toISOString().split("T")[0]
-        ).optional()
-})
 export async function PATCH(
     request: Request,
     context: { params: Promise<{ id: string }> }

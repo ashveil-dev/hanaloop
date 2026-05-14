@@ -5,17 +5,7 @@ import { NextResponse } from "next/server";
 import { DrizzleQueryError } from "drizzle-orm";
 import { DatabaseError } from "pg";
 import { getEmissionRecords } from "@/lib/server/services/emission-record/getEmissionRecords";
-
-const createEmissionRecordSchema = z.object({
-    groupId: z.number(),
-    scopeType: z.enum(["SCOPE1", "SCOPE2", "SCOPE3"]),
-    amount: z.number().transform(v => v.toString()),
-    unit: z.string().default("tCO2e"),
-    recordedAt: z.string().optional()
-        .default(
-            new Date().toISOString().split("T")[0]
-        )
-});
+import { createEmissionRecordSchema } from "@/lib/server/schema/EmissionRecordsSchema";
 
 export async function POST(request: Request) {
     try {

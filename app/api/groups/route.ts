@@ -1,6 +1,8 @@
 import z from "zod";
+import { NextResponse } from "next/server";
 import { createGroup } from "@/lib/server/services/groups/createGroup";
 import { getGroups } from "@/lib/server/services/groups/getGroups";
+import { ValidationError } from "@/lib/server/errors/ValidationError";
 
 
 /**
@@ -32,9 +34,15 @@ import { getGroups } from "@/lib/server/services/groups/getGroups";
  *                     format: date-time
  */
 export async function GET() {
-  return Response.json(
-    await getGroups()
-  );
+  try {
+    const groups = await getGroups();
+    return NextResponse.json(groups)
+  } catch (e) {
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    )
+  }
 }
 
 
@@ -79,24 +87,33 @@ const createGroupSchema = z.object({
   parentId: z.string().nullable().default(null).transform(v => v ? parseInt(v) : null)
 })
 
-
 export async function POST(request: Request) {
-  const body = await request.json();
-  const parsed = createGroupSchema.safeParse(body);
+  try {
+    const body = await request.json();
+    const parsed = createGroupSchema.safeParse(body);
 
-  if (!parsed.success) {
-    return Response.json({
-      message: "invalid input",
-      errors: parsed.error.flatten()
-    }, {
-      status: 400
+    if (!parsed.success) {
+      throw new ValidationError({
+        errors: z.treeifyError(parsed.error),
+      })
     }
-    )
+
+    const result = await createGroup(parsed.data)
+
+    return result;
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      return NextResponse.json({
+        message: e.message,
+        errros: e.errors
+      }, {
+        status: 400
+      })
+    }
   }
 
-
-  const result = await createGroup(parsed.data)
-
-  return result;
-
+  return NextResponse.json(
+    { message: "Internal Server Error" },
+    { status: 500 }
+  )
 }

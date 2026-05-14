@@ -1,10 +1,19 @@
 import { ApiError } from "@server/errors/ApiError";
+import { ZodIssue } from "zod/v3";
+
+type ValidationErrorParams = {
+    message?: string;
+    errors: unknown
+};
 
 export class ValidationError extends ApiError {
-    errors: string;
+    errors: unknown
 
-    constructor(message = "Invalid Input", errors: string) {
-        super(400, message);
+    constructor({
+        message = "Invalid Input",
+        errors,
+    }: ValidationErrorParams) {
+        super({ status: 400, message });
 
         this.errors = errors;
     }

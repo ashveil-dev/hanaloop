@@ -1,5 +1,8 @@
+"use client"
+
 import Link from "next/link";
 import SidebarNavItem from "./SidebarNavItem";
+import { useState } from "react";
 
 const navItems = [
     {
@@ -47,6 +50,11 @@ const sections = [
 ]
 
 export default function AppSidebar() {
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const onClick = (index : number) => () => {
+        setSelectedIndex(index)
+    }
+    
     return (
         <aside className="hidden h-full shrink-0 md:flex md:w-auto md:flex-row md:bg-transparent">
             <div className="block h-20 w-full md:hidden" />
@@ -75,10 +83,10 @@ export default function AppSidebar() {
 
                 <ul className="mt-8 flex flex-col gap-3">
                     {sections.map((item, index) => (
-                        <li key={item.title}>
+                        <li key={item.title} onClick={onClick(index)}>
                             <Link href={item.href}>
                                 <button
-                                    className={`flex w-full items-center justify-between rounded-2xl border p-4 text-left transition cursor-pointer ${index === 0
+                                    className={`flex w-full items-center justify-between rounded-2xl border p-4 text-left transition cursor-pointer ${index === selectedIndex
                                         ? "border-emerald-200 bg-emerald-50"
                                         : "border-slate-200 bg-white hover:bg-slate-50"
                                         }`}
@@ -92,7 +100,7 @@ export default function AppSidebar() {
                                     </div>
 
                                     <div
-                                        className={`h-2.5 w-2.5 rounded-full ${index === 0 ? "bg-emerald-500" : "bg-slate-300"
+                                        className={`h-2.5 w-2.5 rounded-full ${index === selectedIndex ? "bg-emerald-500" : "bg-slate-300"
                                             }`}
                                     />
                                 </button>

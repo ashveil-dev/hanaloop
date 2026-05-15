@@ -9,6 +9,7 @@ const navItems = [
         title: "홈",
         description: "대시보드 개요 및 KPI",
         icon: "/icons/home.png",
+        href: "http://localhost:3000/",
         activeIcon: "/icons/home_fill.png",
         alt: "dashboard page",
         color: "emerald" as const,
@@ -17,6 +18,7 @@ const navItems = [
         title: "그룹",
         description: "조직 계층 및 관리 그룹",
         icon: "/icons/people.png",
+        href: "http://localhost:3000/group",
         activeIcon: "/icons/people_fill.png",
         alt: "groups page",
         color: "cyan" as const,
@@ -25,36 +27,27 @@ const navItems = [
         title: "레코드",
         description: "배출 데이터 및 기록",
         icon: "/icons/server.png",
+        href: "http://localhost:3000/records",
         activeIcon: "/icons/server_fill.png",
         alt: "records page",
         color: "teal" as const,
     },
 ];
 
-const sections = [
-    {
-        title: "전체 배출량",
-        descrption: "",
-        href: "#StatCard"
-    },
-    {
-        title: "Scope별 배출량",
-        descrption: "",
-        href: "#ScopeBreakdownCard"
-    },
-    {
-        title: "계층별 배출량",
-        descrption: "",
-        href: "#HierarchyEmissionCard"
-    },
-]
+type AppSliderType = {
+    sections: {
+        title: string,
+        description: string,
+        href: string
+    }[]
+}
 
-export default function AppSidebar() {
+export default function AppSidebar({ sections }: AppSliderType) {
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const onClick = (index : number) => () => {
+    const onClick = (index: number) => () => {
         setSelectedIndex(index)
     }
-    
+
     return (
         <aside className="hidden h-full shrink-0 md:flex md:w-auto md:flex-row md:bg-transparent">
             <div className="block h-20 w-full md:hidden" />

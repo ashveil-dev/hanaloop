@@ -5,11 +5,15 @@ import ScopeBreakdownCard from "./ScopeBreakdownCard";
 import HierarchyEmissionCard from "./HierarchyEmissionCard";
 import { getDashboardSummary } from "@/lib/client/api/getDashboardSummary";
 import { getGroups } from "@/lib/client/api/getGroups";
+import { getHierarchy } from "@/lib/client/api/getHierarchy";
 
 export default async function DashboardMain() {
     const summaryData = await getDashboardSummary();
     const groupsData = await getGroups();
-    
+    const hierarchyData = await getHierarchy({
+        id: groupsData.find(group => group.parentId === null)?.id
+    });
+
     return (
         <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
             <DashboardHeader />
@@ -49,11 +53,17 @@ export default async function DashboardMain() {
 
                 <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
                     <MonthlyEmissionChart />
-                    <ScopeBreakdownCard />
+                    <ScopeBreakdownCard
+                        scope1={summaryData.scope1.amount}
+                        scope2={summaryData.scope2.amount}
+                        scope3={summaryData.scope3.amount}
+                    />
                 </section>
 
                 <section className="grid grid-cols-1 gap-6 xl:grid-cols-1">
-                    <HierarchyEmissionCard />
+                    <HierarchyEmissionCard
+                        hierarchyData={hierarchyData}
+                    />
                 </section>
             </div>
         </div>

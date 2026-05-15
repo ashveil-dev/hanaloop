@@ -1,15 +1,33 @@
-export type EmissionType = {
+export type SummaryEmissionType = {
     "amount": number,
     "carbonTax": number,
     "riskLevel": string
 }
 
-export type DashboardSummary =
-    {
+export type DashboardSummary = {
         "name": string,
         "unit": string,
-        "scope1": EmissionType,
-        "scope2": EmissionType,
-        "scope3": EmissionType,
-        "total": EmissionType
+        "scope1": SummaryEmissionType,
+        "scope2": SummaryEmissionType,
+        "scope3": SummaryEmissionType,
+        "total": SummaryEmissionType
+}
+
+export type Emission = {
+        scope1: number,
+        scope2: number,
+        scope3: number,
+        total: number,
     }
+
+
+export type Hierarchy = {
+    id: number,
+    name: string,
+    parent_id: number | null,
+    unit: string,
+    directEmission: Emission,
+    childrenEmission : Emission,
+    totalEmission : Emission,
+    children : Hierarchy[]
+}

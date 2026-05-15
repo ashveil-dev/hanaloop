@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Providers from "./providers";
 import "./globals.css";
+
 
 export const metadata: Metadata = {
   title: "Hana Dashboard",
@@ -14,7 +16,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={"w-full h-full"}>
       <link rel="icon" href="/icons/logo.png" type="image/png" sizes="32x32" />
-      <body className="min-w-full h-full min-h-full">{children}</body>
+      <body className="min-w-full h-full min-h-full">
+        <Providers>
+          {children}
+        </Providers>
+      </body>
     </html>
   );
 }

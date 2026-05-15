@@ -3,8 +3,11 @@ import StatCard from "./StatCard";
 import MonthlyEmissionChart from "./MonthlyEmissionChart";
 import ScopeBreakdownCard from "./ScopeBreakdownCard";
 import HierarchyEmissionCard from "./HierarchyEmissionCard";
+import { getDashboardSummary } from "@/lib/client/api/getDashboardSummary";
 
-export default function DashboardMain() {
+export default async function DashboardMain() {
+    const summaryData = await getDashboardSummary();
+    
     return (
         <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
             <DashboardHeader />
@@ -13,16 +16,16 @@ export default function DashboardMain() {
                 <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
                     <StatCard
                         label="총 배출량"
-                        value="42,380"
-                        unit="tCO₂e"
+                        value={summaryData.total.amount.toString()}
+                        unit={summaryData.unit}
                         description="전월 대비 8.4% 감소"
                         descriptionColor="text-emerald-600"
                     />
 
                     <StatCard
                         label="예상 탄소세"
-                        value="₩128M"
-                        description="기준치 초과 부서 3곳"
+                        value={summaryData.total.carbonTax.toString()}
+                        description=""
                         descriptionColor="text-amber-600"
                     />
 
@@ -30,13 +33,13 @@ export default function DashboardMain() {
                         label="관리 그룹"
                         value="18"
                         unit="groups"
-                        description="4개 계층 구조"
+                        description=""
                     />
 
                     <StatCard
                         label="리스크 레벨"
-                        value="Moderate"
-                        description="안정 구간에 근접"
+                        value={summaryData.total.riskLevel}
+                        description=""
                         descriptionColor="text-emerald-400"
                         dark
                     />

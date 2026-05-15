@@ -5,7 +5,7 @@ import { GroupsTable } from "@/lib/server/db/schema/groups";
 import { ApiError } from "@/lib/server/errors/ApiError";
 
 type getHierarchyParameterType = {
-    id: number,
+    id: number | null,
 }
 
 type Emission = {
@@ -16,7 +16,7 @@ type Emission = {
 }
 
 type GroupNode = {
-    id: number
+    id: number | null
     name: string,
     parent_id: number | null,
 
@@ -27,7 +27,7 @@ type GroupNode = {
     children?: GroupNode[]
 }
 
-export function makeHierarchy(id: number, groups: GroupNode[], groupsNode: Map<number, GroupNode>): GroupNode {
+export function makeHierarchy(id: number | null, groups: GroupNode[], groupsNode: Map<number | null, GroupNode>): GroupNode {
     const children = []
     const currentGroup = groupsNode.get(id) as GroupNode
 
@@ -36,7 +36,6 @@ export function makeHierarchy(id: number, groups: GroupNode[], groupsNode: Map<n
             children.push(makeHierarchy(group.id, groups, groupsNode))
         }
     }
-
 
     let scope1 = children.reduce((acc, cur) => acc + (cur.directEmission?.scope1 ?? 0), 0);
     let scope2 = children.reduce((acc, cur) => acc + (cur.directEmission?.scope2 ?? 0), 0);
@@ -70,7 +69,7 @@ export function makeHierarchy(id: number, groups: GroupNode[], groupsNode: Map<n
 export async function getHierarchy({
     id,
 }: getHierarchyParameterType) {
-    const nodeMap = new Map<number, GroupNode>()
+    const nodeMap = new Map<number | null, GroupNode>()
     const groups = await db
         .select({
             id: GroupsTable.id,

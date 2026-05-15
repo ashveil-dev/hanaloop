@@ -1,13 +1,15 @@
 # HanaLoop Carbon Emission Dashboard
 
-탄소 배출량 및 탄소세를 조직 계층 구조 기반으로 보여주는 대시보드입니다.
-
 # Table of Contents
-- [Features](#features)
-- [Run](#run)
-- [Tech Stack](#tech-stack)
-- [Using AI](#using-ai)
-- [Notion](#notion)
+- [개요](#summary)
+- [특징](#features)
+- [실행](#run)
+- [기술 스택](#tech-stack)
+- [AI 활용하기](#using-ai)
+- [개발하면서 기록한 내용](#notion)
+
+# Summary
+탄소 배출량 및 탄소세를 조직 계층 구조 기반으로 보여주는 대시보드입니다.
 
 # Features
 

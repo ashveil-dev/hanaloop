@@ -1,6 +1,6 @@
 type StatCardProps = {
     label: string;
-    value: string;
+    value: string | number;
     unit?: string;
     description: string;
     descriptionColor?: string;

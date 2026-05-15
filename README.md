@@ -39,6 +39,8 @@ cd <project-name>
 ```bash
 docker compose up --build
 ```
+/api-docs : Backend API Docs
+
 ## 완성하지 못한 점
 
 ## 개발하면서 기록한 내용

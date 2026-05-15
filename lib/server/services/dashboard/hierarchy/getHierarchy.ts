@@ -19,7 +19,7 @@ type GroupNode = {
     id: number | null
     name: string,
     parent_id: number | null,
-    unit : string,
+    unit: string,
 
     directEmission: Emission,
     childrenEmission: Emission,
@@ -38,9 +38,9 @@ export function makeHierarchy(id: number | null, groups: GroupNode[], groupsNode
         }
     }
 
-    let scope1 = children.reduce((acc, cur) => acc + (cur.directEmission?.scope1 ?? 0), 0);
-    let scope2 = children.reduce((acc, cur) => acc + (cur.directEmission?.scope2 ?? 0), 0);
-    let scope3 = children.reduce((acc, cur) => acc + (cur.directEmission?.scope3 ?? 0), 0);
+    let scope1 = children.reduce((acc, cur) => acc + (cur.totalEmission?.scope1 ?? 0), 0);
+    let scope2 = children.reduce((acc, cur) => acc + (cur.totalEmission?.scope2 ?? 0), 0);
+    let scope3 = children.reduce((acc, cur) => acc + (cur.totalEmission?.scope3 ?? 0), 0);
     const childrenEmission: Emission = {
         scope1,
         scope2,

@@ -33,29 +33,37 @@ export default function Home() {
           <nav className="h-full p-4 border-r border-r-gray-200 mr-2">
             <ul className="flex flex-col gap-6">
               <li className="p-4 group cursor-pointer border border-gray-100 rounded-2xl shadow-sm">
-                <Image src="/icons/home.png" width={40} height={40} alt="dashboard page" className="group-hover:hidden"/>
-                <Image src="/icons/home_fill.png" width={40} height={40} alt="dashboard page" className="hidden group-hover:block"/>
+                <Image src="/icons/home.png" width={40} height={40} alt="dashboard page" className="group-hover:hidden" />
+                <Image src="/icons/home_fill.png" width={40} height={40} alt="dashboard page" className="hidden group-hover:block" />
               </li>
               <li className="p-4 group cursor-pointer border border-gray-100 rounded-2xl shadow-sm">
-                <Image src="/icons/people.png" width={40} height={40} alt="dashboard page" className="group-hover:hidden"/>
-                <Image src="/icons/people_fill.png" width={40} height={40} alt="dashboard page" className="hidden group-hover:block"/>
+                <Image src="/icons/people.png" width={40} height={40} alt="dashboard page" className="group-hover:hidden" />
+                <Image src="/icons/people_fill.png" width={40} height={40} alt="dashboard page" className="hidden group-hover:block" />
               </li>
               <li className="p-4 group cursor-pointer border border-gray-100 rounded-2xl shadow-sm">
-                <Image src="/icons/server.png" width={40} height={40} alt="dashboard page" className="group-hover:hidden"/>
-                <Image src="/icons/server_fill.png" width={40} height={40} alt="dashboard page" className="hidden group-hover:block"/>
+                <Image src="/icons/server.png" width={40} height={40} alt="dashboard page" className="group-hover:hidden" />
+                <Image src="/icons/server_fill.png" width={40} height={40} alt="dashboard page" className="hidden group-hover:block" />
               </li>
             </ul>
           </nav>
           <section className="min-w-[300] h-full p-4">
-            <header className="flex justify-between p-4 mb-4 border-b border-b-gray-200">
-              <h2>Dashboard</h2>
-              <div>뒤로 가기</div>
+            <header className="flex justify-between items-center p-4 mb-4 border-b border-b-gray-200">
+              <h3 className="text-2xl">Home</h3>
+              <h6 className="text-sm">뒤로 가기</h6>
             </header>
-            <ul>
-              <li>개요</li>
-              <li>전체 배출량</li>
-              <li>계층별 배출량</li>
-              <li>Scope별 배출량</li>
+            <ul className="flex flex-col gap-10 p-4">
+              <li>
+                <h5 className="text-lg">개요</h5>
+              </li>
+              <li>
+                <h5 className="text-lg">전체 배출량</h5>
+              </li>
+              <li>
+                <h5 className="text-lg">계층별 배출량</h5>
+              </li>
+              <li>
+                <h5 className="text-lg">Scope별 배출량</h5>
+              </li>
             </ul>
           </section>
         </aside>

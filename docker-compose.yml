@@ -6,7 +6,10 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://postgres:hanaloop@localhost:5432/hanaloop
+      DATABASE_URL: postgresql://postgres:hanaloop@db:5432/hanaloop
+      SERVER_BASE_URL: http://app:3000
+      NEXT_PUBLIC_BASE_URL: http://localhost:3000
+
     depends_on:
       - db
 

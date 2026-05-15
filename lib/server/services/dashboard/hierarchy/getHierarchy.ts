@@ -19,6 +19,7 @@ type GroupNode = {
     id: number | null
     name: string,
     parent_id: number | null,
+    unit : string,
 
     directEmission: Emission,
     childrenEmission: Emission,
@@ -115,6 +116,7 @@ export async function getHierarchy({
             id: group.id,
             name: group.name,
             parent_id: group.parent_id,
+            unit: "tCO2e",
             directEmission: {
                 scope1: group.scope1Emission,
                 scope2: group.scope2Emission,

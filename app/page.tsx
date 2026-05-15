@@ -27,12 +27,36 @@ export default function Home() {
             </button>
           </div>
         </div>
-
-
       </header>
-      <div id="sidebar" className="w-1/3 min-w-[300] h-full ">
-
-      </div>
+      <main className="w-full h-full flex">
+        <aside className="p-4 w-auto h-full flex shadow-xl rounded-2xl">
+          <nav className="h-full p-4 border-r border-r-gray-200 mr-2">
+            <ul>
+              <li className="p-4">
+                <Image src="/icons/home.png" width={40} height={40} alt="dashboard page" />
+              </li>
+              <li className="p-4">
+                <Image src="/icons/people.png" width={40} height={40} alt="dashboard page" />
+              </li>
+              <li className="p-4">
+                <Image src="/icons/server.png" width={40} height={40} alt="dashboard page" />
+              </li>
+            </ul>
+          </nav>
+          <section className="min-w-[300] h-full p-4">
+            <header className="flex justify-between p-4 mb-4 border-b border-b-gray-200">
+              <h2>Dashboard</h2>
+              <div>뒤로 가기</div>
+            </header>
+            <ul>
+              <li>개요</li>
+              <li>전체 배출량</li>
+              <li>계층별 배출량</li>
+              <li>Scope별 배출량</li>
+            </ul>
+          </section>
+        </aside>
+      </main>
     </div>
   );
 }

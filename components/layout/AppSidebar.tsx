@@ -70,10 +70,6 @@ export default function AppSidebar() {
                                 Home
                             </h3>
                         </div>
-
-                        <button className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100 cursor-pointer">
-                            뒤로 가기
-                        </button>
                     </div>
                 </header>
 

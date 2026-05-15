@@ -2,6 +2,13 @@
 
 탄소 배출량 및 탄소세를 조직 계층 구조 기반으로 보여주는 대시보드입니다.
 
+# Table of Contents
+- [Features](#features)
+- [Run](#run)
+- [Tech Stack](#tech-stack)
+- [Using AI](#using-ai)
+- [Notion](#notion)
+
 # Features
 
 - 탄소 배출량을 기록할 수 있습니다.
@@ -32,5 +39,11 @@ docker compose up --build
 5. Database
    - Postgres
 
-## Notion
+# Using AI
+1. SQL의 각 쿼리에서 성능 향상이나, 필요없는 부분을 생략하기 위하여 만든 Query를 다듬도록 요청
+2. 처음 사용하는 패키지(Drizzle, Zod, Swagger-UI)에 대한 기본적인 코드와 예제 설명
+3. Postgres에 대한 예제 코드
+4. 프론트엔드 디자인 코드 (기획과 틀을 잡아놓고 이에 대한 디자인적인 코드 요청)
+
+# Notion
 https://spark-fossa-b2a.notion.site/35eff317bebd809c843fe47b6c941084?pvs=74

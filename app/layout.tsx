@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={"w-full h-full"}>
       <link rel="icon" href="/icons/logo.png" type="image/png" sizes="32x32" />
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-w-full h-full min-h-full">{children}</body>
     </html>
   );
 }

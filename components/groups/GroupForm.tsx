@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Group } from "./GroupMain";
 
 type Props = {
-    groups: Group[];
+    groups: Group[] | undefined;
     editingGroup: Group | null;
     onCreate: (name: string, parentId: number | null) => void;
     onUpdate: (id: number, name: string, parentId: number | null) => void;
@@ -74,7 +74,7 @@ export default function GroupForm({
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
                     >
                         <option value="">없음</option>
-                        {groups
+                        {groups && groups
                             .filter((group) => group.id !== editingGroup?.id)
                             .map((group) => (
                                 <option key={group.id} value={group.id}>

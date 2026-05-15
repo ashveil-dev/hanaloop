@@ -1,7 +1,7 @@
 import type { Group } from "./GroupMain";
 
 type Props = {
-    groups: Group[];
+    groups: Group[] | undefined;
     onEdit: (group: Group) => void;
     onDelete: (id: number) => void;
 };
@@ -9,7 +9,7 @@ type Props = {
 export default function GroupTable({ groups, onEdit, onDelete }: Props) {
     const getParentName = (parentId: number | null) => {
         if (parentId === null) return "최상위 그룹";
-        return groups.find((group) => group.id === parentId)?.name ?? "알 수 없음";
+        return groups?.find((group) => group.id === parentId)?.name ?? "알 수 없음";
     };
 
     return (
@@ -38,7 +38,7 @@ export default function GroupTable({ groups, onEdit, onDelete }: Props) {
                     </thead>
 
                     <tbody className="divide-y divide-slate-100">
-                        {groups.map((group) => (
+                        {groups?.map((group) => (
                             <tr key={group.id} className="transition hover:bg-slate-50">
                                 <td className="px-5 py-4 text-slate-500">
                                     #{group.id}
@@ -78,7 +78,7 @@ export default function GroupTable({ groups, onEdit, onDelete }: Props) {
                             </tr>
                         ))}
 
-                        {groups.length === 0 && (
+                        {groups?.length === 0 && (
                             <tr>
                                 <td colSpan={5} className="px-5 py-12 text-center text-slate-400">
                                     생성된 그룹이 없습니다.

@@ -88,7 +88,7 @@ export default function AppSidebar({ sections }: AppSliderType) {
                                     <div>
                                         <h5 className="font-semibold text-slate-800">{item.title}</h5>
                                         <p className="mt-1 text-sm text-slate-400">
-                                            {item.descrption}
+                                            {item.description}
                                         </p>
                                     </div>
 

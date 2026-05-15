@@ -107,7 +107,10 @@ export async function PATCH(
 
     const result = await updateGroup(parsed.data);
 
-    return result;
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
   } catch (e) {
     if (e instanceof ValidationError) {
       return NextResponse.json({

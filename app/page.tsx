@@ -83,8 +83,43 @@ export default function Home() {
             </ul>
           </section>
         </aside>
-        <div id="mainLayout" className="w-full bg-black">
+        <div id="mainLayout" className="w-full bg-white">
+          <div id="mainHeader">
+            <div>
+              Home {'>'} 개요
+            </div>
+            <div>
+              <div className="flex shrink-0">
+                <button
+                  className="w-10 h-10 cursor-pointer rounded-sm text-xm font-medium text-neutral-500 hover:text-black hover:font-bold">
+                  정렬
+                </button>
+                <button
+                  className="w-10 h-10 cursor-pointer rounded-sm text-xm font-medium text-neutral-500 hover:text-black hover:font-bold">
+                  필터
+                </button>
+              </div>
 
+              <div className="relative shrink-0">
+                <form>
+                  <input name="searchText" type="text" placeholder="검색하기"
+                    maxLength={6}
+                    className="w-50 px-2 pr-7 py-2 border-b border-b-gray-300 outline-none font-semibold"
+                  />
+                  <button type="submit"
+                    className="absolute right-0 bottom-0 -translate-y-1/2 cursor-pointer"
+                  >
+                    <Image src="/icons/search.png" width={30} height={30} alt="submit search" />
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div id="mainContent" className="">
+            <div>
+
+            </div>
+          </div>
         </div>
       </main>
     </div>

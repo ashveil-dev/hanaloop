@@ -12,7 +12,7 @@ const baseUrl =
 
 
 export async function updateGroupApi({ name, parentId } : updateGroupType): Promise<Groups> {
-    const res = await fetch(baseUrl+"/api/groups", {
+    const res = await fetch("/api/groups", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

@@ -11,7 +11,7 @@ const baseUrl =
     : process.env.NEXT_PUBLIC_BASE_URL;
 
 export async function createGroupApi({ name, parentId } : createGroupType): Promise<Groups> {
-    const res = await fetch(baseUrl+"/api/groups", {
+    const res = await fetch("/api/groups", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

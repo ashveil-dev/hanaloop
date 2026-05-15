@@ -10,7 +10,7 @@ export default function ScopeBreakdownCard({
   const sum = scope1 + scope2 + scope3;
 
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div id="ScopeBreakdownCard" className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
       <h4 className="text-xl font-bold text-slate-900">
         Scope별 배출량
       </h4>

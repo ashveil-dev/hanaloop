@@ -15,11 +15,11 @@ export default async function DashboardMain() {
     });
 
     return (
-        <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8 scroll-smooth">
             <DashboardHeader />
 
             <div className="space-y-8">
-                <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <section id="StatCard" className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
                     <StatCard
                         label="총 배출량"
                         value={summaryData.total.amount}

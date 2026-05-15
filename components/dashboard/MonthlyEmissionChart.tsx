@@ -2,7 +2,8 @@ const monthlyData = [45, 62, 38, 72, 55, 48];
 
 export default function MonthlyEmissionChart() {
     return (
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm xl:col-span-2">
+        <div id="MonthlyEmissionChart"
+            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm xl:col-span-2">
             <div className="mb-6 flex items-center justify-between">
                 <div>
                     <h4 className="text-xl font-bold text-slate-900">

@@ -9,7 +9,7 @@ export default function HierarchyEmissionCard({
 }: Parameter) {
     const sum = hierarchyData.children.reduce((acc, cur) => acc + cur.totalEmission.total, 0)
     return (
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div id="HierarchyEmissionCard" className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <h4 className="text-xl font-bold text-slate-900">
                 계층별 배출량
             </h4>

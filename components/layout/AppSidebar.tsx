@@ -1,3 +1,4 @@
+import Link from "next/link";
 import SidebarNavItem from "./SidebarNavItem";
 
 const navItems = [
@@ -27,7 +28,23 @@ const navItems = [
     },
 ];
 
-const sections = ["개요", "전체 배출량", "계층별 배출량", "Scope별 배출량"];
+const sections = [
+    {
+        title: "전체 배출량",
+        descrption: "",
+        href: "#StatCard"
+    },
+    {
+        title: "Scope별 배출량",
+        descrption: "",
+        href: "#ScopeBreakdownCard"
+    },
+    {
+        title: "계층별 배출량",
+        descrption: "",
+        href: "#HierarchyEmissionCard"
+    },
+]
 
 export default function AppSidebar() {
     return (
@@ -62,29 +79,32 @@ export default function AppSidebar() {
 
                 <ul className="mt-8 flex flex-col gap-3">
                     {sections.map((item, index) => (
-                        <li key={item}>
-                            <button
-                                className={`flex w-full items-center justify-between rounded-2xl border p-4 text-left transition cursor-pointer ${index === 0
+                        <li key={item.title}>
+                            <Link href={item.href}>
+                                <button
+                                    className={`flex w-full items-center justify-between rounded-2xl border p-4 text-left transition cursor-pointer ${index === 0
                                         ? "border-emerald-200 bg-emerald-50"
                                         : "border-slate-200 bg-white hover:bg-slate-50"
-                                    }`}
-                            >
-                                <div>
-                                    <h5 className="font-semibold text-slate-800">{item}</h5>
-                                    <p className="mt-1 text-sm text-slate-400">
-                                        관련 데이터 및 분석 보기
-                                    </p>
-                                </div>
-
-                                <div
-                                    className={`h-2.5 w-2.5 rounded-full ${index === 0 ? "bg-emerald-500" : "bg-slate-300"
                                         }`}
-                                />
-                            </button>
+                                >
+
+                                    <div>
+                                        <h5 className="font-semibold text-slate-800">{item.title}</h5>
+                                        <p className="mt-1 text-sm text-slate-400">
+                                            {item.descrption}
+                                        </p>
+                                    </div>
+
+                                    <div
+                                        className={`h-2.5 w-2.5 rounded-full ${index === 0 ? "bg-emerald-500" : "bg-slate-300"
+                                            }`}
+                                    />
+                                </button>
+                            </Link>
                         </li>
                     ))}
                 </ul>
             </section>
-        </aside>
+        </aside >
     );
 }

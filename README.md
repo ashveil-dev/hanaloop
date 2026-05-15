@@ -32,5 +32,5 @@ docker compose up --build
 5. Database
    - Postgres
 
-## 개발하면서 기록한 내용
+## Notion
 https://spark-fossa-b2a.notion.site/35eff317bebd809c843fe47b6c941084?pvs=74

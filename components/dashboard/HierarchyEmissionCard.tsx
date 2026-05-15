@@ -13,6 +13,16 @@ function getPercent(value: number, total: number) {
   return ((value / total) * 100).toFixed(2);
 }
 
+function getPercentColor(p: string) {
+  const percent = parseInt(p)
+  if (percent < 20) return "bg-green-500"
+  if (percent < 40) return "bg-lime-500"
+  if (percent < 60) return "bg-yellow-400"
+  if (percent < 80) return "bg-orange-500"
+
+  return "bg-red-500"
+}
+
 type TreeNodeProps = {
   node: Hierarchy;
   rootTotal: number;
@@ -46,7 +56,7 @@ function HierarchyTreeNode({ node, rootTotal, depth = 0 }: TreeNodeProps) {
 
         <div className="h-2 overflow-hidden rounded-full bg-slate-100">
           <div
-            className="h-full rounded-full bg-slate-800"
+            className={`h-full rounded-full ${getPercentColor(percent)}`}
             style={{ width: `${percent}%` }}
           />
         </div>

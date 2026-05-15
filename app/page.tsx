@@ -31,15 +31,18 @@ export default function Home() {
       <main className="w-full h-full flex">
         <aside className="p-4 w-auto h-full flex shadow-xl rounded-2xl">
           <nav className="h-full p-4 border-r border-r-gray-200 mr-2">
-            <ul>
-              <li className="p-4">
-                <Image src="/icons/home.png" width={40} height={40} alt="dashboard page" />
+            <ul className="flex flex-col gap-6">
+              <li className="p-4 group cursor-pointer border border-gray-100 rounded-2xl shadow-sm">
+                <Image src="/icons/home.png" width={40} height={40} alt="dashboard page" className="group-hover:hidden"/>
+                <Image src="/icons/home_fill.png" width={40} height={40} alt="dashboard page" className="hidden group-hover:block"/>
               </li>
-              <li className="p-4">
-                <Image src="/icons/people.png" width={40} height={40} alt="dashboard page" />
+              <li className="p-4 group cursor-pointer border border-gray-100 rounded-2xl shadow-sm">
+                <Image src="/icons/people.png" width={40} height={40} alt="dashboard page" className="group-hover:hidden"/>
+                <Image src="/icons/people_fill.png" width={40} height={40} alt="dashboard page" className="hidden group-hover:block"/>
               </li>
-              <li className="p-4">
-                <Image src="/icons/server.png" width={40} height={40} alt="dashboard page" />
+              <li className="p-4 group cursor-pointer border border-gray-100 rounded-2xl shadow-sm">
+                <Image src="/icons/server.png" width={40} height={40} alt="dashboard page" className="group-hover:hidden"/>
+                <Image src="/icons/server_fill.png" width={40} height={40} alt="dashboard page" className="hidden group-hover:block"/>
               </li>
             </ul>
           </nav>

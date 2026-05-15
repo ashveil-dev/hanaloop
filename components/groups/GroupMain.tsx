@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import GroupHeader from "./GroupHeader";
-import GroupForm from "./GroupForm";
-import GroupTable from "./GroupTable";
-import GroupCard from "./GroupCard";
+import { useEffect, useState } from "react";
+import GroupHeader from "@/components/groups/GroupHeader"
+import GroupForm from "@/components/groups//GroupForm";
+import GroupTable from "@/components/groups//GroupTable";
+import GroupCard from "@/components/groups//GroupCard";
+import { getGroups } from "@/lib/client/api/getGroups";
+
 
 export type Group = {
   id: number;
@@ -47,6 +49,19 @@ export default function GroupMain() {
   const deleteGroup = (id: number) => {
     setGroups((prev) => prev.filter((group) => group.id !== id));
   };
+
+  useEffect(() => {
+    async function fetchGroups() {
+      try {
+        const response = await getGroups();
+        setGroups(response)
+      } catch(e) {
+        console.log(e)
+      }
+    }
+    
+    fetchGroups();
+  }, []);
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">

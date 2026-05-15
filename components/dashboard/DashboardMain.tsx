@@ -26,7 +26,7 @@ export default async function DashboardMain() {
                 <section id="StatCard" className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
                     <StatCard
                         label="총 배출량"
-                        value={summaryData.total.amount}
+                        value={summaryData.total.amount.toFixed(2)}
                         unit={summaryData.unit}
                         description="전월 대비 8.4% 감소"
                         descriptionColor="text-emerald-600"

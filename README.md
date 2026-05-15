@@ -11,6 +11,7 @@
 - Carbon Tax KPI Dashboard
 - Group CRUD API
 - Emission Record CRUD API
+- /api-docs : Backend API Docs
 
 ---
 
@@ -39,7 +40,6 @@ cd <project-name>
 ```bash
 docker compose up --build
 ```
-/api-docs : Backend API Docs
 
 ## 완성하지 못한 점
 

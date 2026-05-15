@@ -7,6 +7,10 @@ import { getDashboardSummary } from "@/lib/client/api/getDashboardSummary";
 import { getGroups } from "@/lib/client/api/getGroups";
 import { getHierarchy } from "@/lib/client/api/getHierarchy";
 
+function formatDollar(value: number) {
+  return `$${value.toLocaleString()}`;
+}
+
 export default async function DashboardMain() {
     const summaryData = await getDashboardSummary();
     const groupsData = await getGroups();
@@ -30,7 +34,7 @@ export default async function DashboardMain() {
 
                     <StatCard
                         label="예상 탄소세"
-                        value={summaryData.total.carbonTax}
+                        value={formatDollar(summaryData.total.carbonTax)}
                         description=""
                         descriptionColor="text-amber-600"
                     />

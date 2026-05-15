@@ -29,7 +29,7 @@ export default function Home() {
         </div>
       </header>
       <main className="w-full h-full flex flex-col md:flex-row">
-        <aside className="fixed top-0 left-0 bg-slate-50 md:bg-transparent h-full max-h-full flex flex-col md:flex-row items-start w-full md:p-4 md:shrink-0 md:static md:w-auto md:shadow-xl md:rounded-2xl">
+        <aside className="fixed top-0 left-0 bg-slate-50 md:bg-transparent h-full max-h-full flex flex-col md:flex-row items-start w-full md:shrink-0 md:static md:w-auto md:shadow-xl md:rounded-2xl">
           <div className="w-full h-28 block md:hidden"></div>
           <nav className="overflow-auto w-full p-4 md:w-auto md:shrink-0 md:h-full md:border-r md:border-r-gray-200 mr-2">
             <ul className="flex flex-col gap-6 ">
@@ -62,7 +62,7 @@ export default function Home() {
               </li>
             </ul>
           </nav>
-          <section className="hidden h-full p-4 md:block md:min-w-[300] ">
+          <section className="hidden h-full p-4 md:p-0 md:block md:min-w-[300] ">
             <header className="flex justify-between items-center p-4 mb-4 border-b border-b-gray-200">
               <h3 className="text-2xl">Home</h3>
               <h6 className="text-sm">뒤로 가기</h6>
@@ -83,37 +83,11 @@ export default function Home() {
             </ul>
           </section>
         </aside>
-        <div id="mainLayout" className="w-full bg-white">
-          <div id="mainHeader">
-            <div>
-              Home {'>'} 개요
-            </div>
-            <div>
-              <div className="flex shrink-0">
-                <button
-                  className="w-10 h-10 cursor-pointer rounded-sm text-xm font-medium text-neutral-500 hover:text-black hover:font-bold">
-                  정렬
-                </button>
-                <button
-                  className="w-10 h-10 cursor-pointer rounded-sm text-xm font-medium text-neutral-500 hover:text-black hover:font-bold">
-                  필터
-                </button>
-              </div>
-
-              <div className="relative shrink-0">
-                <form>
-                  <input name="searchText" type="text" placeholder="검색하기"
-                    maxLength={6}
-                    className="w-50 px-2 pr-7 py-2 border-b border-b-gray-300 outline-none font-semibold"
-                  />
-                  <button type="submit"
-                    className="absolute right-0 bottom-0 -translate-y-1/2 cursor-pointer"
-                  >
-                    <Image src="/icons/search.png" width={30} height={30} alt="submit search" />
-                  </button>
-                </form>
-              </div>
-            </div>
+        <div id="mainLayout" className="w-full p-4 bg-white">
+          <div id="mainHeader" className="flex justify-between p-4">
+            <h3 className="text-2xl">
+              개요
+            </h3>
           </div>
           <div id="mainContent" className="">
             <div>

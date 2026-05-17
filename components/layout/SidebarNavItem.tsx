@@ -9,6 +9,7 @@ type SidebarNavItemProps = {
     activeIcon: string;
     alt: string;
     color?: "emerald" | "cyan" | "teal";
+    onClick: () => void
 };
 
 const colorMap = {
@@ -25,9 +26,10 @@ export default function SidebarNavItem({
     activeIcon,
     alt,
     color = "emerald",
+    onClick
 }: SidebarNavItemProps) {
     return (
-        <li>
+        <li onClick={onClick}>
             <Link href={href}>
                 <button
                     className={`group cursor-pointer flex w-full items-center gap-4 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg md:flex-col md:justify-center md:gap-3 ${colorMap[color]}`}

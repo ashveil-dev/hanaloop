@@ -45,7 +45,8 @@ type AppSliderType = {
 }
 
 export default function AppSidebar({ sections }: AppSliderType) {
-    const open = useMenuStore(state => state.open)
+    const open = useMenuStore((state) => state.open);
+    const closeMenu = useMenuStore((state) => state.closeMenu);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const onClick = (index: number) => () => {
         setSelectedIndex(index)
@@ -53,13 +54,13 @@ export default function AppSidebar({ sections }: AppSliderType) {
 
     return (
         <aside className={clsx("fixed top-0 w-full h-full overflow-auto bg-white shrink-0 md:static md:flex md:w-auto md:flex-row md:bg-transparent",
-            open ? "hidden" : "block"
+            open ? "block" : "hidden"
         )}>
             <div className="block h-20 w-full md:hidden" />
             <nav className="w-full px-4 py-6 md:w-[110px] md:shrink-0 md:px-3">
                 <ul className="flex flex-col gap-4">
                     {navItems.map((item) => (
-                        <SidebarNavItem key={item.title} {...item} />
+                        <SidebarNavItem key={item.title} onClick={closeMenu} {...item} />
                     ))}
                 </ul>
             </nav>

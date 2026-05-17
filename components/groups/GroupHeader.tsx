@@ -1,4 +1,8 @@
-export default function GroupHeader() {
+type Props = {
+  onRefresh : () => void
+}
+
+export default function GroupHeader({ onRefresh }) {
   return (
     <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
       <div>
@@ -13,7 +17,10 @@ export default function GroupHeader() {
         </p>
       </div>
 
-      <button className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700">
+      <button 
+        onClick={onRefresh}
+        className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700"
+        >
         그룹 새로고침
       </button>
     </div>

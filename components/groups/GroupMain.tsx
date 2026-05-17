@@ -64,9 +64,13 @@ export default function GroupMain() {
     setGroup(undefined);
   }
 
+  const onRefresh = () => {
+    groupsQuery.refetch();
+  }
+
   return (
     <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
-      <GroupHeader />
+      <GroupHeader onRefresh={onRefresh}/>
 
       <div className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <section className="xl:col-span-1">

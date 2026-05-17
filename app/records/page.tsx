@@ -1,11 +1,17 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { SubmitHandler, useForm } from "react-hook-form";
+import AppHeader from "@/components/layout/AppHeader";
+import AppSidebar from "@/components/layout/AppSidebar";
 import { getEmissionRecords } from "@/lib/client/api/getEmissionRecords";
 import { createEmissionRecord } from "@/lib/client/api/createEmissionRecord";
 import { deleteEmissionRecord } from "@/lib/client/api/deleteEmissionRecord";
-import AppHeader from "@/components/layout/AppHeader";
-import AppSidebar from "@/components/layout/AppSidebar";
+import { editEmissionRecord } from "@/lib/client/api/editEmissionRecord";
+import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type ScopeType = "SCOPE1" | "SCOPE2" | "SCOPE3";
 
@@ -13,7 +19,7 @@ const sections = [
     {
         title: "레코드 생성",
         description: "",
-        href: "#CreateRecord",
+        href: "#RecordForm",
     },
     {
         title: "레코드 목록",
@@ -22,12 +28,30 @@ const sections = [
     },
 ];
 
+const FormSchema = z.object({
+    groupId: z.number(),
+    scopeType: z.enum(["SCOPE1", "SCOPE2", "SCOPE3"]),
+    amount: z.number(),
+    unit: z.string(),
+    recordedAt: z.string(),
+})
+
+type FormType = z.infer<typeof FormSchema>
+
 export default function RecordsPage() {
+    const [id, setId] = useState<number | undefined>(undefined)
+
     const recordsData = useQuery({
         queryKey: ["emission-records"],
         queryFn: getEmissionRecords
     })
-    const editId = undefined
+
+    const formRef = useRef<HTMLFormElement>(null);
+    const { register, handleSubmit, formState: { errors, isValid } } = useForm<FormType>({
+        resolver: zodResolver(FormSchema)
+    });
+
+    const editId = 30
     const records = recordsData.data ?? []
 
     const totalAmount = records.reduce((acc, cur) => acc + Number(cur.amount), 0);
@@ -35,36 +59,31 @@ export default function RecordsPage() {
     const scope2Count = records.filter((record) => record.scopeType === "SCOPE2").length;
     const scope3Count = records.filter((record) => record.scopeType === "SCOPE3").length;
 
-    const onFormSubmit: React.SubmitEventHandler<HTMLFormElement> = async (e) => {
+    const onFormSubmit: SubmitHandler<FormType> = async (data) => {
         try {
-            e.preventDefault()
+            const { groupId, scopeType, amount, unit, recordedAt } = data;
 
-            const formData = new FormData(e.currentTarget);
+            if(!isValid) 
+                throw new Error("Invalid input");
 
-            const groupId = formData.get("groupId");
-            const scopeType = formData.get("scopeType") as "SCOPE1" | "SCOPE2" | "SCOPE3";
-            const amount = formData.get("amount");
-            const unit = formData.get("unit");
-            const recordedAt = formData.get("recordedAt");
+            if (editId) {
+                await editEmissionRecord({
+                    id: editId,
+                    groupId: groupId,
+                    scopeType,
+                    amount: amount,
+                    unit: unit as string,
+                    recordedAt: recordedAt as string
+                })
 
-            if (
-                groupId === null ||
-                amount === null ||
-                unit === null ||
-                recordedAt === null
-            ) {
-                throw new Error("invalid input");
+                setId(undefined);
+                return
             }
 
-            const parsedGroupId = Number(groupId);
-            const parsedAmount = Number(amount);
-            if (Number.isNaN(parsedGroupId) || Number.isNaN(parsedAmount))
-                throw "invalid input"
-
-            await createEmissionRecord({
-                groupId: parsedGroupId,
+            return await createEmissionRecord({
+                groupId: groupId,
                 scopeType,
-                amount: parsedAmount,
+                amount: amount,
                 unit: unit as string,
                 recordedAt: recordedAt as string
             })
@@ -72,6 +91,29 @@ export default function RecordsPage() {
             alert("Error")
             console.log(e);
         }
+    }
+
+    const onChangeButtonClicked: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+        try {
+            const { id } = e.currentTarget.dataset;
+
+            if (id === undefined) {
+                throw new Error("The id does not exit")
+            }
+
+            const parsedId = parseInt(id);
+            if (Number.isNaN(parsedId)) {
+                throw new Error("invalid input")
+            }
+
+            setId(parsedId);
+            formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        } catch (e) {
+            alert("Error");
+            console.log(e);
+        }
+
     }
 
     const onDeleteButtonClicked: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
@@ -157,8 +199,9 @@ export default function RecordsPage() {
 
                     <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
                         <form
-                            id="CreateRecord"
-                            onSubmit={onFormSubmit}
+                            id="RecordForm"
+                            ref={formRef}
+                            onSubmit={handleSubmit(onFormSubmit)}
                             className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
                         >
                             <p className="text-sm font-medium text-emerald-600">
@@ -174,6 +217,7 @@ export default function RecordsPage() {
                                         그룹 ID
                                     </span>
                                     <input
+                                        {...register("groupId")}
                                         name="groupId"
                                         type="number"
                                         placeholder="예: 1"
@@ -186,7 +230,7 @@ export default function RecordsPage() {
                                         Scope 타입
                                     </span>
                                     <select
-                                        name="scopeType"
+                                        {...register("scopeType")}
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     >
                                         <option value="SCOPE1">SCOPE1</option>
@@ -202,7 +246,7 @@ export default function RecordsPage() {
                                     <input
                                         type="number"
                                         step="0.01"
-                                        name="amount"
+                                        {...register("amount")}
                                         placeholder="예: 1200.50"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     />
@@ -213,7 +257,7 @@ export default function RecordsPage() {
                                         단위
                                     </span>
                                     <input
-                                        name="unit"
+                                        {...register("unit")}
                                         placeholder="tCO2e"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     />
@@ -224,7 +268,7 @@ export default function RecordsPage() {
                                         기록일
                                     </span>
                                     <input
-                                        name="recordedAt"
+                                        {...register("recordedAt")}
                                         type="date"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     />
@@ -304,7 +348,9 @@ export default function RecordsPage() {
                                                     <td className="px-5 py-4">
                                                         <div className="flex justify-end gap-2">
                                                             <button
-                                                                // onClick={() => onEdit(record)}
+                                                                type="button"
+                                                                data-id={record.id}
+                                                                onClick={onChangeButtonClicked}
                                                                 className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
                                                             >
                                                                 수정

@@ -2,7 +2,7 @@ type Props = {
   onRefresh : () => void
 }
 
-export default function GroupHeader({ onRefresh }) {
+export default function GroupHeader({ onRefresh } : Props) {
   return (
     <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
       <div>

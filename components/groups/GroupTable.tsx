@@ -41,11 +41,11 @@ export default function GroupTable({ groups, onEdit, onDelete }: Props) {
                         {groups?.map((group) => (
                             <tr key={group.id} className="transition hover:bg-slate-50">
                                 <td className="px-5 py-4 text-slate-500">
-                                    #{group.id}
+                                    {group.id}
                                 </td>
 
-                                <td className="px-5 py-4">
-                                    <div className="font-semibold text-slate-900">
+                                <td className="px-5 py-4 max-w-50">
+                                    <div className="font-semibold text-slate-900 wrap-break-word whitespace-normal">
                                         {group.name}
                                     </div>
                                 </td>

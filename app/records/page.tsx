@@ -13,6 +13,7 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EmissionRecord } from "@/lib/client/types/emissionRecords";
 import clsx from "clsx";
+import { getGroups } from "@/lib/client/api/getGroups";
 
 type ScopeType = "SCOPE1" | "SCOPE2" | "SCOPE3";
 
@@ -52,6 +53,11 @@ export default function RecordsPage() {
     const recordsData = useQuery({
         queryKey: ["emission-records"],
         queryFn: getEmissionRecords
+    })
+
+    const groupsQuery = useQuery({
+        queryKey: ["Groups"],
+        queryFn: getGroups
     })
 
     const formRef = useRef<HTMLFormElement>(null);
@@ -338,47 +344,45 @@ export default function RecordsPage() {
                                     <table className="w-full min-w-[920px] text-left text-sm">
                                         <thead className="bg-slate-50 text-slate-500">
                                             <tr>
-                                                <th className="px-5 py-4 font-medium">ID</th>
-                                                <th className="px-5 py-4 font-medium">Group ID</th>
-                                                <th className="px-5 py-4 font-medium">Scope</th>
-                                                <th className="px-5 py-4 font-medium">Amount</th>
-                                                <th className="px-5 py-4 font-medium">Unit</th>
-                                                <th className="px-5 py-4 font-medium">Recorded At</th>
-                                                <th className="px-5 py-4 font-medium">Created At</th>
-                                                <th className="px-5 py-4 text-right font-medium">관리</th>
+                                                <th className="px-5 py-4 text-center font-medium">ID</th>
+                                                <th className="px-5 py-4 text-center font-medium">그룹명</th>
+                                                <th className="px-5 py-4 text-center font-medium">Scope</th>
+                                                <th className="px-5 py-4 text-center font-medium">배출량</th>
+                                                <th className="px-5 py-4 text-center font-medium">단위</th>
+                                                <th className="px-5 py-4 text-center font-medium">기록 날짜</th>
+                                                <th className="px-5 py-4 text-center font-medium">관리</th>
                                             </tr>
                                         </thead>
 
                                         <tbody className="divide-y divide-slate-100">
                                             {records.map((record) => (
-                                                <tr key={record.id} className="bg-white">
+                                                <tr key={record.id} className="bg-white text-center">
                                                     <td className="px-5 py-4 text-slate-500">
-                                                        #{record.id}
+                                                        {record.id}
                                                     </td>
-                                                    <td className="px-5 py-4 font-semibold text-slate-900">
-                                                        {record.groupId}
+                                                    <td className="px-5 py-4 font-semibold max-w-50">
+                                                        <div className=" text-slate-900 text-center wrap-break-word whitespace-normal">
+                                                            {groupsQuery.data?.find(g => g.id === record.groupId)?.name ?? ""}
+                                                        </div>
                                                     </td>
-                                                    <td className="px-5 py-4">
+                                                    <td className="px-5 py-4 text-center">
                                                         <span className={clsx("rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700",
                                                             scopeStyle[record.scopeType]
                                                         )}>
                                                             {record.scopeType}
                                                         </span>
                                                     </td>
-                                                    <td className="px-5 py-4 font-semibold text-slate-900">
+                                                    <td className="px-5 py-4 font-semibold text-slate-900 text-center">
                                                         {record.amount}
                                                     </td>
-                                                    <td className="px-5 py-4 text-slate-500">
+                                                    <td className="px-5 py-4 text-slate-500 text-center">
                                                         {record.unit}
                                                     </td>
-                                                    <td className="px-5 py-4 text-slate-500">
+                                                    <td className="px-5 py-4 text-slate-500 text-center">
                                                         {record.recordedAt}
                                                     </td>
-                                                    <td className="px-5 py-4 text-slate-500">
-                                                        {record.createdAt.toString()}
-                                                    </td>
                                                     <td className="px-5 py-4">
-                                                        <div className="flex justify-end gap-2">
+                                                        <div className="flex justify-center gap-2 text-center">
                                                             <button
                                                                 type="button"
                                                                 onClick={onChangeButtonClicked(record)}
@@ -415,7 +419,7 @@ export default function RecordsPage() {
                         </div>
                     </section>
                 </div>
-            </main>
-        </div>
+            </main >
+        </div >
     );
 }

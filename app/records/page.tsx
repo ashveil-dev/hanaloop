@@ -63,7 +63,6 @@ export default function RecordsPage() {
         try {
             const { id, groupId, scopeType, amount, unit, recordedAt } = data;
 
-
             if (isEdit) {
                 setIsEdit(false);
                 await editEmissionRecord({
@@ -206,7 +205,7 @@ export default function RecordsPage() {
                                                 ID
                                             </span>
                                             <input
-                                                {...register("id")}
+                                                {...register("id", { valueAsNumber: true })}
                                                 name="id"
                                                 type="number"
                                                 placeholder="예 : 1"
@@ -224,7 +223,7 @@ export default function RecordsPage() {
                                         그룹 ID
                                     </span>
                                     <input
-                                        {...register("groupId")}
+                                        {...register("groupId", { valueAsNumber: true })}
                                         name="groupId"
                                         type="number"
                                         placeholder="예: 1"
@@ -254,12 +253,12 @@ export default function RecordsPage() {
 
                                 <label className="block">
                                     <span className="text-sm font-medium text-slate-700">
-                                        배출량 {errors.amount?.message}
+                                        배출량
                                     </span>
                                     <input
                                         type="number"
                                         step="0.01"
-                                        {...register("amount")}
+                                        {...register("amount", { valueAsNumber: true })}
 
                                         placeholder="예: 1200.50"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"

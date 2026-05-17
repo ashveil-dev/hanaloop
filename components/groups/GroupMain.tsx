@@ -5,38 +5,53 @@ import GroupHeader from "@/components/groups/GroupHeader"
 import GroupForm from "@/components/groups//GroupForm";
 import GroupTable from "@/components/groups//GroupTable";
 import GroupCard from "@/components/groups//GroupCard";
-import { createGroupApi } from "@/lib/client/api/createGroup";
+import { createGroup } from "@/lib/client/api/createGroup";
 import { getGroups } from "@/lib/client/api/getGroups";
-import { updateGroupApi } from "@/lib/client/api/updateGroup";
+import { updateGroup } from "@/lib/client/api/updateGroup";
+import { deleteGroup } from "@/lib/client/api/deleteGroup";
 import { useQuery } from "@tanstack/react-query";
+import type { Group } from "@/lib/client/types/groups";
 
 
 export default function GroupMain() {
-
+  const [group, setGroup] = useState<Group | undefined>(undefined);
   const groupsQuery = useQuery({
     queryKey: ["Groups"],
     queryFn: getGroups
   })
 
-  const createGroup = async (name: string, parentId: number | null) => {
+  const onCreateGroup = async (name: string, parentId: string | null | undefined) => {
     try {
-      const response = await createGroupApi({ name, parentId })
+      await createGroup({ name, parentId })
     } catch (e) {
+      alert("Error");
       console.log(e)
     }
   };
 
-  const updateGroup = async (id: number, name: string, parentId: number | null) => {
+  const onUpdateGroup = async (id: number, name: string, parentId: string | null | undefined) => {
     try {
-      const response = await updateGroupApi({ name, parentId })
+      await updateGroup({ id, name, parentId })
+      groupsQuery.refetch();
     } catch (e) {
+      alert("Error");
       console.log(e)
     }
   };
 
-  const deleteGroup = (id: number) => {
-    // setGroups((prev) => prev?.filter((group) => group.id !== id));
+  const onDeleteGroup = async (id: number) => {
+    try {
+      await deleteGroup({ id })
+      groupsQuery.refetch();
+    } catch (e) {
+      alert("Error");
+      console.log(e)
+    }
   };
+
+  const onChangeButtonClicked = () => {
+
+  }
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
@@ -45,11 +60,12 @@ export default function GroupMain() {
       <div className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <section className="xl:col-span-1">
           <GroupForm
+            group={group}
             groups={groupsQuery.data}
-            editingGroup={() => { }}
-            onCreate={createGroup}
-            onUpdate={updateGroup}
-            onCancelEdit={() => {}}
+            onCreate={onCreateGroup}
+            onUpdate={onUpdateGroup}
+            onDelete={onDeleteGroup}
+            onCancelEdit={() => { }}
           />
         </section>
 
@@ -62,8 +78,9 @@ export default function GroupMain() {
 
           <GroupTable
             groups={groupsQuery.data}
-            onEdit={() => {}}
-            onDelete={deleteGroup}
+            onEdit={() => { }}
+            onChange={onChangeButtonClicked}
+            onDelete={onDeleteGroup}
           />
         </section>
       </div>

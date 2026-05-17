@@ -1,19 +1,20 @@
 import type { Groups } from "@/lib/client/types/groups";
 
 type updateGroupType = {
+    id: number,
     name? : string,
-    parentId? : number | null
+    parentId? : string | null
 }
 
-export async function updateGroupApi({ name, parentId } : updateGroupType): Promise<Groups> {
-    const res = await fetch("/api/groups", {
-        method: "POST",
+export async function updateGroup({ id, name, parentId } : updateGroupType): Promise<Groups> {
+    const res = await fetch(`/api/groups${id}`, {
+        method: "PATCH",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
             name, 
-            parentId : parentId ? parentId.toString() : parentId
+            parentId : parentId ? parentId.toString() : undefined
         }),
         cache: "no-store"
     });

@@ -1,23 +1,21 @@
-import { useState } from "react";
-import type { Group } from "@/lib/client/types/groups";
 import z from "zod";
+import type { Group } from "@/lib/client/types/groups";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = {
     group?: Group | undefined;
     groups: Group[] | undefined;
-    onCreate: (name: string, parentId: number | null) => void;
-    onChange: () => void;
-    onUpdate: (id: number, name: string, parentId: number | null) => void;
+    onCreate: (name: string, parentId: string | null | undefined) => void;
+    onUpdate: (id: number, name: string, parentId: string | null | undefined) => void;
     onDelete: (id: number) => void;
     onCancelEdit: () => void;
 };
 
 const FormSchema = z.object({
-    id: z.number(),
+    id: z.number().optional(),
     name: z.string(),
-    parentId: z.number(),
+    parentId: z.string(),
 })
 
 type FormType = z.infer<typeof FormSchema>
@@ -26,7 +24,6 @@ export default function GroupForm({
     group,
     groups,
     onCreate,
-    onChange,
     onUpdate,
     onDelete,
     onCancelEdit,
@@ -37,29 +34,15 @@ export default function GroupForm({
 
     const onFormSubmit: SubmitHandler<FormType> = async ({ id, name, parentId }) => {
         try {
-            if (group) {
-                // await editEmissionRecord({
-                //     id: id,
-                //     groupId: groupId,
-                //     scopeType,
-                //     amount: amount,
-                //     unit: unit as string,
-                //     recordedAt: recordedAt as string
-                // })
+            if (group && id) {
+                onUpdate(id, name, parentId);
             } else {
-                // await createEmissionRecord({
-                //     groupId: groupId,
-                //     scopeType,
-                //     amount: amount,
-                //     unit: unit as string,
-                //     recordedAt: recordedAt as string
-                // })
+                onCreate(name, parentId);
             }
 
-            // recordsData.refetch()
+            reset();
         } catch (e) {
             alert("Error")
-            console.log(errors)
             console.log(e);
         }
     }
@@ -78,7 +61,7 @@ export default function GroupForm({
 
             <div className="mt-6 space-y-4">
                 {
-                    groups && (
+                    group && (
                         <div>
                             <label className="block">
                                 <span className="text-sm font-medium text-slate-700">
@@ -89,7 +72,7 @@ export default function GroupForm({
                                     name="id"
                                     type="number"
                                     placeholder="예 : 1"
-                                    disabled
+                                    readOnly
                                     className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400 cursor-not-allowed"
                                 />
                                 <span className="text-sm font-bold text-red-300">
@@ -118,15 +101,15 @@ export default function GroupForm({
                         상위 그룹
                     </label>
                     <select
-                        {...register("parentId", { valueAsNumber: true })}
+                        {...register("parentId")}
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
                     >
                         <option value="">없음</option>
                         {groups && groups
-                            .filter((group) => group.id !== group?.id)
-                            .map((group) => (
-                                <option key={group.id} value={group.id}>
-                                    {group.name}
+                            .filter((g) => g.id !== group?.id)
+                            .map((g) => (
+                                <option key={g.id} value={g.id.toString()}>
+                                    {g.name}
                                 </option>
                             ))}
                     </select>
@@ -137,7 +120,7 @@ export default function GroupForm({
 
                 <div className="flex gap-3 pt-2">
                     <button
-                        onClick={() => { }}
+                        type="submit"
                         className="flex-1 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
                     >
                         {group ? "수정하기" : "생성하기"}

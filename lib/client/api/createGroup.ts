@@ -2,10 +2,10 @@ import type { Groups } from "@/lib/client/types/groups";
 
 type createGroupType = {
     name : string,
-    parentId : number | null
+    parentId? : string | null
 }
 
-export async function createGroupApi({ name, parentId } : createGroupType): Promise<Groups> {
+export async function createGroup({ name, parentId } : createGroupType): Promise<Groups> {
     const res = await fetch("/api/groups", {
         method: "POST",
         headers: {
@@ -13,7 +13,7 @@ export async function createGroupApi({ name, parentId } : createGroupType): Prom
         },
         body: JSON.stringify({
             name, 
-            parentId : parentId ? parentId.toString() : null
+            parentId : parentId,
         }),
         cache: "no-store"
     });

@@ -1,12 +1,7 @@
 import type { Groups } from "@/lib/client/types/groups";
 
-const baseUrl =
-  typeof window === "undefined"
-    ? process.env.SERVER_BASE_URL
-    : "";
-
 export async function getGroups(): Promise<Groups> {
-    const res = await fetch(baseUrl+"/api/groups", {
+    const res = await fetch("/api/groups", {
         cache: "no-store"
     });
 

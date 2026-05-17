@@ -5,11 +5,6 @@ type createGroupType = {
     parentId : number | null
 }
 
-const baseUrl =
-  typeof window === "undefined"
-    ? process.env.SERVER_BASE_URL
-    : process.env.NEXT_PUBLIC_BASE_URL;
-
 export async function createGroupApi({ name, parentId } : createGroupType): Promise<Groups> {
     const res = await fetch("/api/groups", {
         method: "POST",

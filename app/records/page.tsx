@@ -92,6 +92,7 @@ export default function RecordsPage() {
 
     const onChangeButtonClicked: (record: EmissionRecord) => React.MouseEventHandler<HTMLButtonElement> = (record) => () => {
         setValues({ ...record, amount: parseFloat(record.amount) })
+        setIsEdit(true);
         formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 

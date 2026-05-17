@@ -1,9 +1,9 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getEmissionRecords } from "@/lib/client/api/getEmissionRecords";
 import { createEmissionRecord } from "@/lib/client/api/createEmissionRecord";
+import { deleteEmissionRecord } from "@/lib/client/api/deleteEmissionRecord";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 
@@ -35,10 +35,6 @@ export default function RecordsPage() {
     const scope2Count = records.filter((record) => record.scopeType === "SCOPE2").length;
     const scope3Count = records.filter((record) => record.scopeType === "SCOPE3").length;
 
-    const onFormInputChange: (setState: Dispatch<SetStateAction<string>>) => React.ChangeEventHandler<HTMLInputElement> = (setState) => (e) => {
-        setState(e.currentTarget.value)
-    }
-
     const onFormSubmit: React.SubmitEventHandler<HTMLFormElement> = async (e) => {
         try {
             e.preventDefault()
@@ -65,15 +61,35 @@ export default function RecordsPage() {
             if (Number.isNaN(parsedGroupId) || Number.isNaN(parsedAmount))
                 throw "invalid input"
 
-            const result = await createEmissionRecord({
+            await createEmissionRecord({
                 groupId: parsedGroupId,
                 scopeType,
                 amount: parsedAmount,
-                unit : unit as string,
-                recordedAt : recordedAt as string
+                unit: unit as string,
+                recordedAt: recordedAt as string
             })
         } catch (e) {
             alert("Error")
+            console.log(e);
+        }
+    }
+
+    const onDeleteButtonClicked: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
+        try {
+            const id = e.currentTarget.dataset.id;
+
+            if (id === undefined) {
+                throw new Error("The id does not exit")
+            }
+
+            const parsedId = parseInt(id);
+            if (Number.isNaN(parsedId)) {
+                throw new Error("invalid input")
+            }
+
+            await deleteEmissionRecord({ id: parsedId })
+        } catch (e) {
+            alert("Error");
             console.log(e);
         }
     }
@@ -294,6 +310,8 @@ export default function RecordsPage() {
                                                                 수정
                                                             </button>
                                                             <button
+                                                                data-id={record.id}
+                                                                onClick={onDeleteButtonClicked}
                                                                 className="rounded-xl bg-rose-50 px-3 py-2 text-sm font-medium text-rose-600 hover:bg-rose-100"
                                                             >
                                                                 삭제

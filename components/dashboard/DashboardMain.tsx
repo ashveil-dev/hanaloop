@@ -88,8 +88,8 @@ export default function DashboardMain() {
                     />
                 </section>
 
-                <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-                    <MonthlyEmissionChart />
+                <section className="grid grid-cols-1 gap-6 xl:grid-cols-1">
+                    {/* <MonthlyEmissionChart /> */}
                     <ScopeBreakdownCard
                         scope1={summaryData.data.scope1.amount}
                         scope2={summaryData.data.scope2.amount}

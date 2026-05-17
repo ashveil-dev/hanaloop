@@ -35,23 +35,23 @@ const navItems = [
 ];
 
 type AppSliderType = {
+    menuOpen: boolean;
     sections: {
         title: string,
         description: string,
         href: string
-    }[]
+    }[];
 }
 
-export default function AppSidebar({ sections }: AppSliderType) {
+export default function AppSidebar({ menuOpen, sections }: AppSliderType) {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const onClick = (index: number) => () => {
         setSelectedIndex(index)
     }
 
     return (
-        <aside className="hidden h-full shrink-0 md:flex md:w-auto md:flex-row md:bg-transparent">
+        <aside className="fixed top-0 w-full h-full overflow-auto bg-white shrink-0 md:static md:flex md:w-auto md:flex-row md:bg-transparent">
             <div className="block h-20 w-full md:hidden" />
-
             <nav className="w-full px-4 py-6 md:w-[110px] md:shrink-0 md:px-3">
                 <ul className="flex flex-col gap-4">
                     {navItems.map((item) => (

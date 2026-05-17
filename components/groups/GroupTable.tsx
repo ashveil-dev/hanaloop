@@ -32,7 +32,7 @@ export default function GroupTable({ groups, onEdit, onDelete }: Props) {
                             <th className="px-5 py-4 font-medium">ID</th>
                             <th className="px-5 py-4 font-medium">그룹명</th>
                             <th className="px-5 py-4 font-medium">상위 그룹</th>
-                            <th className="px-5 py-4 font-medium">생성일</th>
+                            <th className="px-5 py-4 font-medium">생성 날짜</th>
                             <th className="px-5 py-4 text-right font-medium">관리</th>
                         </tr>
                     </thead>
@@ -55,7 +55,7 @@ export default function GroupTable({ groups, onEdit, onDelete }: Props) {
                                 </td>
 
                                 <td className="px-5 py-4 text-slate-500">
-                                    {group.createdAt}
+                                    {new Date(group.createdAt).toLocaleDateString().slice(0, -1)}
                                 </td>
 
                                 <td className="px-5 py-4">

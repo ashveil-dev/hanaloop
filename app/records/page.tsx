@@ -1,22 +1,13 @@
 "use client";
 
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getEmissionRecords } from "@/lib/client/api/getEmissionRecords";
+import { createEmissionRecord } from "@/lib/client/api/createEmissionRecord";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
-import { useState } from "react";
-import { getEmissionRecords } from "@/lib/client/api/getEmissionRecords";
-import { useQuery } from "@tanstack/react-query";
 
 type ScopeType = "SCOPE1" | "SCOPE2" | "SCOPE3";
-
-type EmissionRecord = {
-    id: number;
-    group_id: number;
-    scope_type: ScopeType;
-    amount: number;
-    unit: string;
-    recorded_at: string;
-    created_at: string;
-};
 
 const sections = [
     {
@@ -36,8 +27,8 @@ export default function RecordsPage() {
         queryKey: ["emission-records"],
         queryFn: getEmissionRecords
     })
-    const editId = 1
-     const [groupId, setGroupId] = useState("");
+    const editId = undefined
+    const [groupId, setGroupId] = useState("");
     const [scopeType, setScopeType] = useState<ScopeType>("SCOPE1");
     const [amount, setAmount] = useState("");
     const [unit, setUnit] = useState("tCO2e");
@@ -48,6 +39,28 @@ export default function RecordsPage() {
     const scope1Count = records.filter((record) => record.scopeType === "SCOPE1").length;
     const scope2Count = records.filter((record) => record.scopeType === "SCOPE2").length;
     const scope3Count = records.filter((record) => record.scopeType === "SCOPE3").length;
+
+    const onFormSubmit: React.SubmitEventHandler<HTMLFormElement> = async (e) => {
+        try {
+            const _groupId = parseInt(groupId)
+            const _amount = parseInt(amount)
+
+            e.preventDefault()
+            if (Number.isNaN(_groupId) || Number.isNaN(_amount))
+                throw "invalid input"
+
+            const result = await createEmissionRecord({
+                groupId: _groupId,
+                scopeType,
+                amount: _amount,
+                unit,
+                recordedAt
+            })
+        } catch (e) {
+            alert("Error")
+            console.log(e);
+        }
+    }
 
     return (
         <div className="flex h-screen w-full flex-col overflow-hidden">
@@ -111,8 +124,9 @@ export default function RecordsPage() {
                     </section>
 
                     <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-                        <div
+                        <form
                             id="CreateRecord"
+                            onSubmit={onFormSubmit}
                             className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
                         >
                             <p className="text-sm font-medium text-emerald-600">
@@ -200,7 +214,7 @@ export default function RecordsPage() {
                                     )}
                                 </div>
                             </div>
-                        </div>
+                        </form>
 
                         <div
                             id="RecordList"

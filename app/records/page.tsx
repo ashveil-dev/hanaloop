@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getEmissionRecords } from "@/lib/client/api/getEmissionRecords";
 import { createEmissionRecord } from "@/lib/client/api/createEmissionRecord";
@@ -28,11 +28,6 @@ export default function RecordsPage() {
         queryFn: getEmissionRecords
     })
     const editId = undefined
-    const [groupId, setGroupId] = useState("");
-    const [scopeType, setScopeType] = useState<ScopeType>("SCOPE1");
-    const [amount, setAmount] = useState("");
-    const [unit, setUnit] = useState("tCO2e");
-    const [recordedAt, setRecordedAt] = useState("");
     const records = recordsData.data ?? []
 
     const totalAmount = records.reduce((acc, cur) => acc + Number(cur.amount), 0);
@@ -40,21 +35,42 @@ export default function RecordsPage() {
     const scope2Count = records.filter((record) => record.scopeType === "SCOPE2").length;
     const scope3Count = records.filter((record) => record.scopeType === "SCOPE3").length;
 
+    const onFormInputChange: (setState: Dispatch<SetStateAction<string>>) => React.ChangeEventHandler<HTMLInputElement> = (setState) => (e) => {
+        setState(e.currentTarget.value)
+    }
+
     const onFormSubmit: React.SubmitEventHandler<HTMLFormElement> = async (e) => {
         try {
-            const _groupId = parseInt(groupId)
-            const _amount = parseInt(amount)
-
             e.preventDefault()
-            if (Number.isNaN(_groupId) || Number.isNaN(_amount))
+
+            const formData = new FormData(e.currentTarget);
+
+            const groupId = formData.get("groupId");
+            const scopeType = formData.get("scopeType") as "SCOPE1" | "SCOPE2" | "SCOPE3";
+            const amount = formData.get("amount");
+            const unit = formData.get("unit");
+            const recordedAt = formData.get("recordedAt");
+
+            if (
+                groupId === null ||
+                amount === null ||
+                unit === null ||
+                recordedAt === null
+            ) {
+                throw new Error("invalid input");
+            }
+
+            const parsedGroupId = Number(groupId);
+            const parsedAmount = Number(amount);
+            if (Number.isNaN(parsedGroupId) || Number.isNaN(parsedAmount))
                 throw "invalid input"
 
             const result = await createEmissionRecord({
-                groupId: _groupId,
+                groupId: parsedGroupId,
                 scopeType,
-                amount: _amount,
-                unit,
-                recordedAt
+                amount: parsedAmount,
+                unit : unit as string,
+                recordedAt : recordedAt as string
             })
         } catch (e) {
             alert("Error")
@@ -142,7 +158,7 @@ export default function RecordsPage() {
                                         그룹 ID
                                     </span>
                                     <input
-                                        value={groupId}
+                                        name="groupId"
                                         type="number"
                                         placeholder="예: 1"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
@@ -154,7 +170,7 @@ export default function RecordsPage() {
                                         Scope 타입
                                     </span>
                                     <select
-                                        value={scopeType}
+                                        name="scopeType"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     >
                                         <option value="SCOPE1">SCOPE1</option>
@@ -168,9 +184,9 @@ export default function RecordsPage() {
                                         배출량
                                     </span>
                                     <input
-                                        value={amount}
                                         type="number"
                                         step="0.01"
+                                        name="amount"
                                         placeholder="예: 1200.50"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     />
@@ -181,7 +197,7 @@ export default function RecordsPage() {
                                         단위
                                     </span>
                                     <input
-                                        value={unit}
+                                        name="unit"
                                         placeholder="tCO2e"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     />
@@ -192,7 +208,7 @@ export default function RecordsPage() {
                                         기록일
                                     </span>
                                     <input
-                                        value={recordedAt}
+                                        name="recordedAt"
                                         type="date"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     />

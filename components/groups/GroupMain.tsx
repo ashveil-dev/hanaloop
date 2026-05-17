@@ -8,18 +8,15 @@ import GroupCard from "@/components/groups//GroupCard";
 import { createGroupApi } from "@/lib/client/api/createGroup";
 import { getGroups } from "@/lib/client/api/getGroups";
 import { updateGroupApi } from "@/lib/client/api/updateGroup";
+import { useQuery } from "@tanstack/react-query";
 
-
-export type Group = {
-  id: number;
-  name: string;
-  parentId: number | null;
-  createdAt: string;
-};
 
 export default function GroupMain() {
-  const [groups, setGroups] = useState<Group[]>();
-  const [editingGroup, setEditingGroup] = useState<Group | null>(null);
+
+  const groupsQuery = useQuery({
+    queryKey: ["Groups"],
+    queryFn: getGroups
+  })
 
   const createGroup = async (name: string, parentId: number | null) => {
     try {
@@ -38,21 +35,8 @@ export default function GroupMain() {
   };
 
   const deleteGroup = (id: number) => {
-    setGroups((prev) => prev?.filter((group) => group.id !== id));
+    // setGroups((prev) => prev?.filter((group) => group.id !== id));
   };
-
-  useEffect(() => {
-    async function fetchGroups() {
-      try {
-        const response = await getGroups();
-        setGroups(response)
-      } catch (e) {
-        console.log(e)
-      }
-    }
-
-    fetchGroups();
-  }, []);
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
@@ -61,24 +45,24 @@ export default function GroupMain() {
       <div className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <section className="xl:col-span-1">
           <GroupForm
-            groups={groups}
-            editingGroup={editingGroup}
+            groups={groupsQuery.data}
+            editingGroup={() => { }}
             onCreate={createGroup}
             onUpdate={updateGroup}
-            onCancelEdit={() => setEditingGroup(null)}
+            onCancelEdit={() => {}}
           />
         </section>
 
         <section className="xl:col-span-2 space-y-6">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <GroupCard title="전체 그룹" value={groups?.length.toString() ?? "0"} desc="등록된 조직 단위" />
-            <GroupCard title="최상위 그룹" value={groups?.filter((g) => g.parentId === null).length.toString() ?? "0"} desc="Parent가 없는 그룹" />
-            <GroupCard title="하위 그룹" value={groups?.filter((g) => g.parentId !== null).length.toString() ?? "0"} desc="계층에 포함된 그룹" dark />
+            <GroupCard title="전체 그룹" value={groupsQuery.data?.length.toString() ?? "0"} desc="등록된 조직 단위" />
+            <GroupCard title="최상위 그룹" value={groupsQuery.data?.filter((g) => g.parentId === null).length.toString() ?? "0"} desc="Parent가 없는 그룹" />
+            <GroupCard title="하위 그룹" value={groupsQuery.data?.filter((g) => g.parentId !== null).length.toString() ?? "0"} desc="계층에 포함된 그룹" dark />
           </div>
 
           <GroupTable
-            groups={groups}
-            onEdit={setEditingGroup}
+            groups={groupsQuery.data}
+            onEdit={() => {}}
             onDelete={deleteGroup}
           />
         </section>

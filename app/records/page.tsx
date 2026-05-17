@@ -83,11 +83,17 @@ export default function RecordsPage() {
                     recordedAt: recordedAt as string
                 })
             }
+
+            recordsData.refetch()
         } catch (e) {
             alert("Error")
             console.log(errors)
             console.log(e);
         }
+    }
+
+    const onRefrshButtonClicked: React.MouseEventHandler<HTMLButtonElement> = () => {
+        recordsData.refetch();
     }
 
     const onChangeButtonClicked: (record: EmissionRecord) => React.MouseEventHandler<HTMLButtonElement> = (record) => () => {
@@ -110,6 +116,7 @@ export default function RecordsPage() {
             }
 
             await deleteEmissionRecord({ id: parsedId })
+            recordsData.refetch();
         } catch (e) {
             alert("Error");
             console.log(e);
@@ -138,7 +145,7 @@ export default function RecordsPage() {
                         </div>
 
                         <button
-                            onClick={() => window.location.reload()}
+                            onClick={onRefrshButtonClicked}
                             className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
                         >
                             레코드 새로고침

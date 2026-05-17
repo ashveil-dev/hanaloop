@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import GroupHeader from "@/components/groups/GroupHeader"
 import GroupForm from "@/components/groups//GroupForm";
 import GroupTable from "@/components/groups//GroupTable";
@@ -14,6 +14,7 @@ import type { Group } from "@/lib/client/types/groups";
 
 
 export default function GroupMain() {
+  const formRef = useRef<HTMLFormElement>(null);
   const [group, setGroup] = useState<Group | undefined>(undefined);
   const groupsQuery = useQuery({
     queryKey: ["Groups"],
@@ -31,7 +32,12 @@ export default function GroupMain() {
 
   const onUpdateGroup = async (id: number, name: string, parentId: string | null | undefined) => {
     try {
-      await updateGroup({ id, name, parentId })
+      let _parentId = undefined;
+      if (parentId === null || parentId === undefined) _parentId = undefined;
+      else _parentId = parseInt(parentId)
+
+      await updateGroup({ id, name, parentId : _parentId })
+      setGroup(undefined);
       groupsQuery.refetch();
     } catch (e) {
       alert("Error");
@@ -49,8 +55,13 @@ export default function GroupMain() {
     }
   };
 
-  const onChangeButtonClicked = () => {
+  const onEdit = (group: Group) => {
+    setGroup(group);
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
+  const onCancel = () => {
+    setGroup(undefined);
   }
 
   return (
@@ -60,12 +71,13 @@ export default function GroupMain() {
       <div className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <section className="xl:col-span-1">
           <GroupForm
+            ref={formRef}
             group={group}
             groups={groupsQuery.data}
             onCreate={onCreateGroup}
             onUpdate={onUpdateGroup}
             onDelete={onDeleteGroup}
-            onCancelEdit={() => { }}
+            onCancel={onCancel}
           />
         </section>
 
@@ -78,8 +90,7 @@ export default function GroupMain() {
 
           <GroupTable
             groups={groupsQuery.data}
-            onEdit={() => { }}
-            onChange={onChangeButtonClicked}
+            onEdit={onEdit}
             onDelete={onDeleteGroup}
           />
         </section>

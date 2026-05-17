@@ -1,4 +1,4 @@
-import type { Group } from "./GroupMain";
+import type { Group } from "@/lib/client/types/groups"
 
 type Props = {
     groups: Group[] | undefined;

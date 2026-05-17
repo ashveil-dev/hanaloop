@@ -1,7 +1,9 @@
 import z from "zod";
+import { forwardRef } from "react";
 import type { Group } from "@/lib/client/types/groups";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 
 type Props = {
     group?: Group | undefined;
@@ -9,7 +11,7 @@ type Props = {
     onCreate: (name: string, parentId: string | null | undefined) => void;
     onUpdate: (id: number, name: string, parentId: string | null | undefined) => void;
     onDelete: (id: number) => void;
-    onCancelEdit: () => void;
+    onCancel: () => void;
 };
 
 const FormSchema = z.object({
@@ -20,14 +22,14 @@ const FormSchema = z.object({
 
 type FormType = z.infer<typeof FormSchema>
 
-export default function GroupForm({
+const GroupForm = forwardRef<HTMLFormElement, Props>(({
     group,
     groups,
     onCreate,
     onUpdate,
     onDelete,
-    onCancelEdit,
-}: Props) {
+    onCancel,
+}: Props, ref) => {
     const { register, handleSubmit, reset, setValues, formState: { errors } } = useForm<FormType>({
         resolver: zodResolver(FormSchema)
     })
@@ -47,8 +49,17 @@ export default function GroupForm({
         }
     }
 
+    useEffect(() => {
+        if (group) {
+            setValues({ ...group, parentId: group.parentId ? group.parentId?.toString() : undefined })
+        } else {
+            reset();
+        }
+    }, [group])
+
     return (
         <form
+            ref={ref}
             onSubmit={handleSubmit(onFormSubmit)}
             className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-sm font-medium text-emerald-600">
@@ -70,6 +81,7 @@ export default function GroupForm({
                                 <input
                                     {...register("id", { valueAsNumber: true })}
                                     name="id"
+                                    value={group.id}
                                     type="number"
                                     placeholder="예 : 1"
                                     readOnly
@@ -128,7 +140,8 @@ export default function GroupForm({
 
                     {group && (
                         <button
-                            onClick={onCancelEdit}
+                            type="button"
+                            onClick={onCancel}
                             className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50"
                         >
                             취소
@@ -139,3 +152,6 @@ export default function GroupForm({
         </form>
     );
 }
+)
+
+export default GroupForm;

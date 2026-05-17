@@ -3,6 +3,8 @@
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import { useState } from "react";
+import { getEmissionRecords } from "@/lib/client/api/getEmissionRecords";
+import { useQuery } from "@tanstack/react-query";
 
 type ScopeType = "SCOPE1" | "SCOPE2" | "SCOPE3";
 
@@ -29,105 +31,23 @@ const sections = [
     },
 ];
 
-const initialRecords: EmissionRecord[] = [
-    {
-        id: 1,
-        group_id: 1,
-        scope_type: "SCOPE1",
-        amount: 1200.5,
-        unit: "tCO2e",
-        recorded_at: "2026-05-01",
-        created_at: "2026-05-15T06:56:50.278Z",
-    },
-    {
-        id: 2,
-        group_id: 2,
-        scope_type: "SCOPE2",
-        amount: 3400.75,
-        unit: "tCO2e",
-        recorded_at: "2026-05-02",
-        created_at: "2026-05-15T06:56:50.278Z",
-    },
-];
-
 export default function RecordsPage() {
-    const [records, setRecords] = useState<EmissionRecord[]>(initialRecords);
-
-    const [groupId, setGroupId] = useState("");
+    const recordsData = useQuery({
+        queryKey: ["emission-records"],
+        queryFn: getEmissionRecords
+    })
+    const editId = 1
+     const [groupId, setGroupId] = useState("");
     const [scopeType, setScopeType] = useState<ScopeType>("SCOPE1");
     const [amount, setAmount] = useState("");
     const [unit, setUnit] = useState("tCO2e");
     const [recordedAt, setRecordedAt] = useState("");
+    const records = recordsData.data ?? []
 
-    const [editId, setEditId] = useState<number | null>(null);
-
-    const totalAmount = records.reduce((acc, cur) => acc + cur.amount, 0);
-    const scope1Count = records.filter((record) => record.scope_type === "SCOPE1").length;
-    const scope2Count = records.filter((record) => record.scope_type === "SCOPE2").length;
-    const scope3Count = records.filter((record) => record.scope_type === "SCOPE3").length;
-
-    const resetForm = () => {
-        setGroupId("");
-        setScopeType("SCOPE1");
-        setAmount("");
-        setUnit("tCO2e");
-        setRecordedAt("");
-        setEditId(null);
-    };
-
-    const onSubmit = () => {
-        if (!groupId || !amount || !recordedAt) return;
-
-        if (editId) {
-            setRecords((prev) =>
-                prev.map((record) =>
-                    record.id === editId
-                        ? {
-                            ...record,
-                            group_id: Number(groupId),
-                            scope_type: scopeType,
-                            amount: Number(amount),
-                            unit,
-                            recorded_at: recordedAt,
-                        }
-                        : record,
-                ),
-            );
-
-            resetForm();
-            return;
-        }
-
-        const newRecord: EmissionRecord = {
-            id: Date.now(),
-            group_id: Number(groupId),
-            scope_type: scopeType,
-            amount: Number(amount),
-            unit,
-            recorded_at: recordedAt,
-            created_at: new Date().toISOString(),
-        };
-
-        setRecords((prev) => [newRecord, ...prev]);
-        resetForm();
-    };
-
-    const onEdit = (record: EmissionRecord) => {
-        setEditId(record.id);
-        setGroupId(record.group_id.toString());
-        setScopeType(record.scope_type);
-        setAmount(record.amount.toString());
-        setUnit(record.unit);
-        setRecordedAt(record.recorded_at);
-    };
-
-    const onDelete = (id: number) => {
-        setRecords((prev) => prev.filter((record) => record.id !== id));
-
-        if (editId === id) {
-            resetForm();
-        }
-    };
+    const totalAmount = records.reduce((acc, cur) => acc + Number(cur.amount), 0);
+    const scope1Count = records.filter((record) => record.scopeType === "SCOPE1").length;
+    const scope2Count = records.filter((record) => record.scopeType === "SCOPE2").length;
+    const scope3Count = records.filter((record) => record.scopeType === "SCOPE3").length;
 
     return (
         <div className="flex h-screen w-full flex-col overflow-hidden">
@@ -209,7 +129,6 @@ export default function RecordsPage() {
                                     </span>
                                     <input
                                         value={groupId}
-                                        onChange={(e) => setGroupId(e.target.value)}
                                         type="number"
                                         placeholder="예: 1"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
@@ -222,7 +141,6 @@ export default function RecordsPage() {
                                     </span>
                                     <select
                                         value={scopeType}
-                                        onChange={(e) => setScopeType(e.target.value as ScopeType)}
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     >
                                         <option value="SCOPE1">SCOPE1</option>
@@ -237,7 +155,6 @@ export default function RecordsPage() {
                                     </span>
                                     <input
                                         value={amount}
-                                        onChange={(e) => setAmount(e.target.value)}
                                         type="number"
                                         step="0.01"
                                         placeholder="예: 1200.50"
@@ -251,7 +168,6 @@ export default function RecordsPage() {
                                     </span>
                                     <input
                                         value={unit}
-                                        onChange={(e) => setUnit(e.target.value)}
                                         placeholder="tCO2e"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     />
@@ -263,7 +179,6 @@ export default function RecordsPage() {
                                     </span>
                                     <input
                                         value={recordedAt}
-                                        onChange={(e) => setRecordedAt(e.target.value)}
                                         type="date"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     />
@@ -271,7 +186,6 @@ export default function RecordsPage() {
 
                                 <div className="flex gap-3">
                                     <button
-                                        onClick={onSubmit}
                                         className="flex-1 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
                                     >
                                         {editId ? "수정하기" : "생성하기"}
@@ -279,7 +193,6 @@ export default function RecordsPage() {
 
                                     {editId && (
                                         <button
-                                            onClick={resetForm}
                                             className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
                                         >
                                             취소
@@ -323,35 +236,34 @@ export default function RecordsPage() {
                                                         #{record.id}
                                                     </td>
                                                     <td className="px-5 py-4 font-semibold text-slate-900">
-                                                        {record.group_id}
+                                                        {record.groupId}
                                                     </td>
                                                     <td className="px-5 py-4">
                                                         <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                                                            {record.scope_type}
+                                                            {record.scopeType}
                                                         </span>
                                                     </td>
                                                     <td className="px-5 py-4 font-semibold text-slate-900">
-                                                        {record.amount.toFixed(2)}
+                                                        {record.amount}
                                                     </td>
                                                     <td className="px-5 py-4 text-slate-500">
                                                         {record.unit}
                                                     </td>
                                                     <td className="px-5 py-4 text-slate-500">
-                                                        {record.recorded_at}
+                                                        {record.recordedAt}
                                                     </td>
                                                     <td className="px-5 py-4 text-slate-500">
-                                                        {record.created_at}
+                                                        {record.createdAt.toString()}
                                                     </td>
                                                     <td className="px-5 py-4">
                                                         <div className="flex justify-end gap-2">
                                                             <button
-                                                                onClick={() => onEdit(record)}
+                                                                // onClick={() => onEdit(record)}
                                                                 className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
                                                             >
                                                                 수정
                                                             </button>
                                                             <button
-                                                                onClick={() => onDelete(record.id)}
                                                                 className="rounded-xl bg-rose-50 px-3 py-2 text-sm font-medium text-rose-600 hover:bg-rose-100"
                                                             >
                                                                 삭제

@@ -23,6 +23,11 @@ const scopeStyle = {
     SCOPE3: "bg-sky-100 text-sky-700 border-sky-200",
 };
 
+const header = {
+    title: "배출 기록 관리",
+    description: "탄소 배출 데이터를 등록하고 관리할 수 있습니다.",
+}
+
 const sections = [
     {
         title: "레코드 생성",
@@ -140,7 +145,7 @@ export default function RecordsPage() {
             <AppHeader />
 
             <main className="flex min-h-0 flex-1 overflow-hidden">
-                <AppSidebar sections={sections} />
+                <AppSidebar header={header} sections={sections} />
 
                 <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
                     <header className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">

@@ -37,6 +37,10 @@ const navItems = [
 ];
 
 type AppSliderType = {
+    header: {
+        title : string,
+        description : string,
+    }
     sections: {
         title: string,
         description: string,
@@ -44,7 +48,7 @@ type AppSliderType = {
     }[];
 }
 
-export default function AppSidebar({ sections }: AppSliderType) {
+export default function AppSidebar({ header, sections }: AppSliderType) {
     const open = useMenuStore((state) => state.open);
     const closeMenu = useMenuStore((state) => state.closeMenu);
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -70,10 +74,10 @@ export default function AppSidebar({ sections }: AppSliderType) {
                     <div className="flex items-start justify-between">
                         <div>
                             <p className="text-sm font-medium text-emerald-600">
-                                Dashboard Navigation
+                                {header.description}
                             </p>
                             <h3 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-                                Home
+                                {header.title}
                             </h3>
                         </div>
                     </div>

@@ -9,9 +9,9 @@ import { createEmissionRecord } from "@/lib/client/api/createEmissionRecord";
 import { deleteEmissionRecord } from "@/lib/client/api/deleteEmissionRecord";
 import { editEmissionRecord } from "@/lib/client/api/editEmissionRecord";
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { EmissionRecord } from "@/lib/client/types/emissionRecords";
 
 type ScopeType = "SCOPE1" | "SCOPE2" | "SCOPE3";
 
@@ -29,6 +29,7 @@ const sections = [
 ];
 
 const FormSchema = z.object({
+    id: z.number(),
     groupId: z.number(),
     scopeType: z.enum(["SCOPE1", "SCOPE2", "SCOPE3"]),
     amount: z.number(),
@@ -39,7 +40,7 @@ const FormSchema = z.object({
 type FormType = z.infer<typeof FormSchema>
 
 export default function RecordsPage() {
-    const [id, setId] = useState<number | undefined>(undefined)
+    const [isEdit, setIsEdit] = useState<boolean>(false);
 
     const recordsData = useQuery({
         queryKey: ["emission-records"],
@@ -47,11 +48,10 @@ export default function RecordsPage() {
     })
 
     const formRef = useRef<HTMLFormElement>(null);
-    const { register, handleSubmit, formState: { errors, isValid } } = useForm<FormType>({
+    const { register, handleSubmit, reset, setValues, formState: { errors, isValid } } = useForm<FormType>({
         resolver: zodResolver(FormSchema)
     });
 
-    const editId = 30
     const records = recordsData.data ?? []
 
     const totalAmount = records.reduce((acc, cur) => acc + Number(cur.amount), 0);
@@ -61,59 +61,43 @@ export default function RecordsPage() {
 
     const onFormSubmit: SubmitHandler<FormType> = async (data) => {
         try {
-            const { groupId, scopeType, amount, unit, recordedAt } = data;
+            const { id, groupId, scopeType, amount, unit, recordedAt } = data;
 
-            if(!isValid) 
+            if (!isValid)
                 throw new Error("Invalid input");
+            console.log(errors)
 
-            if (editId) {
+            if (isEdit) {
+                setIsEdit(false);
                 await editEmissionRecord({
-                    id: editId,
+                    id: id,
                     groupId: groupId,
                     scopeType,
                     amount: amount,
                     unit: unit as string,
                     recordedAt: recordedAt as string
                 })
-
-                setId(undefined);
-                return
+            } else {
+                await createEmissionRecord({
+                    groupId: groupId,
+                    scopeType,
+                    amount: amount,
+                    unit: unit as string,
+                    recordedAt: recordedAt as string
+                })
             }
 
-            return await createEmissionRecord({
-                groupId: groupId,
-                scopeType,
-                amount: amount,
-                unit: unit as string,
-                recordedAt: recordedAt as string
-            })
+
+
         } catch (e) {
             alert("Error")
             console.log(e);
         }
     }
 
-    const onChangeButtonClicked: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-        try {
-            const { id } = e.currentTarget.dataset;
-
-            if (id === undefined) {
-                throw new Error("The id does not exit")
-            }
-
-            const parsedId = parseInt(id);
-            if (Number.isNaN(parsedId)) {
-                throw new Error("invalid input")
-            }
-
-            setId(parsedId);
-            formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-
-        } catch (e) {
-            alert("Error");
-            console.log(e);
-        }
-
+    const onChangeButtonClicked: (record: EmissionRecord) => React.MouseEventHandler<HTMLButtonElement> = (record) => () => {
+        setValues({ ...record, amount: parseInt(record.amount) })
+        formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     const onDeleteButtonClicked: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
@@ -205,13 +189,30 @@ export default function RecordsPage() {
                             className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
                         >
                             <p className="text-sm font-medium text-emerald-600">
-                                {editId ? "Update Record" : "Create Record"}
+                                {isEdit ? "Update Record" : "Create Record"}
                             </p>
                             <h4 className="mt-2 text-2xl font-bold text-slate-900">
-                                {editId ? "레코드 수정" : "레코드 생성"}
+                                {isEdit ? "레코드 수정" : "레코드 생성"}
                             </h4>
 
                             <div className="mt-6 space-y-5">
+                                {
+                                    isEdit && (
+                                        <label className="block">
+                                            <span className="text-sm font-medium text-slate-700">
+                                                ID
+                                            </span>
+                                            <input
+                                                {...register("id")}
+                                                name="id"
+                                                type="number"
+                                                placeholder="예 : 1"
+                                                disabled
+                                                className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400 cursor-not-allowed"
+                                            />
+                                        </label>)
+                                }
+
                                 <label className="block">
                                     <span className="text-sm font-medium text-slate-700">
                                         그룹 ID
@@ -241,12 +242,13 @@ export default function RecordsPage() {
 
                                 <label className="block">
                                     <span className="text-sm font-medium text-slate-700">
-                                        배출량
+                                        배출량 {errors.amount?.message}
                                     </span>
                                     <input
                                         type="number"
                                         step="0.01"
                                         {...register("amount")}
+
                                         placeholder="예: 1200.50"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     />
@@ -276,12 +278,13 @@ export default function RecordsPage() {
 
                                 <div className="flex gap-3">
                                     <button
+                                        type="submit"
                                         className="flex-1 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
                                     >
-                                        {editId ? "수정하기" : "생성하기"}
+                                        {isEdit ? "수정하기" : "생성하기"}
                                     </button>
 
-                                    {editId && (
+                                    {isEdit && (
                                         <button
                                             className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
                                         >
@@ -349,8 +352,7 @@ export default function RecordsPage() {
                                                         <div className="flex justify-end gap-2">
                                                             <button
                                                                 type="button"
-                                                                data-id={record.id}
-                                                                onClick={onChangeButtonClicked}
+                                                                onClick={onChangeButtonClicked(record)}
                                                                 className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
                                                             >
                                                                 수정

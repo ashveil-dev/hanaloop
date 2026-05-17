@@ -17,13 +17,12 @@ export async function editEmissionRecord({
     unit,
     recordedAt
 }: editEmissionRecord): Promise<EmissionRecord> {
-    const res = await fetch("/api/emission-records", {
+    const res = await fetch(`/api/emission-records/${id}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            id,
             groupId,
             scopeType,
             amount,

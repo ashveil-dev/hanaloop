@@ -158,7 +158,7 @@ export default function RecordsPage() {
 
                         <button
                             onClick={onRefrshButtonClicked}
-                            className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                            className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 cursor-pointer"
                         >
                             레코드 새로고침
                         </button>
@@ -312,14 +312,14 @@ export default function RecordsPage() {
                                 <div className="flex gap-3">
                                     <button
                                         type="submit"
-                                        className="flex-1 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                                        className="flex-1 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 cursor-pointer"
                                     >
                                         {isEdit ? "수정하기" : "생성하기"}
                                     </button>
 
                                     {isEdit && (
                                         <button
-                                            className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                                            className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 cursor-pointer"
                                         >
                                             취소
                                         </button>
@@ -386,14 +386,14 @@ export default function RecordsPage() {
                                                             <button
                                                                 type="button"
                                                                 onClick={onChangeButtonClicked(record)}
-                                                                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                                                                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer"
                                                             >
                                                                 수정
                                                             </button>
                                                             <button
                                                                 data-id={record.id}
                                                                 onClick={onDeleteButtonClicked}
-                                                                className="rounded-xl bg-rose-50 px-3 py-2 text-sm font-medium text-rose-600 hover:bg-rose-100"
+                                                                className="rounded-xl bg-rose-50 px-3 py-2 text-sm font-medium text-rose-600 hover:bg-rose-100 cursor-pointer"
                                                             >
                                                                 삭제
                                                             </button>

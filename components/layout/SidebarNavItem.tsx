@@ -32,7 +32,7 @@ export default function SidebarNavItem({
         <li onClick={onClick}>
             <Link href={href}>
                 <button
-                    className={`group cursor-pointer flex w-full items-center gap-4 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg md:flex-col md:justify-center md:gap-3 ${colorMap[color]}`}
+                    className={`group cursor-pointer flex w-full items-center gap-4 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg md:flex-col md:justify-center md:gap-3  ${colorMap[color]}`}
                 >
                     <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl transition-colors group-hover:bg-white">
                         <Image

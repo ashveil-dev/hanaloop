@@ -19,7 +19,7 @@ export default function GroupHeader({ onRefresh }) {
 
       <button 
         onClick={onRefresh}
-        className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700"
+        className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 cursor-pointer"
         >
         그룹 새로고침
       </button>

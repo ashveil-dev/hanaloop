@@ -53,7 +53,7 @@ export default function AppHeader() {
             <Image src="/icons/hanaeco.png" width={28} height={28} alt="hana eco website" />
           </Link>
 
-          <button onClick={onMenuClick} className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:bg-slate-50 md:hidden">
+          <button onClick={onMenuClick} className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:bg-slate-50 md:hidden cursor-pointer">
             <Image src="/images/menu.png" width={24} height={24} alt="Menu" />
           </button>
         </div>

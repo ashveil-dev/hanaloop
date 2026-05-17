@@ -133,7 +133,7 @@ const GroupForm = forwardRef<HTMLFormElement, Props>(({
                 <div className="flex gap-3 pt-2">
                     <button
                         type="submit"
-                        className="flex-1 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                        className="flex-1 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 cursor-pointer"
                     >
                         {group ? "수정하기" : "생성하기"}
                     </button>
@@ -142,7 +142,7 @@ const GroupForm = forwardRef<HTMLFormElement, Props>(({
                         <button
                             type="button"
                             onClick={onCancel}
-                            className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+                            className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer"
                         >
                             취소
                         </button>

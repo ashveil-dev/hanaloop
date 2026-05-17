@@ -48,7 +48,7 @@ export default function RecordsPage() {
     })
 
     const formRef = useRef<HTMLFormElement>(null);
-    const { register, handleSubmit, reset, setValues, formState: { errors, isValid } } = useForm<FormType>({
+    const { register, handleSubmit, reset, setValues, formState: { errors } } = useForm<FormType>({
         resolver: zodResolver(FormSchema)
     });
 
@@ -63,9 +63,6 @@ export default function RecordsPage() {
         try {
             const { id, groupId, scopeType, amount, unit, recordedAt } = data;
 
-            if (!isValid)
-                throw new Error("Invalid input");
-            console.log(errors)
 
             if (isEdit) {
                 setIsEdit(false);
@@ -86,17 +83,15 @@ export default function RecordsPage() {
                     recordedAt: recordedAt as string
                 })
             }
-
-
-
         } catch (e) {
             alert("Error")
+            console.log(errors)
             console.log(e);
         }
     }
 
     const onChangeButtonClicked: (record: EmissionRecord) => React.MouseEventHandler<HTMLButtonElement> = (record) => () => {
-        setValues({ ...record, amount: parseInt(record.amount) })
+        setValues({ ...record, amount: parseFloat(record.amount) })
         formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
@@ -210,6 +205,9 @@ export default function RecordsPage() {
                                                 disabled
                                                 className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400 cursor-not-allowed"
                                             />
+                                            <span className="text-sm font-bold text-red-300">
+                                                {errors.id && errors.id?.message}
+                                            </span>
                                         </label>)
                                 }
 
@@ -224,6 +222,9 @@ export default function RecordsPage() {
                                         placeholder="예: 1"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     />
+                                    <span className="text-sm font-bold text-red-300">
+                                        {errors.groupId && errors.groupId?.message}
+                                    </span>
                                 </label>
 
                                 <label className="block">
@@ -238,6 +239,9 @@ export default function RecordsPage() {
                                         <option value="SCOPE2">SCOPE2</option>
                                         <option value="SCOPE3">SCOPE3</option>
                                     </select>
+                                    <span className="text-sm font-bold text-red-300">
+                                        {errors.scopeType && errors.scopeType?.message}
+                                    </span>
                                 </label>
 
                                 <label className="block">
@@ -252,6 +256,9 @@ export default function RecordsPage() {
                                         placeholder="예: 1200.50"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     />
+                                    <span className="text-sm font-bold text-red-300">
+                                        {errors.amount && errors.amount?.message}
+                                    </span>
                                 </label>
 
                                 <label className="block">
@@ -263,6 +270,9 @@ export default function RecordsPage() {
                                         placeholder="tCO2e"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     />
+                                    <span className="text-sm font-bold text-red-300">
+                                        {errors.unit && errors.unit?.message}
+                                    </span>
                                 </label>
 
                                 <label className="block">
@@ -274,6 +284,9 @@ export default function RecordsPage() {
                                         type="date"
                                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                                     />
+                                    <span className="text-sm font-bold text-red-300">
+                                        {errors.recordedAt && errors.recordedAt?.message}
+                                    </span>
                                 </label>
 
                                 <div className="flex gap-3">

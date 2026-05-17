@@ -12,8 +12,15 @@ import { useRef, useState } from "react";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EmissionRecord } from "@/lib/client/types/emissionRecords";
+import clsx from "clsx";
 
 type ScopeType = "SCOPE1" | "SCOPE2" | "SCOPE3";
+
+const scopeStyle = {
+    SCOPE1: "bg-red-100 text-red-700 border-red-200",
+    SCOPE2: "bg-amber-100 text-amber-700 border-amber-200",
+    SCOPE3: "bg-sky-100 text-sky-700 border-sky-200",
+};
 
 const sections = [
     {
@@ -352,7 +359,9 @@ export default function RecordsPage() {
                                                         {record.groupId}
                                                     </td>
                                                     <td className="px-5 py-4">
-                                                        <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                                                        <span className={clsx("rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700",
+                                                            scopeStyle[record.scopeType]
+                                                        )}>
                                                             {record.scopeType}
                                                         </span>
                                                     </td>

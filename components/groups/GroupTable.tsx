@@ -33,7 +33,7 @@ export default function GroupTable({ groups, onEdit, onDelete }: Props) {
                             <th className="px-5 py-4 font-medium">그룹명</th>
                             <th className="px-5 py-4 font-medium">상위 그룹</th>
                             <th className="px-5 py-4 font-medium">생성 날짜</th>
-                            <th className="px-5 py-4 text-right font-medium">관리</th>
+                            <th className="px-5 py-4 text-center font-medium">관리</th>
                         </tr>
                     </thead>
 
@@ -59,7 +59,7 @@ export default function GroupTable({ groups, onEdit, onDelete }: Props) {
                                 </td>
 
                                 <td className="px-5 py-4">
-                                    <div className="flex justify-end gap-2">
+                                    <div className="flex justify-center gap-2">
                                         <button
                                             onClick={() => onEdit(group)}
                                             className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"

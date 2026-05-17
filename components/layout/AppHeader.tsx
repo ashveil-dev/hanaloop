@@ -1,7 +1,16 @@
+"use client"
+
 import Image from "next/image";
 import Link from "next/link";
+import { useMenuStore } from "@/stores/useMenuStore";
 
 export default function AppHeader() {
+  const toggleMenu = useMenuStore(state => state.toggleMenu)
+
+  const onMenuClick = () => {
+    toggleMenu();
+  }
+
   return (
     <header className="sticky top-0 z-30 w-full border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
       <div className="flex h-20 items-center justify-between px-4 md:px-8">
@@ -44,7 +53,7 @@ export default function AppHeader() {
             <Image src="/icons/hanaeco.png" width={28} height={28} alt="hana eco website" />
           </Link>
 
-          <button className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:bg-slate-50 md:hidden">
+          <button onClick={onMenuClick} className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:bg-slate-50 md:hidden">
             <Image src="/images/menu.png" width={24} height={24} alt="Menu" />
           </button>
         </div>

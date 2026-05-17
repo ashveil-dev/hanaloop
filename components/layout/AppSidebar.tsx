@@ -1,8 +1,10 @@
 "use client"
 
+import { useState } from "react";
+import { clsx } from "clsx"
 import Link from "next/link";
 import SidebarNavItem from "./SidebarNavItem";
-import { useState } from "react";
+import { useMenuStore } from "@/stores/useMenuStore";
 
 const navItems = [
     {
@@ -35,7 +37,6 @@ const navItems = [
 ];
 
 type AppSliderType = {
-    menuOpen: boolean;
     sections: {
         title: string,
         description: string,
@@ -43,14 +44,17 @@ type AppSliderType = {
     }[];
 }
 
-export default function AppSidebar({ menuOpen, sections }: AppSliderType) {
+export default function AppSidebar({ sections }: AppSliderType) {
+    const open = useMenuStore(state => state.open)
     const [selectedIndex, setSelectedIndex] = useState(0);
     const onClick = (index: number) => () => {
         setSelectedIndex(index)
     }
 
     return (
-        <aside className="fixed top-0 w-full h-full overflow-auto bg-white shrink-0 md:static md:flex md:w-auto md:flex-row md:bg-transparent">
+        <aside className={clsx("fixed top-0 w-full h-full overflow-auto bg-white shrink-0 md:static md:flex md:w-auto md:flex-row md:bg-transparent",
+            open ? "hidden" : "block"
+        )}>
             <div className="block h-20 w-full md:hidden" />
             <nav className="w-full px-4 py-6 md:w-[110px] md:shrink-0 md:px-3">
                 <ul className="flex flex-col gap-4">

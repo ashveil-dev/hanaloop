@@ -47,7 +47,7 @@ VALUES
 -- 4단계
 (7, 'Seoul Factory Line A', 4),
 (8, 'Seoul Factory Line B', 4),
-(9, 'Busan Packaging Center', 5);
+(9, 'Busan Packaging Center', 5),
 
 -- Korea Branch Additional
 (10, 'Incheon Logistics Center', 2),

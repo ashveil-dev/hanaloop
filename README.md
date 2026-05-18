@@ -321,12 +321,11 @@ cd hanaloop
 docker compose up --build
 ```
 
-## 4. Open Swagger Docs
-
-프로젝트 실행 후 아래 주소에서 Swagger(OpenAPI) 문서를 확인할 수 있습니다.
+## 4. Run Browser
 
 ```bash
-http://localhost:3000/api-docs
+http://localhost:3000 # 홈 페이지
+http://localhost:3000/api-docs # swagger Page
 ---
 
 # Future Improvements

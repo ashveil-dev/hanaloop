@@ -326,8 +326,8 @@ docker compose up --build
 ```bash
 http://localhost:3000 # 홈 페이지
 http://localhost:3000/api-docs # swagger Page
+```
 ---
-
 # Future Improvements
 
 * 탄소세 계산 시스템

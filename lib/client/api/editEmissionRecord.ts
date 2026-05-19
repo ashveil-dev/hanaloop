@@ -1,4 +1,5 @@
 import type { EmissionRecord } from "@/lib/client/types/emissionRecords";
+import { ApiError } from "@/lib/server/errors/ApiError";
 
 type editEmissionRecord = {
     id: number,
@@ -30,6 +31,13 @@ export async function editEmissionRecord({
             recordedAt
         }),
     });
+
+    if(!res.ok) {
+        throw new ApiError({
+            status : res.status,
+            message : await res.json(),
+        })
+    }
 
     return res.json();
 }

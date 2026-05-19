@@ -1,4 +1,5 @@
 import type { EmissionRecord } from "@/lib/client/types/emissionRecords";
+import { ApiError } from "@/lib/client/errors/ApiError";
 
 type createEmissionRecord = {
     groupId: number,
@@ -28,6 +29,13 @@ export async function createEmissionRecord({
             recordedAt
         }),
     });
+
+    if (!res.ok) {
+        throw new ApiError({
+            status: res.status,
+            message: res.statusText,
+        })
+    }
 
     return res.json();
 }

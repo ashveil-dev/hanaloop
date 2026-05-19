@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Toaster } from "sonner";
 import Providers from "./providers";
 import "./globals.css";
 
@@ -19,6 +20,7 @@ export default function RootLayout({
       <body className="min-w-full h-full min-h-full">
         <Providers>
           {children}
+          <Toaster richColors position="top-right" />
         </Providers>
       </body>
     </html>

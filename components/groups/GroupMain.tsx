@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { toast } from "sonner";
 import GroupHeader from "@/components/groups/GroupHeader"
 import GroupForm from "@/components/groups//GroupForm";
 import GroupTable from "@/components/groups//GroupTable";
@@ -11,6 +12,7 @@ import { updateGroup } from "@/lib/client/api/updateGroup";
 import { deleteGroup } from "@/lib/client/api/deleteGroup";
 import { useQuery } from "@tanstack/react-query";
 import type { Group } from "@/lib/client/types/groups";
+import { ApiError } from "@/lib/client/errors/ApiError";
 
 
 export default function GroupMain() {
@@ -24,9 +26,16 @@ export default function GroupMain() {
   const onCreateGroup = async (name: string, parentId: string | null | undefined) => {
     try {
       await createGroup({ name, parentId })
+      toast.success("그룹을 생성하였습니다")
+      groupsQuery.refetch();
     } catch (e) {
-      alert("Error");
-      console.log(e)
+      if (e instanceof ApiError) {
+        toast.error(e.message)
+      } else {
+        toast.error(JSON.stringify(e))
+      }
+
+      toast.error("그룹 생성을 실패하였습니다")
     }
   };
 
@@ -36,22 +45,34 @@ export default function GroupMain() {
       if (parentId === null || parentId === undefined) _parentId = undefined;
       else _parentId = parseInt(parentId)
 
-      await updateGroup({ id, name, parentId : _parentId })
+      await updateGroup({ id, name, parentId: _parentId })
       setGroup(undefined);
+      toast.success("그룹을 수정하였습니다")
       groupsQuery.refetch();
     } catch (e) {
-      alert("Error");
-      console.log(e)
+      if (e instanceof ApiError) {
+        toast.error(e.message)
+      } else {
+        toast.error(JSON.stringify(e))
+      }
+
+      toast.error("그룹 수정을 실패하였습니다")
     }
   };
 
   const onDeleteGroup = async (id: number) => {
     try {
       await deleteGroup({ id })
+      toast.success("그룹을 삭제하였습니다")
       groupsQuery.refetch();
     } catch (e) {
-      alert("Error");
-      console.log(e)
+      if (e instanceof ApiError) {
+        toast.error(e.message)
+      } else {
+        toast.error(JSON.stringify(e))
+      }
+
+      toast.error("그룹 삭제를 실패하였습니다")
     }
   };
 
@@ -70,7 +91,7 @@ export default function GroupMain() {
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
-      <GroupHeader onRefresh={onRefresh}/>
+      <GroupHeader onRefresh={onRefresh} />
 
       <div className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <section className="xl:col-span-1">

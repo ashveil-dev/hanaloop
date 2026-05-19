@@ -34,18 +34,11 @@ const GroupForm = forwardRef<HTMLFormElement, Props>(({
         resolver: zodResolver(FormSchema)
     })
 
-    const onFormSubmit: SubmitHandler<FormType> = async ({ id, name, parentId }) => {
-        try {
-            if (group && id) {
-                onUpdate(id, name, parentId);
-            } else {
-                onCreate(name, parentId);
-            }
-
-            reset();
-        } catch (e) {
-            alert("Error")
-            console.log(e);
+    const onFormSubmit: SubmitHandler<FormType> = ({ id, name, parentId }) => {
+        if (group && id) {
+            onUpdate(id, name, parentId);
+        } else {
+            onCreate(name, parentId);
         }
     }
 

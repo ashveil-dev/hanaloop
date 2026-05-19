@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
 import { getEmissionRecords } from "@/lib/client/api/getEmissionRecords";
@@ -14,6 +14,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { EmissionRecord } from "@/lib/client/types/emissionRecords";
 import clsx from "clsx";
 import { getGroups } from "@/lib/client/api/getGroups";
+import { toast } from "sonner";
+import { ApiError } from "@/lib/client/errors/ApiError";
 
 type ScopeType = "SCOPE1" | "SCOPE2" | "SCOPE3";
 
@@ -42,10 +44,10 @@ const sections = [
 ];
 
 const FormSchema = z.object({
-    id: z.number(),
-    groupId: z.number(),
+    id: z.number("아이디에 숫자를 입력해주세요").optional(),
+    groupId: z.number("그룹 아이디에 숫자를 입력해주세요"),
     scopeType: z.enum(["SCOPE1", "SCOPE2", "SCOPE3"]),
-    amount: z.number(),
+    amount: z.number("배출량에 숫자를 입력해주세요"),
     unit: z.string(),
     recordedAt: z.string(),
 })
@@ -66,7 +68,7 @@ export default function RecordsPage() {
     })
 
     const formRef = useRef<HTMLFormElement>(null);
-    const { register, handleSubmit, reset, setValues, formState: { errors } } = useForm<FormType>({
+    const { register, handleSubmit, setValues, formState: { errors } } = useForm<FormType>({
         resolver: zodResolver(FormSchema)
     });
 
@@ -82,15 +84,17 @@ export default function RecordsPage() {
             const { id, groupId, scopeType, amount, unit, recordedAt } = data;
 
             if (isEdit) {
-                setIsEdit(false);
                 await editEmissionRecord({
-                    id: id,
+                    id: id as number,
                     groupId: groupId,
                     scopeType,
                     amount: amount,
                     unit: unit as string,
                     recordedAt: recordedAt as string
                 })
+                toast.success("레코드가 수정되었습니다")
+                setIsEdit(false);
+
             } else {
                 await createEmissionRecord({
                     groupId: groupId,
@@ -99,13 +103,18 @@ export default function RecordsPage() {
                     unit: unit as string,
                     recordedAt: recordedAt as string
                 })
+                toast.success("레코드가 생성되었습니다");
             }
 
             recordsData.refetch()
         } catch (e) {
-            alert("Error")
-            console.log(errors)
-            console.log(e);
+            if (e instanceof ApiError) {
+                toast.error(e.message)
+            } else {
+                toast.error(JSON.stringify(e))
+            }
+
+            toast.error(isEdit ? "레코드 수정을 실패하였습니다" : "생성을 실패하였습니다")
         }
     }
 
@@ -133,10 +142,16 @@ export default function RecordsPage() {
             }
 
             await deleteEmissionRecord({ id: parsedId })
+            toast.success("레코드를 삭제하였습니다")
             recordsData.refetch();
         } catch (e) {
-            alert("Error");
-            console.log(e);
+            if (e instanceof ApiError) {
+                toast.error(e.message)
+            }  
+            else {
+                toast.error(JSON.stringify(e))
+            }
+            toast.error("삭제를 실패하였습니다")
         }
     }
 

@@ -1,10 +1,14 @@
 import { SubmitHandler, UseFormReturn } from "react-hook-form";
 import z from "zod";
 import type { Group } from "@/lib/client/types/groups";
+import type { EmissionFactor } from "@/lib/client/types/emissionFactors";
+import { calculateEmission, formatEmission } from "@/lib/shared/calculateEmission";
+import { useEffect } from "react";
 
 export const RecordFormSchema = z.object({
     id: z.number().optional(),
     groupId: z.number({ error: "그룹을 선택해주세요" }),
+    emissionFactorId: z.number({ error: "배출 계수 유형을 선택해주세요" }),
     scopeType: z.enum(["SCOPE1", "SCOPE2", "SCOPE3"]),
     amount: z.number(),
     unit: z.string(),
@@ -16,6 +20,7 @@ export type RecordFormType = z.infer<typeof RecordFormSchema>;
 type RecordFormProps = {
     form: UseFormReturn<RecordFormType>;
     groups: Group[] | undefined;
+    emissionFactors: EmissionFactor[] | undefined;
     isEdit: boolean;
     onSubmit: SubmitHandler<RecordFormType>;
     onCancel: () => void;
@@ -24,6 +29,7 @@ type RecordFormProps = {
 export default function RecordForm({
     form,
     groups,
+    emissionFactors,
     isEdit,
     onSubmit,
     onCancel,
@@ -32,11 +38,27 @@ export default function RecordForm({
         register,
         handleSubmit,
         watch,
+        setValue,
         formState: { errors },
     } = form;
 
     const selectedGroupId = watch("groupId");
+    const emissionFactorId = watch("emissionFactorId");
+    const amount = watch("amount");
+
     const selectedGroup = groups?.find((g) => g.id === selectedGroupId);
+    const selectedFactor = emissionFactors?.find((f) => f.id === emissionFactorId);
+
+    const calculatedEmission =
+        selectedFactor && amount
+            ? calculateEmission(amount, selectedFactor.factor)
+            : 0;
+
+    useEffect(() => {
+        if (selectedFactor) {
+            setValue("unit", selectedFactor.inputUnit, { shouldValidate: true });
+        }
+    }, [selectedFactor, setValue]);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-1">
@@ -58,9 +80,6 @@ export default function RecordForm({
                             disabled
                             className="mt-2 w-full cursor-not-allowed rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                         />
-                        <span className="text-sm font-bold text-red-300">
-                            {errors.id?.message}
-                        </span>
                     </label>
                 )}
 
@@ -90,6 +109,23 @@ export default function RecordForm({
                 </div>
 
                 <label className="block">
+                    <span className="text-sm font-medium text-slate-700">배출 계수 유형</span>
+                    <select
+                        {...register("emissionFactorId", { valueAsNumber: true })}
+                        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
+                    >
+                        {emissionFactors?.map((factor) => (
+                            <option key={factor.id} value={factor.id}>
+                                {factor.name} ({Number(factor.factor)} {factor.outputUnit}/{factor.inputUnit})
+                            </option>
+                        ))}
+                    </select>
+                    <span className="text-sm font-bold text-red-300">
+                        {errors.emissionFactorId?.message}
+                    </span>
+                </label>
+
+                <label className="block">
                     <span className="text-sm font-medium text-slate-700">Scope 타입</span>
                     <select
                         {...register("scopeType")}
@@ -99,13 +135,12 @@ export default function RecordForm({
                         <option value="SCOPE2">SCOPE2</option>
                         <option value="SCOPE3">SCOPE3</option>
                     </select>
-                    <span className="text-sm font-bold text-red-300">
-                        {errors.scopeType?.message}
-                    </span>
                 </label>
 
                 <label className="block">
-                    <span className="text-sm font-medium text-slate-700">배출량</span>
+                    <span className="text-sm font-medium text-slate-700">
+                        활동량 {selectedFactor ? `(${selectedFactor.inputUnit})` : ""}
+                    </span>
                     <input
                         {...register("amount", { valueAsNumber: true })}
                         type="number"
@@ -118,17 +153,21 @@ export default function RecordForm({
                     </span>
                 </label>
 
-                <label className="block">
-                    <span className="text-sm font-medium text-slate-700">단위</span>
-                    <input
-                        {...register("unit")}
-                        placeholder="tCO2e"
-                        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
-                    />
-                    <span className="text-sm font-bold text-red-300">
-                        {errors.unit?.message}
-                    </span>
-                </label>
+                {selectedFactor && (
+                    <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+                        <p className="font-medium">환산 배출량</p>
+                        <p className="mt-1 text-lg font-bold">
+                            {formatEmission(calculatedEmission)}{" "}
+                            {selectedFactor.outputUnit}
+                        </p>
+                        <p className="mt-1 text-xs text-emerald-700">
+                            {formatEmission(Number(amount) || 0)} {selectedFactor.inputUnit} ×{" "}
+                            {Number(selectedFactor.factor)} = 환산 결과
+                        </p>
+                    </div>
+                )}
+
+                <input type="hidden" {...register("unit")} />
 
                 <label className="block">
                     <span className="text-sm font-medium text-slate-700">기록일</span>
@@ -137,9 +176,6 @@ export default function RecordForm({
                         type="date"
                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
                     />
-                    <span className="text-sm font-bold text-red-300">
-                        {errors.recordedAt?.message}
-                    </span>
                 </label>
 
                 <div className="flex gap-3">
@@ -149,7 +185,6 @@ export default function RecordForm({
                     >
                         {isEdit ? "수정하기" : "생성하기"}
                     </button>
-
                     <button
                         type="button"
                         onClick={onCancel}

@@ -32,6 +32,15 @@ const navItems = [
         alt: "records page",
         color: "teal" as const,
     },
+    {
+        title: "배출 계수",
+        description: "활동량별 CO2e 환산 계수",
+        icon: "/icons/server.png",
+        href: "http://localhost:3000/emission-factors",
+        activeIcon: "/icons/server_fill.png",
+        alt: "emission factors page",
+        color: "amber" as const,
+    },
 ];
 
 export default function AppSidebar() {

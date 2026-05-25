@@ -11,6 +11,7 @@ import { createEmissionRecord } from "@/lib/client/api/createEmissionRecord";
 import { deleteEmissionRecord } from "@/lib/client/api/deleteEmissionRecord";
 import { editEmissionRecord } from "@/lib/client/api/editEmissionRecord";
 import { getGroups } from "@/lib/client/api/getGroups";
+import { getEmissionFactors } from "@/lib/client/api/getEmissionFactors";
 import type { EmissionRecord } from "@/lib/client/types/emissionRecords";
 import { ApiError } from "@/lib/client/errors/ApiError";
 
@@ -35,6 +36,11 @@ export default function RecordMain() {
         queryFn: getGroups,
     });
 
+    const factorsQuery = useQuery({
+        queryKey: ["emission-factors"],
+        queryFn: getEmissionFactors,
+    });
+
     const form = useForm<RecordFormType>({
         resolver: zodResolver(RecordFormSchema),
     });
@@ -42,7 +48,10 @@ export default function RecordMain() {
     const records = recordsQuery.data ?? [];
     const isEdit = !!editingRecord;
 
-    const totalAmount = records.reduce((acc, cur) => acc + Number(cur.amount), 0);
+    const totalEmission = records.reduce(
+        (acc, cur) => acc + cur.calculatedEmission,
+        0
+    );
     const scope1Count = records.filter((record) => record.scopeType === "SCOPE1").length;
     const scope2Count = records.filter((record) => record.scopeType === "SCOPE2").length;
     const scope3Count = records.filter((record) => record.scopeType === "SCOPE3").length;
@@ -55,19 +64,24 @@ export default function RecordMain() {
 
     const openCreateModal = () => {
         setEditingRecord(undefined);
-        form.reset();
+        const defaultFactorId = factorsQuery.data?.[0]?.id;
+        form.reset({
+            emissionFactorId: defaultFactorId,
+            unit: factorsQuery.data?.[0]?.inputUnit ?? "kWh",
+        });
         setModalSession((s) => s + 1);
         setModalOpen(true);
     };
 
     const onSubmit: SubmitHandler<RecordFormType> = async (data) => {
         try {
-            const { id, groupId, scopeType, amount, unit, recordedAt } = data;
+            const { id, groupId, emissionFactorId, scopeType, amount, unit, recordedAt } = data;
 
             if (editingRecord && id) {
                 await editEmissionRecord({
                     id,
                     groupId,
+                    emissionFactorId,
                     scopeType,
                     amount,
                     unit,
@@ -77,6 +91,7 @@ export default function RecordMain() {
             } else {
                 await createEmissionRecord({
                     groupId,
+                    emissionFactorId,
                     scopeType,
                     amount,
                     unit,
@@ -137,6 +152,7 @@ export default function RecordMain() {
                 isEdit={isEdit}
                 form={form}
                 groups={groupsQuery.data}
+                emissionFactors={factorsQuery.data}
                 pickerKey={modalSession}
                 onSubmit={onSubmit}
                 onClose={closeModal}
@@ -144,7 +160,7 @@ export default function RecordMain() {
 
             <section className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <RecordCard title="전체 레코드" value={records.length.toString()} desc="등록된 배출 데이터" />
-                <RecordCard title="총 배출량" value={totalAmount.toFixed(2)} desc="tCO2e 기준" highlight />
+                <RecordCard title="총 환산 배출량" value={totalEmission.toFixed(2)} desc="kgCO2e (활동량×계수)" highlight />
                 <RecordCard title="Scope1 / Scope2" value={`${scope1Count} / ${scope2Count}`} desc="직접 / 전력 사용" />
                 <RecordCard title="Scope3" value={scope3Count.toString()} desc="기타 간접 배출" dark />
             </section>

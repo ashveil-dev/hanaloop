@@ -6,12 +6,14 @@ import RecordForm, { type RecordFormType } from "@/components/records/RecordForm
 import RecordGroupPicker from "@/components/records/RecordGroupPicker";
 import { SubmitHandler, UseFormReturn } from "react-hook-form";
 import type { Group } from "@/lib/client/types/groups";
+import type { EmissionFactor } from "@/lib/client/types/emissionFactors";
 
 type Props = {
     isOpen: boolean;
     isEdit: boolean;
     form: UseFormReturn<RecordFormType>;
     groups: Group[] | undefined;
+    emissionFactors: EmissionFactor[] | undefined;
     pickerKey: number;
     onSubmit: SubmitHandler<RecordFormType>;
     onClose: () => void;
@@ -22,6 +24,7 @@ export default function RecordModal({
     isEdit,
     form,
     groups,
+    emissionFactors,
     pickerKey,
     onSubmit,
     onClose,
@@ -76,6 +79,7 @@ export default function RecordModal({
                     <RecordForm
                         form={form}
                         groups={groups}
+                        emissionFactors={emissionFactors}
                         isEdit={isEdit}
                         onSubmit={onSubmit}
                         onCancel={onClose}

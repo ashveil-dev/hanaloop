@@ -8,7 +8,7 @@ type SidebarNavItemProps = {
     href: string;
     activeIcon: string;
     alt: string;
-    color?: "emerald" | "cyan" | "teal";
+    color?: "emerald" | "cyan" | "teal" | "amber";
     onClick: () => void
 };
 
@@ -16,6 +16,7 @@ const colorMap = {
     emerald: "hover:border-emerald-200 hover:bg-emerald-50",
     cyan: "hover:border-cyan-200 hover:bg-cyan-50",
     teal: "hover:border-teal-200 hover:bg-teal-50",
+    amber: "hover:border-amber-200 hover:bg-amber-50",
 };
 
 export default function SidebarNavItem({

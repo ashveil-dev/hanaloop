@@ -3,6 +3,7 @@ import { registry } from "@/lib/server/openapi/registry";
 
 import "@/lib/server/openapi/paths/groups.openapi";
 import "@/lib/server/openapi/paths/emission-records.openapi"
+import "@/lib/server/openapi/paths/emission-factors.openapi"
 import "@/lib/server/openapi/paths/dashbard.openapi"
 
 export function generateOpenApiDocument() {

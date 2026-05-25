@@ -23,8 +23,8 @@ export default function RecordTable({
 }: RecordTableProps) {
     return (
         <div
-            id="RecordList"
-            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm xl:col-span-2"
+            id="record-list"
+            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
         >
             <h4 className="text-2xl font-bold text-slate-900">레코드 목록</h4>
 

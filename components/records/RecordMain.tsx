@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
+import { toast } from "sonner";
 
 import { getEmissionRecords } from "@/lib/client/api/getEmissionRecords";
 import { createEmissionRecord } from "@/lib/client/api/createEmissionRecord";
@@ -12,26 +12,17 @@ import { deleteEmissionRecord } from "@/lib/client/api/deleteEmissionRecord";
 import { editEmissionRecord } from "@/lib/client/api/editEmissionRecord";
 import { getGroups } from "@/lib/client/api/getGroups";
 import type { EmissionRecord } from "@/lib/client/types/emissionRecords";
+import { ApiError } from "@/lib/client/errors/ApiError";
 
 import RecordHeader from "@/components/records/RecordHeader";
 import RecordCard from "@/components/records/RecordCard";
-import RecordForm from "@/components/records/RecordForm";
+import RecordModal from "@/components/records/RecordModal";
 import RecordTable from "@/components/records/RecordTable";
-
-const FormSchema = z.object({
-    id: z.number(),
-    groupId: z.number(),
-    scopeType: z.enum(["SCOPE1", "SCOPE2", "SCOPE3"]),
-    amount: z.number(),
-    unit: z.string(),
-    recordedAt: z.string(),
-});
-
-export type RecordFormType = z.infer<typeof FormSchema>;
+import { RecordFormSchema, type RecordFormType } from "@/components/records/RecordForm";
 
 export default function RecordMain() {
-    const [isEdit, setIsEdit] = useState(false);
-    const formRef = useRef<HTMLFormElement>(null);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [editingRecord, setEditingRecord] = useState<EmissionRecord | undefined>(undefined);
 
     const recordsQuery = useQuery({
         queryKey: ["emission-records"],
@@ -44,21 +35,34 @@ export default function RecordMain() {
     });
 
     const form = useForm<RecordFormType>({
-        resolver: zodResolver(FormSchema),
+        resolver: zodResolver(RecordFormSchema),
     });
 
     const records = recordsQuery.data ?? [];
+    const isEdit = !!editingRecord;
 
     const totalAmount = records.reduce((acc, cur) => acc + Number(cur.amount), 0);
     const scope1Count = records.filter((record) => record.scopeType === "SCOPE1").length;
     const scope2Count = records.filter((record) => record.scopeType === "SCOPE2").length;
     const scope3Count = records.filter((record) => record.scopeType === "SCOPE3").length;
 
+    const closeModal = () => {
+        setModalOpen(false);
+        setEditingRecord(undefined);
+        form.reset();
+    };
+
+    const openCreateModal = () => {
+        setEditingRecord(undefined);
+        form.reset();
+        setModalOpen(true);
+    };
+
     const onSubmit: SubmitHandler<RecordFormType> = async (data) => {
         try {
             const { id, groupId, scopeType, amount, unit, recordedAt } = data;
 
-            if (isEdit) {
+            if (editingRecord && id) {
                 await editEmissionRecord({
                     id,
                     groupId,
@@ -67,8 +71,7 @@ export default function RecordMain() {
                     unit,
                     recordedAt,
                 });
-
-                setIsEdit(false);
+                toast.success("레코드가 수정되었습니다");
             } else {
                 await createEmissionRecord({
                     groupId,
@@ -77,13 +80,19 @@ export default function RecordMain() {
                     unit,
                     recordedAt,
                 });
+                toast.success("레코드가 생성되었습니다");
             }
 
             recordsQuery.refetch();
-            form.reset();
+            closeModal();
         } catch (e) {
-            alert("Error");
-            console.log(e);
+            if (e instanceof ApiError) {
+                toast.error(e.message);
+            } else {
+                toast.error(JSON.stringify(e));
+            }
+
+            toast.error(isEdit ? "레코드 수정을 실패하였습니다" : "레코드 생성을 실패하였습니다");
         }
     };
 
@@ -92,33 +101,41 @@ export default function RecordMain() {
     };
 
     const onEdit = (record: EmissionRecord) => {
-        form.setValues({
+        form.reset({
             ...record,
             amount: parseFloat(record.amount),
         });
-
-        setIsEdit(true);
-        formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        setEditingRecord(record);
+        setModalOpen(true);
     };
 
     const onDelete = async (id: number) => {
         try {
             await deleteEmissionRecord({ id });
+            toast.success("레코드를 삭제하였습니다");
             recordsQuery.refetch();
         } catch (e) {
-            alert("Error");
-            console.log(e);
-        }
-    };
+            if (e instanceof ApiError) {
+                toast.error(e.message);
+            } else {
+                toast.error(JSON.stringify(e));
+            }
 
-    const onCancel = () => {
-        setIsEdit(false);
-        form.reset();
+            toast.error("레코드 삭제를 실패하였습니다");
+        }
     };
 
     return (
         <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
-            <RecordHeader onRefresh={onRefresh} />
+            <RecordHeader onRefresh={onRefresh} onCreate={openCreateModal} />
+
+            <RecordModal
+                isOpen={modalOpen}
+                isEdit={isEdit}
+                form={form}
+                onSubmit={onSubmit}
+                onClose={closeModal}
+            />
 
             <section className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <RecordCard title="전체 레코드" value={records.length.toString()} desc="등록된 배출 데이터" />
@@ -127,22 +144,12 @@ export default function RecordMain() {
                 <RecordCard title="Scope3" value={scope3Count.toString()} desc="기타 간접 배출" dark />
             </section>
 
-            <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-                <RecordForm
-                    ref={formRef}
-                    form={form}
-                    isEdit={isEdit}
-                    onSubmit={onSubmit}
-                    onCancel={onCancel}
-                />
-
-                <RecordTable
-                    records={records}
-                    groups={groupsQuery.data}
-                    onEdit={onEdit}
-                    onDelete={onDelete}
-                />
-            </section>
+            <RecordTable
+                records={records}
+                groups={groupsQuery.data}
+                onEdit={onEdit}
+                onDelete={onDelete}
+            />
         </div>
     );
 }

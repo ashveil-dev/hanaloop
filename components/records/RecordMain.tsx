@@ -22,6 +22,7 @@ import { RecordFormSchema, type RecordFormType } from "@/components/records/Reco
 
 export default function RecordMain() {
     const [modalOpen, setModalOpen] = useState(false);
+    const [modalSession, setModalSession] = useState(0);
     const [editingRecord, setEditingRecord] = useState<EmissionRecord | undefined>(undefined);
 
     const recordsQuery = useQuery({
@@ -55,6 +56,7 @@ export default function RecordMain() {
     const openCreateModal = () => {
         setEditingRecord(undefined);
         form.reset();
+        setModalSession((s) => s + 1);
         setModalOpen(true);
     };
 
@@ -106,6 +108,7 @@ export default function RecordMain() {
             amount: parseFloat(record.amount),
         });
         setEditingRecord(record);
+        setModalSession((s) => s + 1);
         setModalOpen(true);
     };
 
@@ -133,6 +136,8 @@ export default function RecordMain() {
                 isOpen={modalOpen}
                 isEdit={isEdit}
                 form={form}
+                groups={groupsQuery.data}
+                pickerKey={modalSession}
                 onSubmit={onSubmit}
                 onClose={closeModal}
             />

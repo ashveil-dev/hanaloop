@@ -17,6 +17,7 @@ import { ApiError } from "@/lib/client/errors/ApiError";
 
 export default function GroupMain() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalSession, setModalSession] = useState(0);
   const [editingGroup, setEditingGroup] = useState<Group | undefined>(undefined);
   const groupsQuery = useQuery({
     queryKey: ["Groups"],
@@ -30,6 +31,7 @@ export default function GroupMain() {
 
   const openCreateModal = () => {
     setEditingGroup(undefined);
+    setModalSession((s) => s + 1);
     setModalOpen(true);
   };
 
@@ -89,6 +91,7 @@ export default function GroupMain() {
 
   const onEdit = (group: Group) => {
     setEditingGroup(group);
+    setModalSession((s) => s + 1);
     setModalOpen(true);
   }
 
@@ -104,6 +107,7 @@ export default function GroupMain() {
         isOpen={modalOpen}
         group={editingGroup}
         groups={groupsQuery.data}
+        pickerKey={modalSession}
         onClose={closeModal}
         onCreate={onCreateGroup}
         onUpdate={onUpdateGroup}

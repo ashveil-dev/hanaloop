@@ -1,9 +1,10 @@
 import { SubmitHandler, UseFormReturn } from "react-hook-form";
 import z from "zod";
+import type { Group } from "@/lib/client/types/groups";
 
 export const RecordFormSchema = z.object({
     id: z.number().optional(),
-    groupId: z.number(),
+    groupId: z.number({ error: "그룹을 선택해주세요" }),
     scopeType: z.enum(["SCOPE1", "SCOPE2", "SCOPE3"]),
     amount: z.number(),
     unit: z.string(),
@@ -14,6 +15,7 @@ export type RecordFormType = z.infer<typeof RecordFormSchema>;
 
 type RecordFormProps = {
     form: UseFormReturn<RecordFormType>;
+    groups: Group[] | undefined;
     isEdit: boolean;
     onSubmit: SubmitHandler<RecordFormType>;
     onCancel: () => void;
@@ -21,6 +23,7 @@ type RecordFormProps = {
 
 export default function RecordForm({
     form,
+    groups,
     isEdit,
     onSubmit,
     onCancel,
@@ -28,8 +31,12 @@ export default function RecordForm({
     const {
         register,
         handleSubmit,
+        watch,
         formState: { errors },
     } = form;
+
+    const selectedGroupId = watch("groupId");
+    const selectedGroup = groups?.find((g) => g.id === selectedGroupId);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-1">
@@ -57,18 +64,30 @@ export default function RecordForm({
                     </label>
                 )}
 
-                <label className="block">
-                    <span className="text-sm font-medium text-slate-700">그룹 ID</span>
-                    <input
-                        {...register("groupId", { valueAsNumber: true })}
-                        type="number"
-                        placeholder="예: 1"
-                        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
-                    />
+                <div>
+                    <span className="text-sm font-medium text-slate-700">선택된 그룹</span>
+                    <div
+                        className={`mt-2 rounded-2xl border px-4 py-3 text-sm ${
+                            selectedGroup
+                                ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+                                : "border-slate-200 bg-slate-50 text-slate-500"
+                        }`}
+                    >
+                        {selectedGroup ? (
+                            <div>
+                                <p className="font-semibold">{selectedGroup.name}</p>
+                                <p className="mt-0.5 text-xs text-emerald-700">
+                                    그룹 ID: {selectedGroup.id}
+                                </p>
+                            </div>
+                        ) : (
+                            "오른쪽 목록에서 그룹을 검색하고 선택하세요"
+                        )}
+                    </div>
                     <span className="text-sm font-bold text-red-300">
                         {errors.groupId?.message}
                     </span>
-                </label>
+                </div>
 
                 <label className="block">
                     <span className="text-sm font-medium text-slate-700">Scope 타입</span>

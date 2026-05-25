@@ -24,3 +24,22 @@
   outline: none;
   box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
 }
+
+.ReactModal__Content--record {
+  max-width: 56rem;
+  width: 100%;
+  overflow: hidden;
+}
+
+.ReactModal__Content--group {
+  max-width: 56rem;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+@media (max-width: 767px) {
+  .ReactModal__Content--record .modal-group-panel {
+    max-height: 13rem;
+  }
+}

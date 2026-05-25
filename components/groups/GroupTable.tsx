@@ -13,7 +13,7 @@ export default function GroupTable({ groups, onEdit, onDelete }: Props) {
     };
 
     return (
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div id="group-list" className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-6 flex items-center justify-between">
                 <div>
                     <h4 className="text-xl font-bold text-slate-900">

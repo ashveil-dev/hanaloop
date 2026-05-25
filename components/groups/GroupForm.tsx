@@ -1,5 +1,4 @@
 import z from "zod";
-import { forwardRef } from "react";
 import type { Group } from "@/lib/client/types/groups";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +9,6 @@ type Props = {
     groups: Group[] | undefined;
     onCreate: (name: string, parentId: string | null | undefined) => void;
     onUpdate: (id: number, name: string, parentId: string | null | undefined) => void;
-    onDelete: (id: number) => void;
     onCancel: () => void;
 };
 
@@ -22,14 +20,13 @@ const FormSchema = z.object({
 
 type FormType = z.infer<typeof FormSchema>
 
-const GroupForm = forwardRef<HTMLFormElement, Props>(({
+export default function GroupForm({
     group,
     groups,
     onCreate,
     onUpdate,
-    onDelete,
     onCancel,
-}: Props, ref) => {
+}: Props) {
     const { register, handleSubmit, reset, setValues, formState: { errors } } = useForm<FormType>({
         resolver: zodResolver(FormSchema)
     })
@@ -52,9 +49,8 @@ const GroupForm = forwardRef<HTMLFormElement, Props>(({
 
     return (
         <form
-            ref={ref}
             onSubmit={handleSubmit(onFormSubmit)}
-            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            className="p-1">
             <p className="text-sm font-medium text-emerald-600">
                 {group ? "Edit Group" : "Create Group"}
             </p>
@@ -131,20 +127,15 @@ const GroupForm = forwardRef<HTMLFormElement, Props>(({
                         {group ? "수정하기" : "생성하기"}
                     </button>
 
-                    {group && (
-                        <button
-                            type="button"
-                            onClick={onCancel}
-                            className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer"
-                        >
-                            취소
-                        </button>
-                    )}
+                    <button
+                        type="button"
+                        onClick={onCancel}
+                        className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer"
+                    >
+                        취소
+                    </button>
                 </div>
             </div>
         </form>
     );
 }
-)
-
-export default GroupForm;

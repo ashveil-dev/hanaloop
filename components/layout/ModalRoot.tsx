@@ -1,4 +1,4 @@
-// components/common/ModalRoot.tsx
+// components/layout/ModalRoot.tsx
 "use client";
 
 import { useEffect } from "react";

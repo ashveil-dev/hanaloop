@@ -9,14 +9,9 @@ const header = {
 
 const sections = [
     {
-        title: "그룹 생성",
-        description: "",
-        href: "#StatCard"
-    },
-    {
         title: "그룹 목록",
         description: "",
-        href: "#ScopeBreakdownCard"
+        href: "#group-list"
     },
 ]
 

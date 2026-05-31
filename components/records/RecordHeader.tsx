@@ -1,8 +1,9 @@
 type RecordHeaderProps = {
     onRefresh: () => void;
+    onCreate: () => void;
 };
 
-export default function RecordHeader({ onRefresh }: RecordHeaderProps) {
+export default function RecordHeader({ onRefresh, onCreate }: RecordHeaderProps) {
     return (
         <header className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
@@ -17,12 +18,20 @@ export default function RecordHeader({ onRefresh }: RecordHeaderProps) {
                 </p>
             </div>
 
-            <button
-                onClick={onRefresh}
-                className="cursor-pointer rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
-            >
-                레코드 새로고침
-            </button>
+            <div className="flex gap-2">
+                <button
+                    onClick={onCreate}
+                    className="cursor-pointer rounded-xl border border-emerald-600 bg-white px-5 py-3 text-sm font-semibold text-emerald-600 shadow-sm transition hover:bg-emerald-50"
+                >
+                    레코드 생성
+                </button>
+                <button
+                    onClick={onRefresh}
+                    className="cursor-pointer rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                >
+                    레코드 새로고침
+                </button>
+            </div>
         </header>
     );
 }

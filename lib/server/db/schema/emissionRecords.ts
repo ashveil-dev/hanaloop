@@ -1,5 +1,6 @@
 import { bigint, bigserial, check, date, index, numeric, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
 import { GroupsTable } from "@/lib/server/db/schema/groups";
+import { EmissionFactorsTable } from "@/lib/server/db/schema/emissionFactors";
 import { sql } from "drizzle-orm";
 
 export const EmissionRecordsTable = pgTable(
@@ -9,6 +10,10 @@ export const EmissionRecordsTable = pgTable(
     groupId: bigint("group_id", { mode: "number" })
       .notNull()
       .references(() => GroupsTable.id, { onDelete: "cascade" }),
+
+    emissionFactorId: bigint("emission_factor_id", { mode: "number" })
+      .notNull()
+      .references(() => EmissionFactorsTable.id, { onDelete: "restrict" }),
 
     scopeType: varchar("scope_type", { length: 20 }).notNull(),
     amount: numeric("amount", {
@@ -26,6 +31,7 @@ export const EmissionRecordsTable = pgTable(
     ),
 
     index("idx_emission_records_group_id").on(table.groupId),
+    index("idx_emission_records_emission_factor_id").on(table.emissionFactorId),
     index("idx_emission_records_recorded_at").on(table.recordedAt),
     index("idx_emission_records_scope_type").on(table.scopeType),
   ]

@@ -6,9 +6,10 @@ import MonthlyEmissionChart from "./MonthlyEmissionChart";
 import ScopeBreakdownCard from "./ScopeBreakdownCard";
 import HierarchyEmissionCard from "./HierarchyEmissionCard";
 import { getDashboardSummary } from "@/lib/client/api/getDashboardSummary";
+import { getMonthlyEmissions } from "@/lib/client/api/getMonthlyEmissions";
 import { getGroups } from "@/lib/client/api/getGroups";
 import { getHierarchy } from "@/lib/client/api/getHierarchy";
-import { use, useMemo } from "react";
+import { useMemo } from "react";
 
 function formatDollar(value: number) {
     return `$${value.toLocaleString()}`;
@@ -32,10 +33,21 @@ export default function DashboardMain() {
         }),
     })
 
-    const isLoading = useMemo(() => summaryData.isLoading && groupsData.isLoading && hierarchyData.isLoading, [summaryData.isLoading, groupsData.isLoading, hierarchyData.isLoading])
-    const isError = useMemo(() => summaryData.isError && groupsData.isError && hierarchyData.isError, [summaryData.isError, groupsData.isError, hierarchyData.isError])
+    const monthlyData = useQuery({
+        queryKey: ["getMonthlyEmissions"],
+        queryFn: getMonthlyEmissions,
+    })
 
-    if(isError || !summaryData.data || !groupsData.data || !hierarchyData.data) {
+    const isLoading = useMemo(
+        () => summaryData.isLoading || groupsData.isLoading || hierarchyData.isLoading || monthlyData.isLoading,
+        [summaryData.isLoading, groupsData.isLoading, hierarchyData.isLoading, monthlyData.isLoading]
+    )
+    const isError = useMemo(
+        () => summaryData.isError || groupsData.isError || hierarchyData.isError || monthlyData.isError,
+        [summaryData.isError, groupsData.isError, hierarchyData.isError, monthlyData.isError]
+    )
+
+    if(isError || !summaryData.data || !groupsData.data || !hierarchyData.data || !monthlyData.data) {
         return (
             <div>
                 Error
@@ -88,8 +100,11 @@ export default function DashboardMain() {
                     />
                 </section>
 
-                <section className="grid grid-cols-1 gap-6 xl:grid-cols-1">
-                    {/* <MonthlyEmissionChart /> */}
+                <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+                    <MonthlyEmissionChart
+                        data={monthlyData.data.months}
+                        unit={monthlyData.data.unit}
+                    />
                     <ScopeBreakdownCard
                         scope1={summaryData.data.scope1.amount}
                         scope2={summaryData.data.scope2.amount}

@@ -1,19 +1,22 @@
 import type { EmissionRecord } from "@/lib/client/types/emissionRecords";
+import { ApiError } from "@/lib/client/errors/ApiError";
 
 type createEmissionRecord = {
-    groupId: number,
-    scopeType: "SCOPE1" | "SCOPE2" | "SCOPE3",
-    amount: number,
-    unit: string,
-    recordedAt: string
-}
+    groupId: number;
+    emissionFactorId: number;
+    scopeType: "SCOPE1" | "SCOPE2" | "SCOPE3";
+    amount: number;
+    unit?: string;
+    recordedAt: string;
+};
 
 export async function createEmissionRecord({
     groupId,
+    emissionFactorId,
     scopeType,
     amount,
     unit,
-    recordedAt
+    recordedAt,
 }: createEmissionRecord): Promise<EmissionRecord> {
     const res = await fetch("/api/emission-records", {
         method: "POST",
@@ -22,12 +25,20 @@ export async function createEmissionRecord({
         },
         body: JSON.stringify({
             groupId,
+            emissionFactorId,
             scopeType,
             amount,
             unit,
-            recordedAt
+            recordedAt,
         }),
     });
+
+    if (!res.ok) {
+        throw new ApiError({
+            status: res.status,
+            message: res.statusText,
+        })
+    }
 
     return res.json();
 }

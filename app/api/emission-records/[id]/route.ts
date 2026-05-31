@@ -95,9 +95,9 @@ export async function PATCH(
 ) {
     try {
         const id = parseInt((await context.params).id);
-        const { groupId, scopeType, amount, unit, recordedAt } = await request.json();
+        const { groupId, emissionFactorId, scopeType, amount, unit, recordedAt } = await request.json();
 
-        const parsed = updateEmissionRecordSchema.safeParse({ id, groupId, scopeType, amount, unit, recordedAt });
+        const parsed = updateEmissionRecordSchema.safeParse({ id, groupId, emissionFactorId, scopeType, amount, unit, recordedAt });
         if (!parsed.success) {
             throw new ValidationError({
                 errors: z.treeifyError(parsed.error),
@@ -131,7 +131,7 @@ export async function PATCH(
                 // 선택한 Group Id가 존재하지 않을 경우
                 if (e.cause.code === "23503") {
                     return NextResponse.json({
-                        message: "The selected group could not be found."
+                        message: "The selected group or emission factor could not be found."
                     }, {
                         status: 400
                     })

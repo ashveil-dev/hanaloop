@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import type { EmissionRecord } from "@/lib/client/types/emissionRecords";
 import type { Group } from "@/lib/client/types/groups";
+import { formatEmission } from "@/lib/shared/calculateEmission";
 
 const scopeStyle = {
     SCOPE1: "bg-red-100 text-red-700 border-red-200",
@@ -23,25 +24,25 @@ export default function RecordTable({
 }: RecordTableProps) {
     return (
         <div
-            id="RecordList"
-            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm xl:col-span-2"
+            id="record-list"
+            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
         >
             <h4 className="text-2xl font-bold text-slate-900">레코드 목록</h4>
-
             <p className="mt-2 text-sm text-slate-500">
-                생성된 배출 레코드를 수정하거나 삭제할 수 있습니다.
+                활동량 × 배출 계수로 환산된 CO2e 배출량을 확인할 수 있습니다.
             </p>
 
             <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200">
                 <div className="overflow-x-auto">
-                    <table className="w-full min-w-[920px] text-left text-sm">
+                    <table className="w-full min-w-[1100px] text-left text-sm">
                         <thead className="bg-slate-50 text-slate-500">
                             <tr>
                                 <th className="px-5 py-4 text-center font-medium">ID</th>
                                 <th className="px-5 py-4 text-center font-medium">그룹명</th>
+                                <th className="px-5 py-4 text-center font-medium">배출 계수</th>
                                 <th className="px-5 py-4 text-center font-medium">Scope</th>
-                                <th className="px-5 py-4 text-center font-medium">배출량</th>
-                                <th className="px-5 py-4 text-center font-medium">단위</th>
+                                <th className="px-5 py-4 text-center font-medium">활동량</th>
+                                <th className="px-5 py-4 text-center font-medium">환산 배출량</th>
                                 <th className="px-5 py-4 text-center font-medium">기록 날짜</th>
                                 <th className="px-5 py-4 text-center font-medium">관리</th>
                             </tr>
@@ -50,17 +51,16 @@ export default function RecordTable({
                         <tbody className="divide-y divide-slate-100">
                             {records.map((record) => (
                                 <tr key={record.id} className="bg-white text-center">
-                                    <td className="px-5 py-4 text-slate-500">
-                                        {record.id}
-                                    </td>
-
+                                    <td className="px-5 py-4 text-slate-500">{record.id}</td>
                                     <td className="max-w-50 px-5 py-4 font-semibold">
-                                        <div className="text-center text-slate-900 break-words whitespace-normal">
+                                        <div className="break-words whitespace-normal text-slate-900">
                                             {groups?.find((g) => g.id === record.groupId)?.name ?? ""}
                                         </div>
                                     </td>
-
-                                    <td className="px-5 py-4 text-center">
+                                    <td className="px-5 py-4 text-slate-700">
+                                        {record.emissionFactor.name}
+                                    </td>
+                                    <td className="px-5 py-4">
                                         <span
                                             className={clsx(
                                                 "rounded-full border px-3 py-1 text-xs font-semibold",
@@ -70,21 +70,18 @@ export default function RecordTable({
                                             {record.scopeType}
                                         </span>
                                     </td>
-
-                                    <td className="px-5 py-4 text-center font-semibold text-slate-900">
-                                        {record.amount}
+                                    <td className="px-5 py-4 font-semibold text-slate-900">
+                                        {Number(record.amount).toLocaleString()} {record.unit}
                                     </td>
-
-                                    <td className="px-5 py-4 text-center text-slate-500">
-                                        {record.unit}
+                                    <td className="px-5 py-4 font-bold text-emerald-700">
+                                        {formatEmission(record.calculatedEmission)}{" "}
+                                        {record.emissionFactor.outputUnit}
                                     </td>
-
-                                    <td className="px-5 py-4 text-center text-slate-500">
+                                    <td className="px-5 py-4 text-slate-500">
                                         {record.recordedAt}
                                     </td>
-
                                     <td className="px-5 py-4">
-                                        <div className="flex justify-center gap-2 text-center">
+                                        <div className="flex justify-center gap-2">
                                             <button
                                                 type="button"
                                                 onClick={() => onEdit(record)}
@@ -92,7 +89,6 @@ export default function RecordTable({
                                             >
                                                 수정
                                             </button>
-
                                             <button
                                                 type="button"
                                                 onClick={() => onDelete(record.id)}
@@ -108,7 +104,7 @@ export default function RecordTable({
                             {records.length === 0 && (
                                 <tr>
                                     <td
-                                        colSpan={7}
+                                        colSpan={8}
                                         className="px-5 py-10 text-center text-slate-400"
                                     >
                                         등록된 배출 레코드가 없습니다.

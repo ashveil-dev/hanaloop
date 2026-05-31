@@ -36,7 +36,7 @@ export async function POST(request: Request) {
                 // Group Id가 존재하지 않을 경우
                 if (e.cause.code === "23503") {
                     return NextResponse.json({
-                        message: "The selected group could not be found."
+                        message: "The selected group or emission factor could not be found."
                     }, {
                         status: 400
                     })

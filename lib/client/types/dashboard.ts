@@ -21,6 +21,20 @@ export type Emission = {
     }
 
 
+export type MonthlyEmission = {
+    month: string;
+    label: string;
+    scope1: number;
+    scope2: number;
+    scope3: number;
+    total: number;
+};
+
+export type MonthlyEmissions = {
+    unit: string;
+    months: MonthlyEmission[];
+};
+
 export type Hierarchy = {
     id: number,
     name: string,

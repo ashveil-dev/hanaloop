@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Toaster } from "sonner";
 import Providers from "./providers";
+import ModalRoot from "@/components/layout/ModalRoot";
 import "./globals.css";
 
 
@@ -18,7 +20,9 @@ export default function RootLayout({
       <link rel="icon" href="/icons/logo.png" type="image/png" sizes="32x32" />
       <body className="min-w-full h-full min-h-full">
         <Providers>
+          <ModalRoot />
           {children}
+          <Toaster richColors position="top-right" />
         </Providers>
       </body>
     </html>

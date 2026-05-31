@@ -31,3 +31,15 @@ registry.registerPath({
     },
 });
 
+// getMonthlyEmissions
+registry.registerPath({
+    method: "get",
+    path: "/api/dashboard/monthly",
+    tags: ["Dashboard"],
+    responses: {
+        200: {
+            description: "월별 배출량 조회 성공",
+        },
+    },
+});
+

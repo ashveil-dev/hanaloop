@@ -1,8 +1,9 @@
+import "./globals.css";
 import type { Metadata } from "next";
 import { Toaster } from "sonner";
 import Providers from "./providers";
 import ModalRoot from "@/components/layout/ModalRoot";
-import "./globals.css";
+import Layout from "@/components/layout";
 
 export const metadata: Metadata = {
   title: "Hana Dashboard",
@@ -20,7 +21,7 @@ export default function RootLayout({
       <body className="min-w-full h-full min-h-full">
         <Providers>
           <ModalRoot />
-          {children}
+          <Layout>{children}</Layout>
           <Toaster richColors position="top-right" />
         </Providers>
       </body>

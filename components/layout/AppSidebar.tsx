@@ -3,42 +3,42 @@
 import { clsx } from "clsx"
 import SidebarNavItem from "./SidebarNavItem";
 import { useMenuStore } from "@/stores/useMenuStore";
+import DashboardIcon from "@/components/icons/sidebar/DashboardIcon";
+import GroupsIcon from "@/components/icons/sidebar/GroupsIcon";
+import RecordsIcon from "@/components/icons/sidebar/RecordsIcon";
+import EmissionFactorsIcon from "@/components/icons/sidebar/EmissionFactorsIcon";
 
 const navItems = [
     {
         title: "홈",
         description: "대시보드 개요 및 KPI",
-        icon: "/icons/home.png",
         href: "/",
-        activeIcon: "/icons/home_fill.png",
         alt: "dashboard page",
+        Icon: DashboardIcon,
         color: "emerald" as const,
     },
     {
         title: "그룹",
         description: "조직 계층 및 관리 그룹",
-        icon: "/icons/people.png",
         href: "/group",
-        activeIcon: "/icons/people_fill.png",
         alt: "groups page",
+        Icon: GroupsIcon,
         color: "cyan" as const,
     },
     {
         title: "레코드",
         description: "배출 데이터 및 기록",
-        icon: "/icons/server.png",
         href: "/records",
-        activeIcon: "/icons/server_fill.png",
         alt: "records page",
+        Icon: RecordsIcon,
         color: "teal" as const,
     },
     {
         title: "배출 계수",
         description: "활동량별 CO2e 환산 계수",
-        icon: "/icons/server.png",
         href: "/emission-factors",
-        activeIcon: "/icons/server_fill.png",
         alt: "emission factors page",
+        Icon: EmissionFactorsIcon,
         color: "amber" as const,
     },
 ];
@@ -52,7 +52,7 @@ export default function AppSidebar() {
             open ? "block" : "hidden"
         )}>
             <div className="block h-20 w-full md:hidden" />
-            <nav className="w-full px-4 py-6 md:w-[110px] md:shrink-0 md:px-3">
+            <nav className="w-full px-4 py-6 md:shrink-0 md:px-3">
                 <ul className="flex flex-col gap-4">
                     {navItems.map((item) => (
                         <SidebarNavItem key={item.title} onClick={closeMenu} {...item} />

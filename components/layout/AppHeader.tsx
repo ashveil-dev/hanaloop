@@ -12,7 +12,7 @@ export default function AppHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-30 w-full border-b border-slate-200/70 bg-white/80 backdrop-blur-xl font-suit">
       <div className="flex h-20 items-center justify-between px-4 md:px-8">
         <Link href="/" className="group flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/20 transition-transform group-hover:scale-105">
@@ -36,22 +36,6 @@ export default function AppHeader() {
               Live Monitoring
             </span>
           </div>
-
-          <Link
-            href="https://www.hanaloop.com/"
-            target="_blank"
-            className="hidden h-11 items-center rounded-2xl border border-slate-200 bg-white px-4 shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-md md:flex"
-          >
-            <Image src="/icons/hanaloop.png" width={74} height={34} alt="hanaloop website" />
-          </Link>
-
-          <Link
-            href="https://www.hana.eco/"
-            target="_blank"
-            className="hidden h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-md md:flex"
-          >
-            <Image src="/icons/hanaeco.png" width={28} height={28} alt="hana eco website" />
-          </Link>
 
           <button onClick={onMenuClick} className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:bg-slate-50 md:hidden cursor-pointer">
             <Image src="/images/menu.png" width={24} height={24} alt="Menu" />

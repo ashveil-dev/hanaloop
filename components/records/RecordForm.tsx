@@ -62,7 +62,7 @@ export default function RecordForm({
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-1">
-            <p className="text-sm font-medium text-emerald-600">
+            <p className="text-sm font-medium text-teal-600">
                 {isEdit ? "Update Record" : "Create Record"}
             </p>
 
@@ -78,7 +78,7 @@ export default function RecordForm({
                             {...register("id", { valueAsNumber: true })}
                             type="number"
                             disabled
-                            className="mt-2 w-full cursor-not-allowed rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
+                            className="mt-2 w-full cursor-not-allowed rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-400"
                         />
                     </label>
                 )}
@@ -88,14 +88,14 @@ export default function RecordForm({
                     <div
                         className={`mt-2 rounded-2xl border px-4 py-3 text-sm ${
                             selectedGroup
-                                ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+                                ? "border-teal-200 bg-teal-50 text-teal-900"
                                 : "border-slate-200 bg-slate-50 text-slate-500"
                         }`}
                     >
                         {selectedGroup ? (
                             <div>
                                 <p className="font-semibold">{selectedGroup.name}</p>
-                                <p className="mt-0.5 text-xs text-emerald-700">
+                                <p className="mt-0.5 text-xs text-teal-700">
                                     그룹 ID: {selectedGroup.id}
                                 </p>
                             </div>
@@ -112,7 +112,7 @@ export default function RecordForm({
                     <span className="text-sm font-medium text-slate-700">배출 계수 유형</span>
                     <select
                         {...register("emissionFactorId", { valueAsNumber: true })}
-                        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
+                        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-400"
                     >
                         {emissionFactors?.map((factor) => (
                             <option key={factor.id} value={factor.id}>
@@ -129,7 +129,7 @@ export default function RecordForm({
                     <span className="text-sm font-medium text-slate-700">Scope 타입</span>
                     <select
                         {...register("scopeType")}
-                        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
+                        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-400"
                     >
                         <option value="SCOPE1">SCOPE1</option>
                         <option value="SCOPE2">SCOPE2</option>
@@ -146,7 +146,7 @@ export default function RecordForm({
                         type="number"
                         step="0.01"
                         placeholder="예: 1200.50"
-                        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
+                        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-400"
                     />
                     <span className="text-sm font-bold text-red-300">
                         {errors.amount?.message}
@@ -154,13 +154,13 @@ export default function RecordForm({
                 </label>
 
                 {selectedFactor && (
-                    <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+                    <div className="rounded-2xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-teal-900">
                         <p className="font-medium">환산 배출량</p>
                         <p className="mt-1 text-lg font-bold">
                             {formatEmission(calculatedEmission)}{" "}
                             {selectedFactor.outputUnit}
                         </p>
-                        <p className="mt-1 text-xs text-emerald-700">
+                        <p className="mt-1 text-xs text-teal-700">
                             {formatEmission(Number(amount) || 0)} {selectedFactor.inputUnit} ×{" "}
                             {Number(selectedFactor.factor)} = 환산 결과
                         </p>
@@ -174,14 +174,14 @@ export default function RecordForm({
                     <input
                         {...register("recordedAt")}
                         type="date"
-                        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
+                        className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-teal-400"
                     />
                 </label>
 
                 <div className="flex gap-3">
                     <button
                         type="submit"
-                        className="flex-1 cursor-pointer rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                        className="flex-1 cursor-pointer rounded-2xl bg-teal-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-teal-700"
                     >
                         {isEdit ? "수정하기" : "생성하기"}
                     </button>

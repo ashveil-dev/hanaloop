@@ -106,7 +106,7 @@ export default function GroupMain() {
     return (
       <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
         <GroupHeader onRefresh={onRefresh} onCreate={openCreateModal} />
-        <div className="mt-8 space-y-6">
+        <div className="space-y-6">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <CardSkeleton count={3} darkLast />
           </div>
@@ -141,7 +141,7 @@ export default function GroupMain() {
         onUpdate={onUpdateGroup}
       />
 
-      <div className="mt-8 space-y-6">
+      <div className="space-y-6">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <GroupCard title="전체 그룹" value={groupsQuery.data.length.toString()} desc="등록된 조직 단위" />
           <GroupCard title="최상위 그룹" value={groupsQuery.data.filter((g) => g.parentId === null).length.toString()} desc="Parent가 없는 그룹" />

@@ -7,7 +7,7 @@ export default function RecordHeader({ onRefresh, onCreate }: RecordHeaderProps)
     return (
         <header className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-                <p className="text-sm font-medium text-emerald-600">
+                <p className="text-sm font-medium text-teal-600">
                     Emission Records Management
                 </p>
                 <h3 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
@@ -20,14 +20,16 @@ export default function RecordHeader({ onRefresh, onCreate }: RecordHeaderProps)
 
             <div className="flex gap-2">
                 <button
+                    type="button"
                     onClick={onCreate}
-                    className="cursor-pointer rounded-xl border border-emerald-600 bg-white px-5 py-3 text-sm font-semibold text-emerald-600 shadow-sm transition hover:bg-emerald-50"
+                    className="cursor-pointer rounded-xl border border-teal-600 bg-white px-5 py-3 text-sm font-semibold text-teal-600 shadow-sm transition hover:bg-teal-50"
                 >
                     레코드 생성
                 </button>
                 <button
+                    type="button"
                     onClick={onRefresh}
-                    className="cursor-pointer rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                    className="cursor-pointer rounded-xl bg-teal-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700"
                 >
                     레코드 새로고침
                 </button>

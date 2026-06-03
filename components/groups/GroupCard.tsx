@@ -20,7 +20,7 @@ type Props = {
         <h4 className={`mt-3 text-3xl font-bold ${dark ? "text-white" : "text-slate-900"}`}>
           {value}
         </h4>
-        <p className={`mt-4 text-sm ${dark ? "text-emerald-400" : "text-slate-500"}`}>
+        <p className={`mt-4 text-sm ${dark ? "text-cyan-400" : "text-slate-500"}`}>
           {desc}
         </p>
       </div>

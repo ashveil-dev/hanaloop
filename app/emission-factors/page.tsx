@@ -123,13 +123,13 @@ export default function FactorMain() {
                 <div className="flex gap-2">
                     <button
                         onClick={openCreateModal}
-                        className="cursor-pointer rounded-xl border border-amber-600 bg-white px-5 py-3 text-sm font-semibold text-amber-600 hover:bg-amber-50"
+                        className="cursor-pointer rounded-xl border border-amber-600 bg-white px-5 py-3 text-sm font-semibold text-amber-600 shadow-sm transition hover:bg-amber-50"
                     >
                         배출 계수 생성
                     </button>
                     <button
                         onClick={() => factorsQuery.refetch()}
-                        className="cursor-pointer rounded-xl bg-amber-600 px-5 py-3 text-sm font-semibold text-white hover:bg-amber-700"
+                        className="cursor-pointer rounded-xl bg-amber-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-700"
                     >
                         새로고침
                     </button>

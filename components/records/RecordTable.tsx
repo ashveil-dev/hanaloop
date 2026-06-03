@@ -73,7 +73,7 @@ export default function RecordTable({
                                     <td className="px-5 py-4 font-semibold text-slate-900">
                                         {Number(record.amount).toLocaleString()} {record.unit}
                                     </td>
-                                    <td className="px-5 py-4 font-bold text-emerald-700">
+                                    <td className="px-5 py-4 font-bold text-teal-700">
                                         {formatEmission(record.calculatedEmission)}{" "}
                                         {record.emissionFactor.outputUnit}
                                     </td>

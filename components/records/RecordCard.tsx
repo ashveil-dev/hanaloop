@@ -35,7 +35,7 @@ export default function RecordCard({
             <p
                 className={clsx(
                     "mt-3 text-sm",
-                    dark || highlight ? "text-emerald-400" : "text-slate-500"
+                    dark || highlight ? "text-teal-400" : "text-slate-500"
                 )}
             >
                 {desc}

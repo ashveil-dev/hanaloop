@@ -54,7 +54,7 @@ export default function GroupForm({
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-1">
-            <p className="text-sm font-medium text-emerald-600">
+            <p className="text-sm font-medium text-cyan-600">
                 {group ? "Edit Group" : "Create Group"}
             </p>
 
@@ -71,7 +71,7 @@ export default function GroupForm({
                                 {...register("id", { valueAsNumber: true })}
                                 type="number"
                                 readOnly
-                                className="mt-2 w-full cursor-not-allowed rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-emerald-400"
+                                className="mt-2 w-full cursor-not-allowed rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-cyan-400"
                             />
                             <span className="text-sm font-bold text-red-300">
                                 {errors.id?.message}
@@ -87,7 +87,7 @@ export default function GroupForm({
                     <input
                         {...register("name")}
                         placeholder="예: 본사, 공장 A"
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-emerald-300 focus:bg-white focus:ring-4 focus:ring-emerald-100"
+                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-cyan-300 focus:bg-white focus:ring-4 focus:ring-cyan-100"
                     />
                     <span className="text-sm font-bold text-red-300">
                         {errors.name?.message}
@@ -100,7 +100,7 @@ export default function GroupForm({
                         className={`mt-2 rounded-2xl border px-4 py-3 text-sm ${
                             isTopLevel
                                 ? "border-slate-200 bg-slate-50 text-slate-600"
-                                : "border-emerald-200 bg-emerald-50 text-emerald-900"
+                                : "border-cyan-200 bg-cyan-50 text-cyan-900"
                         }`}
                     >
                         {isTopLevel ? (
@@ -111,7 +111,7 @@ export default function GroupForm({
                         ) : selectedParent ? (
                             <div>
                                 <p className="font-semibold">{selectedParent.name}</p>
-                                <p className="mt-0.5 text-xs text-emerald-700">
+                                <p className="mt-0.5 text-xs text-cyan-700">
                                     그룹 ID: {selectedParent.id}
                                 </p>
                             </div>
@@ -129,7 +129,7 @@ export default function GroupForm({
             <div className="mt-10 flex gap-3">
                     <button
                         type="submit"
-                        className="flex-1 cursor-pointer rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                        className="flex-1 cursor-pointer rounded-2xl bg-cyan-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-cyan-700"
                     >
                         {group ? "수정하기" : "생성하기"}
                     </button>

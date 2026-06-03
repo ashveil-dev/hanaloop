@@ -77,7 +77,7 @@ export default function FactorForm({ form, factor, onSubmit, onCancel }: Props) 
                     <span className="text-sm font-medium text-slate-700">유형</span>
                     <input
                         {...register("category")}
-                        placeholder="예: ELECTRICITY"
+                        placeholder="예: 한국전력"
                         className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-amber-300"
                     />
                     <span className="text-sm font-bold text-red-300">{errors.category?.message}</span>

@@ -101,6 +101,10 @@ PostgreSQL
 
 # Database Design
 
+ERD 다이어그램: [dbdiagram.io](https://dbdiagram.io/d/Hanaloop-6a1bc4582eeb2f46cd24aa70)
+
+![Database ERD](./public/images/erd.png)
+
 ## groups
 
 조직 계층 구조를 저장하는 테이블입니다.

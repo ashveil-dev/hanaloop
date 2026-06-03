@@ -1,148 +1,131 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { getEmissionFactors } from "@/lib/client/api/getEmissionFactors";
-import { createEmissionFactor } from "@/lib/client/api/createEmissionFactor";
-import { updateEmissionFactor } from "@/lib/client/api/updateEmissionFactor";
-import { deleteEmissionFactor } from "@/lib/client/api/deleteEmissionFactor";
-import type { EmissionFactor } from "@/lib/client/types/emissionFactors";
+import GroupHeader from "@/components/groups/GroupHeader";
+import GroupModal from "@/components/groups/GroupModal";
+import GroupTable from "@/components/groups/GroupTable";
+import GroupCard from "@/components/groups/GroupCard";
+import { createGroup } from "@/lib/client/api/createGroup";
+import { getGroups } from "@/lib/client/api/getGroups";
+import { updateGroup } from "@/lib/client/api/updateGroup";
+import { deleteGroup } from "@/lib/client/api/deleteGroup";
+import { useQuery } from "@tanstack/react-query";
+import type { Group } from "@/lib/client/types/groups";
 import { ApiError } from "@/lib/client/errors/ApiError";
-import FactorModal from "@/components/emission-factors/FactorModal";
-import FactorTable from "@/components/emission-factors/FactorTable";
-import { FactorFormSchema, type FactorFormType } from "@/components/emission-factors/FactorForm";
 
-export default function FactorMain() {
-    const [modalOpen, setModalOpen] = useState(false);
-    const [editingFactor, setEditingFactor] = useState<EmissionFactor | undefined>();
 
-    const factorsQuery = useQuery({
-        queryKey: ["emission-factors"],
-        queryFn: getEmissionFactors,
-    });
+export default function GroupMain() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalSession, setModalSession] = useState(0);
+  const [editingGroup, setEditingGroup] = useState<Group | undefined>(undefined);
+  const groupsQuery = useQuery({
+    queryKey: ["Groups"],
+    queryFn: getGroups
+  })
 
-    const form = useForm<FactorFormType>({
-        resolver: zodResolver(FactorFormSchema),
-        defaultValues: {
-            name: "",
-            category: "",
-            factor: 0.456,
-            inputUnit: "kWh",
-            outputUnit: "kgCO2e",
-            description: "",
-        },
-    });
+  const closeModal = () => {
+    setModalOpen(false);
+    setEditingGroup(undefined);
+  };
 
-    const factors = factorsQuery.data ?? [];
+  const openCreateModal = () => {
+    setEditingGroup(undefined);
+    setModalSession((s) => s + 1);
+    setModalOpen(true);
+  };
 
-    const closeModal = () => {
-        setModalOpen(false);
-        setEditingFactor(undefined);
-    };
+  const onCreateGroup = async (name: string, parentId: string | null | undefined) => {
+    try {
+      await createGroup({ name, parentId })
+      toast.success("그룹을 생성하였습니다")
+      groupsQuery.refetch();
+      closeModal();
+    } catch (e) {
+      if (e instanceof ApiError) {
+        toast.error(e.message)
+      } else {
+        toast.error(JSON.stringify(e))
+      }
 
-    const openCreateModal = () => {
-        setEditingFactor(undefined);
-        form.reset({
-            name: "",
-            category: "ELECTRICITY",
-            factor: 0.456,
-            inputUnit: "kWh",
-            outputUnit: "kgCO2e",
-            description: "전력 사용 배출 계수",
-        });
-        setModalOpen(true);
-    };
+      toast.error("그룹 생성을 실패하였습니다")
+    }
+  };
 
-    const onSubmit: SubmitHandler<FactorFormType> = async (data) => {
-        try {
-            const { id, name, category, factor, inputUnit, outputUnit, description } = data;
+  const onUpdateGroup = async (id: number, name: string, parentId: string | null | undefined) => {
+    try {
+      let _parentId = undefined;
+      if (parentId === null || parentId === undefined) _parentId = undefined;
+      else _parentId = parseInt(parentId)
 
-            if (editingFactor && id) {
-                await updateEmissionFactor({
-                    id,
-                    name,
-                    category,
-                    factor,
-                    inputUnit,
-                    outputUnit,
-                    description: description || undefined,
-                });
-                toast.success("배출 계수가 수정되었습니다");
-            } else {
-                await createEmissionFactor({
-                    name,
-                    category,
-                    factor,
-                    inputUnit,
-                    outputUnit,
-                    description: description || undefined,
-                });
-                toast.success("배출 계수가 생성되었습니다");
-            }
+      await updateGroup({ id, name, parentId: _parentId })
+      toast.success("그룹을 수정하였습니다")
+      groupsQuery.refetch();
+      closeModal();
+    } catch (e) {
+      if (e instanceof ApiError) {
+        toast.error(e.message)
+      } else {
+        toast.error(JSON.stringify(e))
+      }
 
-            factorsQuery.refetch();
-            closeModal();
-        } catch (e) {
-            if (e instanceof ApiError) toast.error(e.message);
-            else toast.error(JSON.stringify(e));
-            toast.error(editingFactor ? "수정에 실패했습니다" : "생성에 실패했습니다");
-        }
-    };
+      toast.error("그룹 수정을 실패하였습니다")
+    }
+  };
 
-    const onEdit = (factor: EmissionFactor) => {
-        setEditingFactor(factor);
-        setModalOpen(true);
-    };
+  const onDeleteGroup = async (id: number) => {
+    try {
+      await deleteGroup({ id })
+      toast.success("그룹을 삭제하였습니다")
+      groupsQuery.refetch();
+    } catch (e) {
+      if (e instanceof ApiError) {
+        toast.error(e.message)
+      } else {
+        toast.error(JSON.stringify(e))
+      }
 
-    const onDelete = async (id: number) => {
-        try {
-            await deleteEmissionFactor(id);
-            toast.success("배출 계수가 삭제되었습니다");
-            factorsQuery.refetch();
-        } catch (e) {
-            if (e instanceof ApiError) toast.error(e.message);
-            else toast.error("삭제에 실패했습니다");
-        }
-    };
+      toast.error("그룹 삭제를 실패하였습니다")
+    }
+  };
 
-    return (
-        <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
-            <header className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                <div>
-                    <p className="text-sm font-medium text-amber-600">Emission Factors</p>
-                    <h3 className="mt-2 text-3xl font-bold text-slate-900">배출 계수 관리</h3>
-                    <p className="mt-2 text-sm text-slate-500">
-                        활동량에 곱해 CO2e 환산 배출량을 계산합니다. (예: 전기 0.456 kgCO2e/kWh)
-                    </p>
-                </div>
-                <div className="flex gap-2">
-                    <button
-                        onClick={openCreateModal}
-                        className="cursor-pointer rounded-xl border border-amber-600 bg-white px-5 py-3 text-sm font-semibold text-amber-600 hover:bg-amber-50"
-                    >
-                        배출 계수 생성
-                    </button>
-                    <button
-                        onClick={() => factorsQuery.refetch()}
-                        className="cursor-pointer rounded-xl bg-amber-600 px-5 py-3 text-sm font-semibold text-white hover:bg-amber-700"
-                    >
-                        새로고침
-                    </button>
-                </div>
-            </header>
+  const onEdit = (group: Group) => {
+    setEditingGroup(group);
+    setModalSession((s) => s + 1);
+    setModalOpen(true);
+  }
 
-            <FactorModal
-                isOpen={modalOpen}
-                factor={editingFactor}
-                form={form}
-                onSubmit={onSubmit}
-                onClose={closeModal}
-            />
+  const onRefresh = () => {
+    groupsQuery.refetch();
+  }
 
-            <FactorTable factors={factors} onEdit={onEdit} onDelete={onDelete} />
+  return (
+    <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
+      <GroupHeader onRefresh={onRefresh} onCreate={openCreateModal} />
+
+      <GroupModal
+        isOpen={modalOpen}
+        group={editingGroup}
+        groups={groupsQuery.data}
+        pickerKey={modalSession}
+        onClose={closeModal}
+        onCreate={onCreateGroup}
+        onUpdate={onUpdateGroup}
+      />
+
+      <div className="mt-8 space-y-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <GroupCard title="전체 그룹" value={groupsQuery.data?.length.toString() ?? "0"} desc="등록된 조직 단위" />
+          <GroupCard title="최상위 그룹" value={groupsQuery.data?.filter((g) => g.parentId === null).length.toString() ?? "0"} desc="Parent가 없는 그룹" />
+          <GroupCard title="하위 그룹" value={groupsQuery.data?.filter((g) => g.parentId !== null).length.toString() ?? "0"} desc="계층에 포함된 그룹" dark />
         </div>
-    );
+
+        <GroupTable
+          groups={groupsQuery.data}
+          onEdit={onEdit}
+          onDelete={onDeleteGroup}
+        />
+      </div>
+    </div>
+  );
 }

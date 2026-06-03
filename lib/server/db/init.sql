@@ -135,172 +135,127 @@ INSERT INTO emission_factors (id, name, category, factor, input_unit, output_uni
 VALUES (10, '폐기물 매립', 'WASTE', 0.586000, 'kg', 'kgCO2e', '일반 폐기물 매립 배출 계수');
 
 -- =========================
--- EXTRA EMISSION RECORDS
+-- EMISSION RECORDS (diverse factors)
 -- =========================
 
-INSERT INTO emission_records
-(group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
-VALUES
-
--- =========================
 -- HanaLoop Holdings
--- =========================
-(1, 1, 'SCOPE1', 1200.50, 'kWh', '2026-05-01'),
-(1, 1, 'SCOPE2', 980.30, 'kWh', '2026-05-01'),
-(1, 1, 'SCOPE3', 2500.80, 'kWh', '2026-05-01'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (1, 2, 'SCOPE1', 320.00, 'Nm3', '2026-01-15');
 
--- =========================
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (1, 9, 'SCOPE3', 1250.00, 't·km', '2026-01-15');
+
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (1, 10, 'SCOPE3', 480.00, 'kg', '2026-02-10');
+
 -- Korea Branch
--- =========================
-(2, 1, 'SCOPE1', 800.20, 'kWh', '2026-05-01'),
-(2, 1, 'SCOPE2', 620.10, 'kWh', '2026-05-01'),
-(2, 1, 'SCOPE3', 1400.00, 'kWh', '2026-05-01'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (2, 2, 'SCOPE1', 540.80, 'Nm3', '2026-02-20');
 
--- =========================
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (2, 3, 'SCOPE1', 210.00, 'L', '2026-03-05');
+
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (2, 8, 'SCOPE2', 1500.00, 'kg', '2026-03-05');
+
 -- Japan Branch
--- =========================
-(3, 1, 'SCOPE1', 650.00, 'kWh', '2026-05-01'),
-(3, 1, 'SCOPE2', 540.40, 'kWh', '2026-05-01'),
-(3, 1, 'SCOPE3', 1200.70, 'kWh', '2026-05-01'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (3, 4, 'SCOPE1', 380.50, 'L', '2026-04-12');
 
--- =========================
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (3, 9, 'SCOPE3', 890.00, 't·km', '2026-04-12');
+
 -- Seoul Factory
--- =========================
-(4, 1, 'SCOPE1', 420.00, 'kWh', '2026-05-01'),
-(4, 1, 'SCOPE2', 310.20, 'kWh', '2026-05-01'),
-(4, 1, 'SCOPE3', 900.50, 'kWh', '2026-05-01'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (4, 2, 'SCOPE1', 920.40, 'Nm3', '2026-05-10');
 
--- =========================
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (4, 3, 'SCOPE1', 650.00, 'L', '2026-05-10');
+
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (4, 8, 'SCOPE2', 2200.00, 'kg', '2026-06-01');
+
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (4, 10, 'SCOPE3', 320.50, 'kg', '2026-06-01');
+
 -- Busan Factory
--- =========================
-(5, 1, 'SCOPE1', 380.30, 'kWh', '2026-05-01'),
-(5, 1, 'SCOPE2', 290.10, 'kWh', '2026-05-01'),
-(5, 1, 'SCOPE3', 850.00, 'kWh', '2026-05-01'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (5, 2, 'SCOPE1', 710.20, 'Nm3', '2026-05-15');
 
--- =========================
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (5, 5, 'SCOPE1', 145.00, 'kg', '2026-06-03');
+
 -- Tokyo Factory
--- =========================
-(6, 1, 'SCOPE1', 410.00, 'kWh', '2026-05-01'),
-(6, 1, 'SCOPE2', 330.00, 'kWh', '2026-05-01'),
-(6, 1, 'SCOPE3', 910.20, 'kWh', '2026-05-01'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (6, 6, 'SCOPE1', 290.00, 'L', '2026-04-20');
 
--- =========================
--- Seoul Factory Line A
--- =========================
-(7, 1, 'SCOPE1', 210.50, 'kWh', '2026-05-01'),
-(7, 1, 'SCOPE2', 150.00, 'kWh', '2026-05-01'),
-(7, 1, 'SCOPE3', 420.30, 'kWh', '2026-05-01'),
-
--- =========================
--- Seoul Factory Line B
--- =========================
-(8, 1, 'SCOPE1', 190.20, 'kWh', '2026-05-01'),
-(8, 1, 'SCOPE2', 140.50, 'kWh', '2026-05-01'),
-(8, 1, 'SCOPE3', 390.80, 'kWh', '2026-05-01'),
-
--- =========================
--- Busan Packaging Center
--- =========================
-(9, 1, 'SCOPE1', 120.00, 'kWh', '2026-05-01'),
-(9, 1, 'SCOPE2', 90.20, 'kWh', '2026-05-01'),
-(9, 1, 'SCOPE3', 210.50, 'kWh', '2026-05-01'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (6, 7, 'SCOPE1', 88.50, 'kg', '2026-05-20');
 
 -- Incheon Logistics Center
-(10, 1, 'SCOPE1', 180.20, 'kWh', '2026-05-02'),
-(10, 1, 'SCOPE2', 130.10, 'kWh', '2026-05-02'),
-(10, 1, 'SCOPE3', 420.50, 'kWh', '2026-05-02'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (10, 3, 'SCOPE1', 1250.80, 'L', '2026-03-18');
+
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (10, 4, 'SCOPE1', 980.20, 'L', '2026-04-08');
+
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (10, 9, 'SCOPE3', 3420.00, 't·km', '2026-05-25');
+
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (10, 9, 'SCOPE3', 2980.50, 't·km', '2026-06-02');
 
 -- Daegu Factory
-(11, 1, 'SCOPE1', 340.00, 'kWh', '2026-05-02'),
-(11, 1, 'SCOPE2', 240.40, 'kWh', '2026-05-02'),
-(11, 1, 'SCOPE3', 780.10, 'kWh', '2026-05-02'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (11, 5, 'SCOPE1', 220.00, 'kg', '2026-02-28');
 
--- Daejeon Research Center
-(12, 1, 'SCOPE1', 120.10, 'kWh', '2026-05-02'),
-(12, 1, 'SCOPE2', 98.20, 'kWh', '2026-05-02'),
-(12, 1, 'SCOPE3', 210.00, 'kWh', '2026-05-02'),
-
--- Osaka Factory
-(13, 1, 'SCOPE1', 500.50, 'kWh', '2026-05-02'),
-(13, 1, 'SCOPE2', 370.80, 'kWh', '2026-05-02'),
-(13, 1, 'SCOPE3', 990.30, 'kWh', '2026-05-02'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (11, 2, 'SCOPE1', 430.60, 'Nm3', '2026-06-01');
 
 -- Nagoya Logistics Center
-(14, 1, 'SCOPE1', 240.10, 'kWh', '2026-05-02'),
-(14, 1, 'SCOPE2', 180.40, 'kWh', '2026-05-02'),
-(14, 1, 'SCOPE3', 460.00, 'kWh', '2026-05-02'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (14, 3, 'SCOPE1', 760.00, 'L', '2026-05-08');
 
--- Seoul QA Center
-(15, 1, 'SCOPE1', 88.50, 'kWh', '2026-05-02'),
-(15, 1, 'SCOPE2', 65.10, 'kWh', '2026-05-02'),
-(15, 1, 'SCOPE3', 140.20, 'kWh', '2026-05-02'),
-
--- Seoul AI Control Room
-(16, 1, 'SCOPE1', 72.40, 'kWh', '2026-05-02'),
-(16, 1, 'SCOPE2', 55.90, 'kWh', '2026-05-02'),
-(16, 1, 'SCOPE3', 130.50, 'kWh', '2026-05-02'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (14, 9, 'SCOPE3', 1850.00, 't·km', '2026-06-04');
 
 -- Busan Cold Storage
-(17, 1, 'SCOPE1', 150.00, 'kWh', '2026-05-02'),
-(17, 1, 'SCOPE2', 110.50, 'kWh', '2026-05-02'),
-(17, 1, 'SCOPE3', 320.40, 'kWh', '2026-05-02'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (17, 7, 'SCOPE1', 195.30, 'kg', '2026-01-22');
+
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (17, 5, 'SCOPE1', 110.00, 'kg', '2026-04-15');
 
 -- Busan Export Hub
-(18, 1, 'SCOPE1', 210.20, 'kWh', '2026-05-02'),
-(18, 1, 'SCOPE2', 170.60, 'kWh', '2026-05-02'),
-(18, 1, 'SCOPE3', 430.90, 'kWh', '2026-05-02'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (18, 3, 'SCOPE1', 540.00, 'L', '2026-03-30');
 
--- Tokyo Packaging Line
-(19, 1, 'SCOPE1', 190.00, 'kWh', '2026-05-02'),
-(19, 1, 'SCOPE2', 140.00, 'kWh', '2026-05-02'),
-(19, 1, 'SCOPE3', 350.70, 'kWh', '2026-05-02'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (18, 9, 'SCOPE3', 2100.00, 't·km', '2026-05-18');
 
--- Tokyo Research Lab
-(20, 1, 'SCOPE1', 95.50, 'kWh', '2026-05-02'),
-(20, 1, 'SCOPE2', 70.10, 'kWh', '2026-05-02'),
-(20, 1, 'SCOPE3', 180.00, 'kWh', '2026-05-02'),
-
--- Seoul Factory Line A - Unit 1
-(21, 1, 'SCOPE1', 60.20, 'kWh', '2026-05-02'),
-(21, 1, 'SCOPE2', 42.50, 'kWh', '2026-05-02'),
-(21, 1, 'SCOPE3', 95.10, 'kWh', '2026-05-02'),
-
--- Seoul Factory Line A - Unit 2
-(22, 1, 'SCOPE1', 58.90, 'kWh', '2026-05-02'),
-(22, 1, 'SCOPE2', 40.20, 'kWh', '2026-05-02'),
-(22, 1, 'SCOPE3', 90.40, 'kWh', '2026-05-02'),
-
--- Seoul Factory Line B - Unit 1
-(23, 1, 'SCOPE1', 54.00, 'kWh', '2026-05-02'),
-(23, 1, 'SCOPE2', 38.20, 'kWh', '2026-05-02'),
-(23, 1, 'SCOPE3', 82.60, 'kWh', '2026-05-02'),
-
--- Seoul Factory Line B - Unit 2
-(24, 1, 'SCOPE1', 50.50, 'kWh', '2026-05-02'),
-(24, 1, 'SCOPE2', 35.40, 'kWh', '2026-05-02'),
-(24, 1, 'SCOPE3', 79.20, 'kWh', '2026-05-02'),
-
--- Osaka Smart Grid Center
-(25, 1, 'SCOPE1', 130.20, 'kWh', '2026-05-02'),
-(25, 1, 'SCOPE2', 99.90, 'kWh', '2026-05-02'),
-(25, 1, 'SCOPE3', 260.00, 'kWh', '2026-05-02'),
-
--- Nagoya Carbon Monitoring Team
-(26, 1, 'SCOPE1', 44.20, 'kWh', '2026-05-02'),
-(26, 1, 'SCOPE2', 30.10, 'kWh', '2026-05-02'),
-(26, 1, 'SCOPE3', 70.50, 'kWh', '2026-05-02'),
-
--- Daejeon Renewable Energy Team
-(27, 1, 'SCOPE1', 38.10, 'kWh', '2026-05-02'),
-(27, 1, 'SCOPE2', 25.00, 'kWh', '2026-05-02'),
-(27, 1, 'SCOPE3', 60.30, 'kWh', '2026-05-02'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (18, 10, 'SCOPE3', 890.00, 'kg', '2026-06-02');
 
 -- Incheon Shipping Dock
-(28, 1, 'SCOPE1', 115.60, 'kWh', '2026-05-02'),
-(28, 1, 'SCOPE2', 80.40, 'kWh', '2026-05-02'),
-(28, 1, 'SCOPE3', 210.70, 'kWh', '2026-05-02'),
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (28, 3, 'SCOPE1', 1680.40, 'L', '2026-02-14');
 
--- Busan Export Automation Room
-(29, 1, 'SCOPE1', 66.00, 'kWh', '2026-05-02'),
-(29, 1, 'SCOPE2', 48.20, 'kWh', '2026-05-02'),
-(29, 1, 'SCOPE3', 120.90, 'kWh', '2026-05-02');
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (28, 9, 'SCOPE3', 4560.00, 't·km', '2026-04-25');
+
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (28, 9, 'SCOPE3', 5120.80, 't·km', '2026-06-03');
+
+-- Seoul Factory Line A
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (7, 2, 'SCOPE1', 180.50, 'Nm3', '2026-05-28');
+
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (7, 6, 'SCOPE1', 95.00, 'L', '2026-06-01');
+
+-- Daejeon Research Center
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (12, 1, 'SCOPE2', 450.00, 'kWh', '2026-01-10');
+
+INSERT INTO emission_records (group_id, emission_factor_id, scope_type, amount, unit, recorded_at)
+VALUES (12, 8, 'SCOPE2', 680.00, 'kg', '2026-03-22');

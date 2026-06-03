@@ -1,7 +1,11 @@
+"use client";
+
 import clsx from "clsx";
 import type { EmissionRecord } from "@/lib/client/types/emissionRecords";
 import type { Group } from "@/lib/client/types/groups";
 import { formatEmission } from "@/lib/shared/calculateEmission";
+import Pagination from "@/components/layout/Pagination";
+import { usePagination } from "@/hooks/usePagination";
 
 const scopeStyle = {
     SCOPE1: "bg-red-100 text-red-700 border-red-200",
@@ -22,6 +26,9 @@ export default function RecordTable({
     onEdit,
     onDelete,
 }: RecordTableProps) {
+    const { page, setPage, paginatedItems, totalPages, totalItems, pageSize } =
+        usePagination(records);
+
     return (
         <div
             id="record-list"
@@ -49,7 +56,7 @@ export default function RecordTable({
                         </thead>
 
                         <tbody className="divide-y divide-slate-100">
-                            {records.map((record) => (
+                            {paginatedItems.map((record) => (
                                 <tr key={record.id} className="bg-white text-center">
                                     <td className="px-5 py-4 text-slate-500">{record.id}</td>
                                     <td className="max-w-50 px-5 py-4 font-semibold">
@@ -115,6 +122,15 @@ export default function RecordTable({
                     </table>
                 </div>
             </div>
+
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                pageSize={pageSize}
+                accent="teal"
+                onPageChange={setPage}
+            />
         </div>
     );
 }

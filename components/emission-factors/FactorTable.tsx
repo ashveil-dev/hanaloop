@@ -1,4 +1,8 @@
+"use client";
+
 import type { EmissionFactor } from "@/lib/client/types/emissionFactors";
+import Pagination from "@/components/layout/Pagination";
+import { usePagination } from "@/hooks/usePagination";
 
 type Props = {
     factors: EmissionFactor[];
@@ -7,6 +11,9 @@ type Props = {
 };
 
 export default function FactorTable({ factors, onEdit, onDelete }: Props) {
+    const { page, setPage, paginatedItems, totalPages, totalItems, pageSize } =
+        usePagination(factors);
+
     return (
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <h4 className="text-2xl font-bold text-slate-900">배출 계수 목록</h4>
@@ -21,7 +28,7 @@ export default function FactorTable({ factors, onEdit, onDelete }: Props) {
                             <tr>
                                 <th className="px-5 py-4 text-center font-medium">ID</th>
                                 <th className="px-5 py-4 text-center font-medium">이름</th>
-                                <th className="px-5 py-4 text-center font-medium">유형</th>
+                                <th className="px-5 py-4 text-center font-medium">분류</th>
                                 <th className="px-5 py-4 text-center font-medium">배출 계수</th>
                                 <th className="px-5 py-4 text-center font-medium">단위</th>
                                 <th className="px-5 py-4 text-center font-medium">설명</th>
@@ -29,7 +36,7 @@ export default function FactorTable({ factors, onEdit, onDelete }: Props) {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {factors.map((factor) => (
+                            {paginatedItems.map((factor) => (
                                 <tr key={factor.id} className="text-center">
                                     <td className="px-5 py-4 text-slate-500">{factor.id}</td>
                                     <td className="px-5 py-4 font-semibold text-slate-900">
@@ -76,6 +83,15 @@ export default function FactorTable({ factors, onEdit, onDelete }: Props) {
                     </table>
                 </div>
             </div>
+
+            <Pagination
+                page={page}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                pageSize={pageSize}
+                accent="amber"
+                onPageChange={setPage}
+            />
         </div>
     );
 }

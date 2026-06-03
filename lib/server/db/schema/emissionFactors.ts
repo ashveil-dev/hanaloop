@@ -1,5 +1,4 @@
 import {
-    bigint,
     bigserial,
     index,
     numeric,

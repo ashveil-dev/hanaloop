@@ -56,7 +56,7 @@ export async function GET() {
     const result = await getEmissionRecords();
 
     return NextResponse.json(result)
-  } catch (e) {
+  } catch {
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }

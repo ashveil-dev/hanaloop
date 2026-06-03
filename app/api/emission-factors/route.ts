@@ -1,8 +1,6 @@
 import { z } from "@/lib/server/openapi";
 import { ValidationError } from "@/lib/server/errors/ValidationError";
 import { NextResponse } from "next/server";
-import { DrizzleQueryError } from "drizzle-orm";
-import { DatabaseError } from "pg";
 import { getEmissionFactors } from "@/lib/server/services/emission-factor/getEmissionFactors";
 import { createEmissionFactor } from "@/lib/server/services/emission-factor/createEmissionFactor";
 import { createEmissionFactorSchema } from "@/lib/server/schema/EmissionFactorsSchema";

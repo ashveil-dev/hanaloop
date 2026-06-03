@@ -12,7 +12,7 @@ export async function GET() {
     const groups = await getGroups();
 
     return NextResponse.json(groups)
-  } catch (e) {
+  } catch {
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }

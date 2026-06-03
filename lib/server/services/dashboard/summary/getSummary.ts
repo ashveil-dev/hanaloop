@@ -19,12 +19,7 @@ function getRiskLevel(amount: number): RiskLevel {
     return "LOW"
 }
 
-type getSummaryParameterType = {
-    id: number | null,
-}
-export async function getSummary({
-    id,
-}: getSummaryParameterType) {
+export async function getSummary() {
     const result = await db
         .select({ id: GroupsTable.id })
         .from(GroupsTable)

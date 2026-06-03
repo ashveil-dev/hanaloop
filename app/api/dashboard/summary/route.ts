@@ -4,7 +4,7 @@ import { ApiError } from "@/lib/server/errors/ApiError";
 
 export async function GET() {
     try {
-        const result = await getSummary({id : null});
+        const result = await getSummary();
 
         return NextResponse.json(result)
     } catch (e) {

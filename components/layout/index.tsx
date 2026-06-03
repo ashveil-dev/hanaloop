@@ -1,6 +1,5 @@
 import AppHeader from "@/components/layout/AppHeader";
 import AppSidebar from "@/components/layout/AppSidebar";
-import DashboardMain from "@/components/dashboard/DashboardMain";
 
 export default function Layout({
   children

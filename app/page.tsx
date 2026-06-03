@@ -1,15 +1,16 @@
 "use client"
 import { useQuery } from "@tanstack/react-query";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import DashboardLoading from "@/components/dashboard/DashboardLoading";
 import StatCard from "@/components/dashboard/StatCard";
 import MonthlyEmissionChart from "@/components/dashboard/MonthlyEmissionChart";
 import ScopeBreakdownCard from "@/components/dashboard/ScopeBreakdownCard";
 import HierarchyEmissionCard from "@/components/dashboard/HierarchyEmissionCard";
+import LoadingSpinner from "@/components/layout/LoadingSpinner";
 import { getDashboardSummary } from "@/lib/client/api/getDashboardSummary";
 import { getMonthlyEmissions } from "@/lib/client/api/getMonthlyEmissions";
 import { getGroups } from "@/lib/client/api/getGroups";
 import { getHierarchy } from "@/lib/client/api/getHierarchy";
-import { useMemo } from "react";
 
 function formatDollar(value: number) {
     return `$${value.toLocaleString()}`;
@@ -38,29 +39,31 @@ export default function DashboardMain() {
         queryFn: getMonthlyEmissions,
     })
 
-    const isLoading = useMemo(
-        () => summaryData.isLoading || groupsData.isLoading || hierarchyData.isLoading || monthlyData.isLoading,
-        [summaryData.isLoading, groupsData.isLoading, hierarchyData.isLoading, monthlyData.isLoading]
-    )
-    const isError = useMemo(
-        () => summaryData.isError || groupsData.isError || hierarchyData.isError || monthlyData.isError,
-        [summaryData.isError, groupsData.isError, hierarchyData.isError, monthlyData.isError]
-    )
+    const isLoading =
+        summaryData.isPending ||
+        groupsData.isPending ||
+        hierarchyData.isPending ||
+        monthlyData.isPending;
 
-    if(isError || !summaryData.data || !groupsData.data || !hierarchyData.data || !monthlyData.data) {
-        return (
-            <div>
-                Error
-            </div>
-        )
+    const isError =
+        summaryData.isError ||
+        groupsData.isError ||
+        hierarchyData.isError ||
+        monthlyData.isError;
+
+    if (isLoading) {
+        return <DashboardLoading />;
     }
 
-    if(isLoading) {
+    if (isError || !summaryData.data || !groupsData.data || !hierarchyData.data || !monthlyData.data) {
         return (
-            <div>
-                Loading
+            <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
+                <LoadingSpinner
+                    label="대시보드 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요."
+                    accent="emerald"
+                />
             </div>
-        )
+        );
     }
 
     return (

@@ -13,6 +13,9 @@ import { deleteGroup } from "@/lib/client/api/deleteGroup";
 import { useQuery } from "@tanstack/react-query";
 import type { Group } from "@/lib/client/types/groups";
 import { ApiError } from "@/lib/client/errors/ApiError";
+import CardSkeleton from "@/components/layout/CardSkeleton";
+import LoadingSpinner from "@/components/layout/LoadingSpinner";
+import TableSkeleton from "@/components/layout/TableSkeleton";
 
 
 export default function GroupMain() {
@@ -99,6 +102,31 @@ export default function GroupMain() {
     groupsQuery.refetch();
   }
 
+  if (groupsQuery.isPending) {
+    return (
+      <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
+        <GroupHeader onRefresh={onRefresh} onCreate={openCreateModal} />
+        <div className="mt-8 space-y-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <CardSkeleton count={3} darkLast />
+          </div>
+          <TableSkeleton title="그룹 목록" rows={6} columns={5} />
+        </div>
+      </div>
+    );
+  }
+
+  if (groupsQuery.isError) {
+    return (
+      <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
+        <LoadingSpinner
+          label="그룹 데이터를 불러오지 못했습니다. 새로고침을 시도해주세요."
+          accent="cyan"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
       <GroupHeader onRefresh={onRefresh} onCreate={openCreateModal} />
@@ -115,9 +143,9 @@ export default function GroupMain() {
 
       <div className="mt-8 space-y-6">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <GroupCard title="전체 그룹" value={groupsQuery.data?.length.toString() ?? "0"} desc="등록된 조직 단위" />
-          <GroupCard title="최상위 그룹" value={groupsQuery.data?.filter((g) => g.parentId === null).length.toString() ?? "0"} desc="Parent가 없는 그룹" />
-          <GroupCard title="하위 그룹" value={groupsQuery.data?.filter((g) => g.parentId !== null).length.toString() ?? "0"} desc="계층에 포함된 그룹" dark />
+          <GroupCard title="전체 그룹" value={groupsQuery.data.length.toString()} desc="등록된 조직 단위" />
+          <GroupCard title="최상위 그룹" value={groupsQuery.data.filter((g) => g.parentId === null).length.toString()} desc="Parent가 없는 그룹" />
+          <GroupCard title="하위 그룹" value={groupsQuery.data.filter((g) => g.parentId !== null).length.toString()} desc="계층에 포함된 그룹" dark />
         </div>
 
         <GroupTable

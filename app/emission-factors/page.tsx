@@ -14,6 +14,8 @@ import { ApiError } from "@/lib/client/errors/ApiError";
 import FactorModal from "@/components/emission-factors/FactorModal";
 import FactorTable from "@/components/emission-factors/FactorTable";
 import { FactorFormSchema, type FactorFormType } from "@/components/emission-factors/FactorForm";
+import LoadingSpinner from "@/components/layout/LoadingSpinner";
+import TableSkeleton from "@/components/layout/TableSkeleton";
 
 export default function FactorMain() {
     const [modalOpen, setModalOpen] = useState(false);
@@ -142,7 +144,16 @@ export default function FactorMain() {
                 onClose={closeModal}
             />
 
-            <FactorTable factors={factors} onEdit={onEdit} onDelete={onDelete} />
+            {factorsQuery.isPending ? (
+                <TableSkeleton title="배출 계수 목록" rows={6} columns={7} />
+            ) : factorsQuery.isError ? (
+                <LoadingSpinner
+                    label="배출 계수를 불러오지 못했습니다. 새로고침을 시도해주세요."
+                    accent="amber"
+                />
+            ) : (
+                <FactorTable factors={factors} onEdit={onEdit} onDelete={onDelete} />
+            )}
         </div>
     );
 }

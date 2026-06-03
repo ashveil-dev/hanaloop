@@ -20,6 +20,9 @@ import RecordCard from "@/components/records/RecordCard";
 import RecordModal from "@/components/records/RecordModal";
 import RecordTable from "@/components/records/RecordTable";
 import { RecordFormSchema, type RecordFormType } from "@/components/records/RecordForm";
+import CardSkeleton from "@/components/layout/CardSkeleton";
+import LoadingSpinner from "@/components/layout/LoadingSpinner";
+import TableSkeleton from "@/components/layout/TableSkeleton";
 
 export default function RecordMain() {
     const [modalOpen, setModalOpen] = useState(false);
@@ -46,6 +49,10 @@ export default function RecordMain() {
     });
 
     const records = recordsQuery.data ?? [];
+    const isLoading =
+        recordsQuery.isPending || groupsQuery.isPending || factorsQuery.isPending;
+    const isError =
+        recordsQuery.isError || groupsQuery.isError || factorsQuery.isError;
     const isEdit = !!editingRecord;
 
     const totalEmission = records.reduce(
@@ -147,30 +154,46 @@ export default function RecordMain() {
         <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
             <RecordHeader onRefresh={onRefresh} onCreate={openCreateModal} />
 
-            <RecordModal
-                isOpen={modalOpen}
-                isEdit={isEdit}
-                form={form}
-                groups={groupsQuery.data}
-                emissionFactors={factorsQuery.data}
-                pickerKey={modalSession}
-                onSubmit={onSubmit}
-                onClose={closeModal}
-            />
+            {isLoading ? (
+                <>
+                    <section className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                        <CardSkeleton count={4} darkLast />
+                    </section>
+                    <TableSkeleton title="레코드 목록" rows={6} columns={8} />
+                </>
+            ) : isError ? (
+                <LoadingSpinner
+                    label="배출 레코드를 불러오지 못했습니다. 새로고침을 시도해주세요."
+                    accent="teal"
+                />
+            ) : (
+                <>
+                    <RecordModal
+                        isOpen={modalOpen}
+                        isEdit={isEdit}
+                        form={form}
+                        groups={groupsQuery.data}
+                        emissionFactors={factorsQuery.data}
+                        pickerKey={modalSession}
+                        onSubmit={onSubmit}
+                        onClose={closeModal}
+                    />
 
-            <section className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <RecordCard title="전체 레코드" value={records.length.toString()} desc="등록된 배출 데이터" />
-                <RecordCard title="총 환산 배출량" value={totalEmission.toFixed(2)} desc="kgCO2e (활동량×계수)" highlight />
-                <RecordCard title="Scope1 / Scope2" value={`${scope1Count} / ${scope2Count}`} desc="직접 / 전력 사용" />
-                <RecordCard title="Scope3" value={scope3Count.toString()} desc="기타 간접 배출" dark />
-            </section>
+                    <section className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                        <RecordCard title="전체 레코드" value={records.length.toString()} desc="등록된 배출 데이터" />
+                        <RecordCard title="총 환산 배출량" value={totalEmission.toFixed(2)} desc="kgCO2e (활동량×계수)" highlight />
+                        <RecordCard title="Scope1 / Scope2" value={`${scope1Count} / ${scope2Count}`} desc="직접 / 전력 사용" />
+                        <RecordCard title="Scope3" value={scope3Count.toString()} desc="기타 간접 배출" dark />
+                    </section>
 
-            <RecordTable
-                records={records}
-                groups={groupsQuery.data}
-                onEdit={onEdit}
-                onDelete={onDelete}
-            />
+                    <RecordTable
+                        records={records}
+                        groups={groupsQuery.data}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
+                    />
+                </>
+            )}
         </div>
     );
 }

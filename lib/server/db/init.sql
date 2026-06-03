@@ -105,10 +105,34 @@ VALUES
 -- =========================
 
 INSERT INTO emission_factors (id, name, category, factor, input_unit, output_unit, description)
-VALUES
-(1, '전기', 'ELECTRICITY', 0.456, 'kWh', 'kgCO2e', '전력 사용 배출 계수'),
-(2, '도시가스', 'GAS', 2.176, 'Nm3', 'kgCO2e', '도시가스 연소 배출 계수'),
-(3, '경유', 'FUEL', 2.610, 'L', 'kgCO2e', '경유 연료 배출 계수');
+VALUES (1, '전기', 'ELECTRICITY', 0.456000, 'kWh', 'kgCO2e', '한국 전력망 전력 사용 배출 계수');
+
+INSERT INTO emission_factors (id, name, category, factor, input_unit, output_unit, description)
+VALUES (2, '도시가스', 'GAS', 2.176000, 'Nm3', 'kgCO2e', '도시가스 연소 배출 계수');
+
+INSERT INTO emission_factors (id, name, category, factor, input_unit, output_unit, description)
+VALUES (3, '경유', 'FUEL', 2.610000, 'L', 'kgCO2e', '경유 연료 배출 계수');
+
+INSERT INTO emission_factors (id, name, category, factor, input_unit, output_unit, description)
+VALUES (4, '휘발유', 'FUEL', 2.097000, 'L', 'kgCO2e', '휘발유 연료 배출 계수');
+
+INSERT INTO emission_factors (id, name, category, factor, input_unit, output_unit, description)
+VALUES (5, 'LPG', 'GAS', 3.003000, 'kg', 'kgCO2e', 'LPG 연소 배출 계수');
+
+INSERT INTO emission_factors (id, name, category, factor, input_unit, output_unit, description)
+VALUES (6, '등유', 'FUEL', 2.519000, 'L', 'kgCO2e', '등유(케로신) 연소 배출 계수');
+
+INSERT INTO emission_factors (id, name, category, factor, input_unit, output_unit, description)
+VALUES (7, '프로판', 'GAS', 2.984000, 'kg', 'kgCO2e', '프로판 연소 배출 계수');
+
+INSERT INTO emission_factors (id, name, category, factor, input_unit, output_unit, description)
+VALUES (8, '스팀(외부)', 'HEAT', 0.059000, 'kg', 'kgCO2e', '외부 공급 스팀 사용 배출 계수');
+
+INSERT INTO emission_factors (id, name, category, factor, input_unit, output_unit, description)
+VALUES (9, '화물 운송', 'TRANSPORT', 0.162000, 't·km', 'kgCO2e', '도로 화물 운송(5톤급) 배출 계수');
+
+INSERT INTO emission_factors (id, name, category, factor, input_unit, output_unit, description)
+VALUES (10, '폐기물 매립', 'WASTE', 0.586000, 'kg', 'kgCO2e', '일반 폐기물 매립 배출 계수');
 
 -- =========================
 -- EXTRA EMISSION RECORDS

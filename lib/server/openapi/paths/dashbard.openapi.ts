@@ -43,3 +43,15 @@ registry.registerPath({
     },
 });
 
+// getEmissionsByFactorCategory
+registry.registerPath({
+    method: "get",
+    path: "/api/dashboard/category",
+    tags: ["Dashboard"],
+    responses: {
+        200: {
+            description: "배출 계수 분류별 환산 배출량 조회 성공",
+        },
+    },
+});
+

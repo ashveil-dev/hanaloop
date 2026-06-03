@@ -35,6 +35,16 @@ export type MonthlyEmissions = {
     months: MonthlyEmission[];
 };
 
+export type FactorCategoryEmission = {
+    category: string;
+    emission: number;
+};
+
+export type FactorCategoryEmissions = {
+    unit: string;
+    categories: FactorCategoryEmission[];
+};
+
 export type Hierarchy = {
     id: number,
     name: string,

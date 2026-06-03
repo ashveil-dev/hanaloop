@@ -2,8 +2,9 @@ import { getHierarchy } from "@/lib/server/services/dashboard/hierarchy/getHiera
 import { db } from "@/lib/server/db";
 import { GroupsTable } from "@/lib/server/db/schema/groups";
 import { isNull } from "drizzle-orm";
+import { CARBON_TAX_RATE, calculateCarbonTax } from "@/lib/shared/carbonTax";
 
-export const CARBON_TAX_RATE = 14500;
+export { CARBON_TAX_RATE };
 export const RISK_THRESHOLDS = {
     LOW: 1000,
     MEDIUM: 5000,
@@ -32,22 +33,22 @@ export async function getSummary() {
         unit: hierarchy.unit,
         scope1: {
             amount: hierarchy.totalEmission.scope1,
-            carbonTax: hierarchy.totalEmission.scope1 * CARBON_TAX_RATE,
+            carbonTax: calculateCarbonTax(hierarchy.totalEmission.scope1),
             riskLevel: getRiskLevel(hierarchy.totalEmission.scope1)
         },
         scope2: {
             amount: hierarchy.totalEmission.scope2,
-            carbonTax: hierarchy.totalEmission.scope2 * CARBON_TAX_RATE,
+            carbonTax: calculateCarbonTax(hierarchy.totalEmission.scope2),
             riskLevel: getRiskLevel(hierarchy.totalEmission.scope2)
         },
         scope3: {
             amount: hierarchy.totalEmission.scope3,
-            carbonTax: hierarchy.totalEmission.scope3 * CARBON_TAX_RATE,
+            carbonTax: calculateCarbonTax(hierarchy.totalEmission.scope3),
             riskLevel: getRiskLevel(hierarchy.totalEmission.scope3)
         },
         total: {
             amount: hierarchy.totalEmission.total,
-            carbonTax: hierarchy.totalEmission.total * CARBON_TAX_RATE,
+            carbonTax: calculateCarbonTax(hierarchy.totalEmission.total),
             riskLevel: getRiskLevel(hierarchy.totalEmission.total)
         },
     }

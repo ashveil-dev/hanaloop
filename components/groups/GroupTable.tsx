@@ -3,9 +3,17 @@
 import { useMemo, useState } from "react";
 import type { Group } from "@/lib/client/types/groups";
 import Pagination from "@/components/layout/Pagination";
-import TableSearchBar from "@/components/layout/TableSearchBar";
+import TableDataToolbar from "@/components/layout/TableDataToolbar";
+import type { FilterFieldDef } from "@/components/layout/notion/NotionFilterPanel";
+import type { SortFieldDef } from "@/components/layout/notion/NotionSortPanel";
 import { usePagination } from "@/hooks/usePagination";
 import { matchesSearch } from "@/lib/shared/matchesSearch";
+import {
+    compareDates,
+    compareNumbers,
+    compareStrings,
+    type SortRule,
+} from "@/lib/shared/tableSort";
 
 type Props = {
     groups: Group[] | undefined;
@@ -13,18 +21,47 @@ type Props = {
     onDelete: (id: number) => void;
 };
 
+const FILTER_FIELDS: FilterFieldDef[] = [
+    {
+        key: "parentType",
+        label: "그룹 유형",
+        options: [
+            { value: "all", label: "전체" },
+            { value: "root", label: "최상위 그룹" },
+            { value: "child", label: "하위 그룹" },
+        ],
+    },
+];
+
+const SORT_FIELDS: SortFieldDef[] = [
+    { key: "id", label: "ID" },
+    { key: "name", label: "그룹명" },
+    { key: "createdAt", label: "생성 날짜" },
+];
+
+const DEFAULT_SORT: SortRule = { field: "id", direction: "desc" };
+const DEFAULT_FILTERS = { parentType: "all" };
+
 export default function GroupTable({ groups, onEdit, onDelete }: Props) {
     const [search, setSearch] = useState("");
+    const [filters, setFilters] = useState(DEFAULT_FILTERS);
+    const [sort, setSort] = useState<SortRule>(DEFAULT_SORT);
 
     const getParentName = (parentId: number | null) => {
         if (parentId === null) return "최상위 그룹";
         return groups?.find((group) => group.id === parentId)?.name ?? "알 수 없음";
     };
 
-    const filteredGroups = useMemo(() => {
-        const list = groups ?? [];
+    const processedGroups = useMemo(() => {
+        let list = groups ?? [];
 
-        return list.filter((group) => {
+        if (filters.parentType === "root") {
+            list = list.filter((group) => group.parentId === null);
+        } else if (filters.parentType === "child") {
+            list = list.filter((group) => group.parentId !== null);
+        }
+
+        list = list.filter((group) => {
             const parentName =
                 group.parentId === null
                     ? "최상위 그룹"
@@ -32,15 +69,48 @@ export default function GroupTable({ groups, onEdit, onDelete }: Props) {
 
             return matchesSearch(search, group.id, group.name, parentName);
         });
-    }, [groups, search]);
+
+        const direction = sort.direction === "asc" ? 1 : -1;
+
+        return [...list].sort((a, b) => {
+            switch (sort.field) {
+                case "name":
+                    return compareStrings(a.name, b.name) * direction;
+                case "createdAt":
+                    return compareDates(a.createdAt, b.createdAt) * direction;
+                default:
+                    return compareNumbers(a.id, b.id) * direction;
+            }
+        });
+    }, [groups, filters, sort, search]);
 
     const totalCount = groups?.length ?? 0;
 
     const { page, setPage, resetPage, paginatedItems, totalPages, totalItems, pageSize } =
-        usePagination(filteredGroups);
+        usePagination(processedGroups);
 
     const handleSearchChange = (value: string) => {
         setSearch(value);
+        resetPage();
+    };
+
+    const handleFilterChange = (key: string, value: string) => {
+        setFilters((prev) => ({ ...prev, [key]: value }));
+        resetPage();
+    };
+
+    const handleFilterClear = () => {
+        setFilters(DEFAULT_FILTERS);
+        resetPage();
+    };
+
+    const handleSortChange = (nextSort: SortRule) => {
+        setSort(nextSort);
+        resetPage();
+    };
+
+    const handleSortReset = () => {
+        setSort(DEFAULT_SORT);
         resetPage();
     };
 
@@ -49,17 +119,24 @@ export default function GroupTable({ groups, onEdit, onDelete }: Props) {
             <div className="mb-4">
                 <h4 className="text-xl font-bold text-slate-900">그룹 목록</h4>
                 <p className="mt-1 text-sm text-slate-500">
-                    생성된 그룹을 검색하고 수정하거나 삭제할 수 있습니다.
+                    생성된 그룹을 검색·필터·정렬하고 수정하거나 삭제할 수 있습니다.
                 </p>
             </div>
 
-            <TableSearchBar
-                value={search}
-                onChange={handleSearchChange}
-                placeholder="그룹명, ID, 상위 그룹 검색"
-                accent="cyan"
-                filteredCount={filteredGroups.length}
+            <TableDataToolbar
+                filterFields={FILTER_FIELDS}
+                filterValues={filters}
+                onFilterChange={handleFilterChange}
+                onFilterClear={handleFilterClear}
+                sortFields={SORT_FIELDS}
+                sort={sort}
+                onSortChange={handleSortChange}
+                onSortReset={handleSortReset}
+                filteredCount={processedGroups.length}
                 totalCount={totalCount}
+                search={search}
+                onSearchChange={handleSearchChange}
+                accent="cyan"
             />
 
             <div className="overflow-hidden rounded-2xl border border-slate-200">
@@ -118,10 +195,10 @@ export default function GroupTable({ groups, onEdit, onDelete }: Props) {
                             </tr>
                         )}
 
-                        {totalCount > 0 && filteredGroups.length === 0 && (
+                        {totalCount > 0 && processedGroups.length === 0 && (
                             <tr>
                                 <td colSpan={5} className="px-5 py-12 text-center text-slate-400">
-                                    검색 결과가 없습니다.
+                                    조건에 맞는 그룹이 없습니다.
                                 </td>
                             </tr>
                         )}

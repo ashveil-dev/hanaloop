@@ -3,10 +3,17 @@
 import { useMemo, useState } from "react";
 import type { EmissionFactor } from "@/lib/client/types/emissionFactors";
 import Pagination from "@/components/layout/Pagination";
-import TableSearchBar from "@/components/layout/TableSearchBar";
+import TableDataToolbar from "@/components/layout/TableDataToolbar";
+import type { FilterFieldDef } from "@/components/layout/notion/NotionFilterPanel";
+import type { SortFieldDef } from "@/components/layout/notion/NotionSortPanel";
 import { usePagination } from "@/hooks/usePagination";
 import { getFactorCategoryLabel } from "@/lib/shared/factorCategoryLabels";
 import { matchesSearch } from "@/lib/shared/matchesSearch";
+import {
+    compareNumbers,
+    compareStrings,
+    type SortRule,
+} from "@/lib/shared/tableSort";
 
 type Props = {
     factors: EmissionFactor[];
@@ -14,11 +21,47 @@ type Props = {
     onDelete: (id: number) => void;
 };
 
+const SORT_FIELDS: SortFieldDef[] = [
+    { key: "id", label: "ID" },
+    { key: "name", label: "이름" },
+    { key: "category", label: "분류" },
+    { key: "factor", label: "배출 계수" },
+];
+
+const DEFAULT_SORT: SortRule = { field: "id", direction: "desc" };
+const DEFAULT_FILTERS = { category: "all" };
+
 export default function FactorTable({ factors, onEdit, onDelete }: Props) {
     const [search, setSearch] = useState("");
+    const [filters, setFilters] = useState(DEFAULT_FILTERS);
+    const [sort, setSort] = useState<SortRule>(DEFAULT_SORT);
 
-    const filteredFactors = useMemo(() => {
-        return factors.filter((factor) =>
+    const filterFields = useMemo<FilterFieldDef[]>(() => {
+        const categories = [...new Set(factors.map((factor) => factor.category))].sort();
+
+        return [
+            {
+                key: "category",
+                label: "분류",
+                options: [
+                    { value: "all", label: "전체" },
+                    ...categories.map((category) => ({
+                        value: category,
+                        label: getFactorCategoryLabel(category),
+                    })),
+                ],
+            },
+        ];
+    }, [factors]);
+
+    const processedFactors = useMemo(() => {
+        let list = factors;
+
+        if (filters.category !== "all") {
+            list = list.filter((factor) => factor.category === filters.category);
+        }
+
+        list = list.filter((factor) =>
             matchesSearch(
                 search,
                 factor.id,
@@ -31,13 +74,48 @@ export default function FactorTable({ factors, onEdit, onDelete }: Props) {
                 factor.description
             )
         );
-    }, [factors, search]);
+
+        const direction = sort.direction === "asc" ? 1 : -1;
+
+        return [...list].sort((a, b) => {
+            switch (sort.field) {
+                case "name":
+                    return compareStrings(a.name, b.name) * direction;
+                case "category":
+                    return compareStrings(a.category, b.category) * direction;
+                case "factor":
+                    return compareNumbers(Number(a.factor), Number(b.factor)) * direction;
+                default:
+                    return compareNumbers(a.id, b.id) * direction;
+            }
+        });
+    }, [factors, filters, sort, search]);
 
     const { page, setPage, resetPage, paginatedItems, totalPages, totalItems, pageSize } =
-        usePagination(filteredFactors);
+        usePagination(processedFactors);
 
     const handleSearchChange = (value: string) => {
         setSearch(value);
+        resetPage();
+    };
+
+    const handleFilterChange = (key: string, value: string) => {
+        setFilters((prev) => ({ ...prev, [key]: value }));
+        resetPage();
+    };
+
+    const handleFilterClear = () => {
+        setFilters(DEFAULT_FILTERS);
+        resetPage();
+    };
+
+    const handleSortChange = (nextSort: SortRule) => {
+        setSort(nextSort);
+        resetPage();
+    };
+
+    const handleSortReset = () => {
+        setSort(DEFAULT_SORT);
         resetPage();
     };
 
@@ -49,13 +127,20 @@ export default function FactorTable({ factors, onEdit, onDelete }: Props) {
             </p>
 
             <div className="mt-4">
-                <TableSearchBar
-                    value={search}
-                    onChange={handleSearchChange}
-                    placeholder="이름, 분류, 설명, 단위 검색"
-                    accent="amber"
-                    filteredCount={filteredFactors.length}
+                <TableDataToolbar
+                    filterFields={filterFields}
+                    filterValues={filters}
+                    onFilterChange={handleFilterChange}
+                    onFilterClear={handleFilterClear}
+                    sortFields={SORT_FIELDS}
+                    sort={sort}
+                    onSortChange={handleSortChange}
+                    onSortReset={handleSortReset}
+                    filteredCount={processedFactors.length}
                     totalCount={factors.length}
+                    search={search}
+                    onSearchChange={handleSearchChange}
+                    accent="amber"
                 />
             </div>
 
@@ -121,10 +206,10 @@ export default function FactorTable({ factors, onEdit, onDelete }: Props) {
                                 </tr>
                             )}
 
-                            {factors.length > 0 && filteredFactors.length === 0 && (
+                            {factors.length > 0 && processedFactors.length === 0 && (
                                 <tr>
                                     <td colSpan={7} className="px-5 py-10 text-center text-slate-400">
-                                        검색 결과가 없습니다.
+                                        조건에 맞는 배출 계수가 없습니다.
                                     </td>
                                 </tr>
                             )}

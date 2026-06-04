@@ -1,368 +1,343 @@
 # HanaLoop Carbon Emission Dashboard
 
-탄소 배출량 및 탄소세를 조직 계층 구조 기반으로 시각화하는 대시보드 프로젝트입니다.
-
-기업의 조직 구조를 기준으로 Scope1 / Scope2 / Scope3 배출량을 집계하고, 관리자가 전체 배출 현황을 빠르게 파악할 수 있도록 설계되었습니다.
+조직 계층 구조 기반으로 Scope1 / Scope2 / Scope3 탄소 배출량을 집계·시각화하고, 배출 레코드와 배출 계수를 관리하는 ESG 대시보드입니다.
 
 ---
 
-# Preview
+## Preview
 
-* 조직 계층 관리 (Drill Down 구조)
-* 전체 배출량 분석
-* Scope별 배출량 분석
-* 탄소 배출 레코드 CRUD
-* 반응형 Dashboard UI
-* Docker 기반 실행 환경
-* Swagger(OpenAPI) 문서 지원
+### Dashboard
 
----
+KPI 카드, Scope별 차트, 월별 추이, 탄소세 예측, 조직 계층 Drill-down을 한 화면에서 확인합니다.
 
-# Features
+![Dashboard](./public/images/dashboard.png)
 
-## 1. Dashboard
+### Group Management
 
-* 전체 탄소 배출량 집계
-* Scope1 / Scope2 / Scope3 구분 시각화
-* 그룹별 탄소 배출량 분석
-* 배출량, 카드 UI 제공
-* 조직 단위 Drill 구조 제공
+조직 그룹 CRUD, 최상위/하위 필터, 정렬, 검색, 페이지네이션이 적용된 목록 테이블입니다.
 
-## 2. Group Management
-* 그룹 CRUD
-* 그룹 목록 테이블
+![Groups](./public/images/groups.png)
 
-## 3. Emission Record Management
+### Emission Records
 
-* 탄소 배출 데이터 CRUD
-* Scope 수 분류
-* 개별 레코드에 대한 목록 테이블
+배출 레코드 CRUD, Scope·그룹 필터, 환산 배출량(활동량 × 배출 계수) 조회를 지원합니다.
 
-## 4. API Documentation
+![Records](./public/images/records.png)
 
-* OpenAPI(Swagger) 문서 제공
-* Zod 기반 Validation
-* API 타입 안정성 확보
+### Emission Factors
 
-## 5. Responsive UI
+배출 계수 CRUD, 분류별 필터, 정렬, 검색 기능을 제공합니다.
 
-* Desktop / Tablet / Mobile 대응
-* 카드 기반 Dashboard UI
+![Emission Factors](./public/images/emission-factors.png)
 
 ---
 
-# System Architecture
+## Features
+
+### Dashboard (`/`)
+
+- **KPI 카드:** 총 배출량, 예상 탄소세, 관리 그룹 수, 리스크 레벨
+- **차트 (Recharts):**
+  - 월별 탄소 배출량 (Scope 스택 바)
+  - Scope별 배출 추이 (라인)
+  - Scope 비율 (파이)
+  - 배출 계수 분류별 배출량 (파이)
+  - 월별 예상 탄소세 (라인)
+  - 하위 그룹 Top N 배출량 (바)
+- **조직 계층 Drill-down:** 그룹 트리에서 직접/하위/합산 배출량 탐색
+- **탄소세 계산:** `배출량 × 14,500원` (`lib/shared/carbonTax.ts`)
+- **리스크 레벨:** 배출량 기준 LOW / MEDIUM / HIGH / CRITICAL
+
+### Group Management (`/group`)
+
+- 그룹 생성·수정·삭제 (모달 + React Hook Form)
+- 상위 그룹 선택 (`GroupListPicker`)
+- 요약 카드: 전체 / 최상위 / 하위 그룹 수
+- 테이블: 검색, 필터(그룹 유형), 정렬, 페이지네이션 (10건/페이지)
+
+### Emission Records (`/records`)
+
+- 배출 레코드 CRUD (그룹 + 배출 계수 + Scope 연결)
+- 환산 배출량 자동 계산 (`amount × factor`)
+- 요약 카드: 레코드 수, 총 환산 배출량, Scope별 건수
+- 테이블: 검색, 필터(Scope·그룹), 정렬, 페이지네이션
+
+### Emission Factors (`/emission-factors`)
+
+- 배출 계수 CRUD
+- 분류: 전기, 가스, 연료, 열/스팀, 운송, 폐기물
+- 레코드에서 참조 중인 계수는 삭제 불가 (FK RESTRICT)
+- 테이블: 검색, 필터(분류), 정렬, 페이지네이션
+
+### 공통 UI/UX
+
+- 사이드바 네비게이션 + 모바일 반응형 레이아웃
+- Notion 스타일 필터·정렬 팝오버
+- 로딩 스켈레톤, 에러 상태, Toast 알림 (Sonner)
+- OpenAPI 문서: [`/api-docs`](http://localhost:3000/api-docs)
+
+---
+
+## Tech Stack
+
+| 구분 | 기술 |
+| --- | --- |
+| Framework | Next.js 16 (App Router, standalone) |
+| UI | React 19, TypeScript, Tailwind CSS v4 |
+| Data Fetching | TanStack Query |
+| Forms | React Hook Form + Zod |
+| ORM / DB | Drizzle ORM, PostgreSQL 16 |
+| Charts | Recharts |
+| Client State | Zustand |
+| API Docs | `@asteasolutions/zod-to-openapi`, Swagger UI |
+| DevOps | Docker, Docker Compose |
+
+---
+
+## System Architecture
 
 ```txt
-Client (Next.js)
+Browser (Next.js Client)
     │
-    ├── Dashboard UI
-    ├── Group Management
-    ├── Record Management
+    ├── Dashboard / Group / Records / Emission Factors
     │
     ▼
-Next.js API Routes
+Next.js Route Handlers (/app/api)
     │
-    ├── Validation (Zod)
-    ├── Business Logic
-    ├── CRUD Services
+    ├── Zod Validation
+    ├── Service Layer (lib/server/services)
     │
     ▼
-PostgreSQL
+PostgreSQL (Drizzle ORM)
 ```
 
 ---
 
-# Tech Stack
+## Database Design
 
-## Frontend
-
-* Next.js (App Router)
-* React
-* TypeScript
-* TailwindCSS
-* TanStack Query
-* React Hook Form
-
-## Backend
-
-* Next.js Route Handler
-* PostgreSQL
-* Drizzle ORM
-* Zod
-* Swagger(OpenAPI)
-
-## DevOps
-
-* Docker
-* Docker Compose
-
----
-
-# Database Design
-
-ERD 다이어그램: [dbdiagram.io](https://dbdiagram.io/d/Hanaloop-6a1bc4582eeb2f46cd24aa70)
+ERD: [dbdiagram.io](https://dbdiagram.io/d/Hanaloop-6a1bc4582eeb2f46cd24aa70)
 
 ![Database ERD](./public/images/erd.png)
 
-## groups
+Docker 실행 시 `lib/server/db/init.sql`이 자동 적용됩니다.
 
-조직 계층 구조를 저장하는 테이블입니다.
+### groups
+
+조직 계층 구조 (self-referential).
 
 ```sql
 CREATE TABLE groups (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    parent_id BIGINT REFERENCES groups(id),
+    parent_id BIGINT REFERENCES groups(id) ON DELETE SET NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 ```
 
-### Hierarchy Example
+### emission_factors
 
-```txt
-HanaLoop Holdings
-├── Korea Branch
-│   ├── Seoul Factory
-│   │   ├── Line A
-│   │   └── Line B
-│   └── Busan Factory
-└── Japan Branch
+활동량에 곱하는 배출 계수.
+
+```sql
+CREATE TABLE emission_factors (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    factor NUMERIC(15, 6) NOT NULL,
+    input_unit VARCHAR(50) NOT NULL,
+    output_unit VARCHAR(50) NOT NULL DEFAULT 'kgCO2e',
+    description VARCHAR(500),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
 ```
 
----
+### emission_records
 
-## emission_records
-
-탄소 배출 데이터를 저장하는 테이블입니다.
+그룹별 배출 활동 기록.
 
 ```sql
 CREATE TABLE emission_records (
     id BIGSERIAL PRIMARY KEY,
-    group_id BIGINT NOT NULL REFERENCES groups(id),
-    scope_type VARCHAR(20) NOT NULL,
+    group_id BIGINT NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+    emission_factor_id BIGINT NOT NULL REFERENCES emission_factors(id) ON DELETE RESTRICT,
+    scope_type VARCHAR(20) NOT NULL CHECK (scope_type IN ('SCOPE1', 'SCOPE2', 'SCOPE3')),
     amount NUMERIC(15, 2) NOT NULL,
     unit VARCHAR(20) NOT NULL DEFAULT 'tCO2e',
-    recorded_at DATE NOT NULL
+    recorded_at DATE NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 ```
 
+### Seed Data
+
+- **29개** 조직 그룹 (HanaLoop Holdings 하위 다단계 계층)
+- **10개** 배출 계수 (전기, 가스, 연료, 열/스팀, 운송, 폐기물 등)
+- **약 40건** 배출 레코드 (2026년 1~6월, 다양한 Scope·그룹·계수)
+
+### Index
+
+```sql
+CREATE INDEX idx_emission_factors_category ON emission_factors(category);
+CREATE INDEX idx_emission_records_group_id ON emission_records(group_id);
+CREATE INDEX idx_emission_records_emission_factor_id ON emission_records(emission_factor_id);
+CREATE INDEX idx_emission_records_recorded_at ON emission_records(recorded_at);
+CREATE INDEX idx_emission_records_scope_type ON emission_records(scope_type);
+```
+
 ---
 
-# Carbon Emission Strategy
+## Scope Strategy
 
-본 프로젝트는 Scope 기반 탄소 관리 방식을 사용합니다.
-
-| Scope  | Description    |
-| ------ | -------------- |
-| Scope1 | 직접 배출          |
-| Scope2 | 전력 사용 간접 배출    |
-| Scope3 | 기타 공급망 및 간접 배출 |
+| Scope | 설명 |
+| --- | --- |
+| Scope1 | 직접 배출 (연료 연소 등) |
+| Scope2 | 전력·열 등 구매 에너지 간접 배출 |
+| Scope3 | 공급망 및 기타 간접 배출 |
 
 ---
 
-# Folder Structure
+## Folder Structure
 
 ```txt
 app/
- ├── api/
- ├── groups/
- ├── records/
- └── page.tsx
+ ├── page.tsx                    # Dashboard
+ ├── group/page.tsx              # Group management
+ ├── records/page.tsx            # Emission records
+ ├── emission-factors/page.tsx   # Emission factors
+ ├── api-docs/page.tsx           # Swagger UI
+ └── api/                        # Route handlers
 
 components/
- ├── dashboard/
- ├── groups/
- ├── records/
- └── layout/
+ ├── dashboard/                  # Charts, stat cards, hierarchy
+ ├── groups/                     # Group CRUD UI
+ ├── records/                    # Record CRUD UI
+ ├── emission-factors/           # Factor CRUD UI
+ ├── layout/                     # Shell, pagination, toolbar, skeletons
+ │   └── notion/                 # Filter/sort popover UI
+ └── icons/sidebar/
 
 lib/
- ├── client/
- └── server/
+ ├── client/api/                 # Fetch wrappers
+ ├── client/types/               # Response types
+ ├── server/services/            # Business logic
+ ├── server/schema/              # Zod validation
+ ├── server/db/                  # Drizzle schema, init.sql
+ ├── server/openapi/             # OpenAPI definitions
+ └── shared/                     # carbonTax, pagination, tableSort, matchesSearch
 
-stores/
+hooks/usePagination.ts
+stores/useMenuStore.ts           # Mobile sidebar state
+public/images/                   # Screenshots, ERD
 ```
 
 ---
 
-# Component Design
+## API Reference
 
-## Group Components
+OpenAPI 스펙: `GET /api/docs` · Swagger UI: `/api-docs`
 
-```txt
-GroupMain
- ├── GroupHeader
- ├── GroupCard
- ├── GroupForm
- └── GroupTable
-```
+### Groups
 
-## Record Components
+| Method | Path | 설명 |
+| --- | --- | --- |
+| GET | `/api/groups` | 그룹 목록 |
+| POST | `/api/groups` | 그룹 생성 |
+| GET | `/api/groups/:id` | 그룹 단건 조회 |
+| PATCH | `/api/groups/:id` | 그룹 수정 |
+| DELETE | `/api/groups/:id` | 그룹 삭제 |
 
-```txt
-RecordMain
- ├── RecordHeader
- ├── RecordCard
- ├── RecordForm
- └── RecordTable
-```
+### Emission Records
 
----
+| Method | Path | 설명 |
+| --- | --- | --- |
+| GET | `/api/emission-records` | 레코드 목록 (환산 배출량 포함) |
+| POST | `/api/emission-records` | 레코드 생성 |
+| GET | `/api/emission-records/:id` | 레코드 단건 조회 |
+| PATCH | `/api/emission-records/:id` | 레코드 수정 |
+| DELETE | `/api/emission-records/:id` | 레코드 삭제 |
 
-# API Design
+### Emission Factors
 
-RESTful API 구조를 기반으로 설계되었습니다.
+| Method | Path | 설명 |
+| --- | --- | --- |
+| GET | `/api/emission-factors` | 배출 계수 목록 |
+| POST | `/api/emission-factors` | 배출 계수 생성 |
+| PUT | `/api/emission-factors/:id` | 배출 계수 수정 |
+| DELETE | `/api/emission-factors/:id` | 배출 계수 삭제 |
 
-## Groups
+### Dashboard
 
-```txt
-GET    /api/groups
-POST   /api/groups
-PATCH  /api/groups/:id
-DELETE /api/groups/:id
-```
-
-## Emission Records
-
-```txt
-GET    /api/emission-records
-POST   /api/emission-records
-PATCH  /api/emission-records/:id
-DELETE /api/emission-records/:id
-```
+| Method | Path | 설명 |
+| --- | --- | --- |
+| GET | `/api/dashboard/summary` | 전체 요약 (Scope 합계, 탄소세, 리스크) |
+| GET | `/api/dashboard/monthly` | 월별 Scope 배출량 |
+| GET | `/api/dashboard/category` | 배출 계수 분류별 배출량 |
+| GET | `/api/dashboard/hierarchy/:id` | 조직 계층별 배출량 트리 |
 
 ---
 
-# UI Design Strategy
+## Getting Started
 
-본 프로젝트는 다음 기준을 중심으로 UI를 설계했습니다.
-
-* ESG Dashboard 스타일
-* 데이터 중심 카드 UI
-* 관리자 친화적 구조
-* Drill Down 중심 탐색 구조
-* Sidebar Navigation 기반 UX
-
----
-
-# State Management
-
-## Server State
-
-TanStack Query를 사용하여:
-
-* 캐싱
-* Refetch
-* 비동기 상태 관리
-
-를 처리합니다.
-
-## Client State
-
-Zustand를 사용하여:
-
-* Sidebar 상태
-* UI 상태
-
-를 관리합니다.
-
----
-
-# Validation Strategy
-
-Zod 기반 Validation을 사용합니다.
-
-```ts
-const FormSchema = z.object({
-    groupId: z.number(),
-    scopeType: z.enum(["SCOPE1", "SCOPE2", "SCOPE3"]),
-    amount: z.number(),
-});
-```
-
----
-
-# Performance Considerations
-
-## Database Index
-
-```sql
-CREATE INDEX idx_emission_records_group_id
-ON emission_records(group_id);
-
-CREATE INDEX idx_emission_records_recorded_at
-ON emission_records(recorded_at);
-
-CREATE INDEX idx_emission_records_scope_type
-ON emission_records(scope_type);
-```
-
-## Optimization Strategy
-
-* Scope 별로 분류하기 위해 Index 설정
-* 기록 날짜로 검색 / 분류하기 위하여 Index 설정
-* 그룹 단위로 검색을 빠르게 하기 위하여 group_id를 index로 설정
-
----
-
-# Run Project
-
-## 1. Clone Repository
+### Docker (권장)
 
 ```bash
 git clone https://github.com/ashveil-dev/hanaloop
-```
-
-## 2. Move Directory
-
-```bash
 cd hanaloop
-```
-
-## 3. Run Docker
-
-```bash
 docker compose up --build
 ```
 
-## 4. Run Browser
+| URL | 설명 |
+| --- | --- |
+| http://localhost:3000 | 대시보드 |
+| http://localhost:3000/group | 그룹 관리 |
+| http://localhost:3000/records | 배출 레코드 |
+| http://localhost:3000/emission-factors | 배출 계수 |
+| http://localhost:3000/api-docs | Swagger UI |
+
+PostgreSQL: `localhost:5432` · user `postgres` · password `hanaloop` · db `hanaloop`
+
+### Local Development
 
 ```bash
-http://localhost:3000 # 홈 페이지
-http://localhost:3000/api-docs # swagger Page
+# DB만 Docker로 실행
+docker compose up db
+
+# 환경 변수 설정
+# DATABASE_URL=postgresql://postgres:hanaloop@localhost:5432/hanaloop
+
+npm install
+npm run dev
 ```
----
-# Future Improvements
 
-* 탄소세 계산 시스템
-* ESG Report Export (회사별 보고서 형식에 맞도록 작성하기)
-* CSV / Excel Export (각 데이터 테이블을 파일로 내보내기)
-* 그래프 기반 시각화 
-* 실시간 데이터 분석
-* AI 기반 탄소 분석
-* 권한(Role) 시스템
-* 로그인 인증 시스템
-* 에러 처리, 백엔드 API 사용 시 알림 창 만들기
-* 테이블에서 검색, 정렬, 필터 기능 제공하기
-* 계정을 만들어서 접근할 수 있는 그룹 제한하기
+### Scripts
 
----
+| Command | 설명 |
+| --- | --- |
+| `npm run dev` | 개발 서버 |
+| `npm run build` | 프로덕션 빌드 |
+| `npm run start` | 프로덕션 서버 |
+| `npm run lint` | ESLint |
 
-# Why This Project?
+README 스크린샷 재생성:
 
-기업 ESG 규제와 탄소세 정책 강화로 인해 탄소 관리 시스템의 중요성이 증가하고 있습니다.
-
-본 프로젝트는:
-
-* 조직 단위 탄소 추적
-* Scope 기반 배출 관리
-* 계층 구조 기반 분석
-* 관리자 친화적 Dashboard
-
-를 목표로 제작되었습니다.
+```bash
+node scripts/capture-screenshots.mjs
+```
 
 ---
 
-# Repository
+## Future Improvements
+
+- ESG Report Export (회사별 보고서 형식)
+- CSV / Excel Export
+- 실시간 데이터 분석
+- AI 기반 탄소 분석
+- 권한(Role) 및 로그인 인증
+- 그룹별 접근 제한 (멀티 테넌트)
+- 서버 사이드 필터·정렬·검색 (대용량 데이터 대응)
+
+---
+
+## Repository
 
 https://github.com/ashveil-dev/hanaloop

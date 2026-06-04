@@ -1,8 +1,12 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import type { EmissionFactor } from "@/lib/client/types/emissionFactors";
 import Pagination from "@/components/layout/Pagination";
+import TableSearchBar from "@/components/layout/TableSearchBar";
 import { usePagination } from "@/hooks/usePagination";
+import { getFactorCategoryLabel } from "@/lib/shared/factorCategoryLabels";
+import { matchesSearch } from "@/lib/shared/matchesSearch";
 
 type Props = {
     factors: EmissionFactor[];
@@ -11,8 +15,31 @@ type Props = {
 };
 
 export default function FactorTable({ factors, onEdit, onDelete }: Props) {
-    const { page, setPage, paginatedItems, totalPages, totalItems, pageSize } =
-        usePagination(factors);
+    const [search, setSearch] = useState("");
+
+    const filteredFactors = useMemo(() => {
+        return factors.filter((factor) =>
+            matchesSearch(
+                search,
+                factor.id,
+                factor.name,
+                factor.category,
+                getFactorCategoryLabel(factor.category),
+                factor.factor,
+                factor.inputUnit,
+                factor.outputUnit,
+                factor.description
+            )
+        );
+    }, [factors, search]);
+
+    const { page, setPage, resetPage, paginatedItems, totalPages, totalItems, pageSize } =
+        usePagination(filteredFactors);
+
+    const handleSearchChange = (value: string) => {
+        setSearch(value);
+        resetPage();
+    };
 
     return (
         <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -21,7 +48,18 @@ export default function FactorTable({ factors, onEdit, onDelete }: Props) {
                 활동량 × 배출 계수 = 환산 배출량({factors[0]?.outputUnit ?? "kgCO2e"})
             </p>
 
-            <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200">
+            <div className="mt-4">
+                <TableSearchBar
+                    value={search}
+                    onChange={handleSearchChange}
+                    placeholder="이름, 분류, 설명, 단위 검색"
+                    accent="amber"
+                    filteredCount={filteredFactors.length}
+                    totalCount={factors.length}
+                />
+            </div>
+
+            <div className="overflow-hidden rounded-2xl border border-slate-200">
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-[800px] text-left text-sm">
                         <thead className="bg-slate-50 text-slate-500">
@@ -42,7 +80,9 @@ export default function FactorTable({ factors, onEdit, onDelete }: Props) {
                                     <td className="px-5 py-4 font-semibold text-slate-900">
                                         {factor.name}
                                     </td>
-                                    <td className="px-5 py-4 text-slate-600">{factor.category}</td>
+                                    <td className="px-5 py-4 text-slate-600">
+                                        {getFactorCategoryLabel(factor.category)}
+                                    </td>
                                     <td className="px-5 py-4 font-semibold text-amber-700">
                                         {Number(factor.factor).toLocaleString()}
                                     </td>
@@ -72,10 +112,19 @@ export default function FactorTable({ factors, onEdit, onDelete }: Props) {
                                     </td>
                                 </tr>
                             ))}
+
                             {factors.length === 0 && (
                                 <tr>
                                     <td colSpan={7} className="px-5 py-10 text-center text-slate-400">
                                         등록된 배출 계수가 없습니다.
+                                    </td>
+                                </tr>
+                            )}
+
+                            {factors.length > 0 && filteredFactors.length === 0 && (
+                                <tr>
+                                    <td colSpan={7} className="px-5 py-10 text-center text-slate-400">
+                                        검색 결과가 없습니다.
                                     </td>
                                 </tr>
                             )}

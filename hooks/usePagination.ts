@@ -23,9 +23,14 @@ export function usePagination<T>(items: T[], pageSize = DEFAULT_PAGE_SIZE) {
         setRequestedPage(Math.min(Math.max(1, nextPage), totalPages));
     };
 
+    const resetPage = () => {
+        setRequestedPage(1);
+    };
+
     return {
         page,
         setPage,
+        resetPage,
         paginatedItems,
         totalPages,
         totalItems,

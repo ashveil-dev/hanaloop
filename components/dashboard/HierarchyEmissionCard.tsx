@@ -36,11 +36,11 @@ function HierarchyTreeNode({ node, rootTotal, depth = 0 }: TreeNodeProps) {
   return (
     <div className="space-y-3">
       <div
-        className="rounded-2xl border border-slate-100 p-4"
-        style={{ marginLeft: `${depth * 20}px` }}
+        className="rounded-2xl border border-slate-100 p-3 sm:p-4"
+        style={{ marginLeft: `${depth * 12}px` }}
       >
-        <div className="mb-3 flex justify-between gap-4">
-          <div>
+        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+          <div className="min-w-0">
             <span className="font-medium text-slate-800">{node.name}</span>
             <p className="mt-1 text-xs text-slate-500">
               Scope1: {formatEmission(node.totalEmission.scope1)} / Scope2:{" "}
@@ -49,7 +49,7 @@ function HierarchyTreeNode({ node, rootTotal, depth = 0 }: TreeNodeProps) {
             </p>
           </div>
 
-          <span className="shrink-0 text-sm text-slate-500">
+          <span className="shrink-0 text-sm text-slate-500 sm:text-right">
             {formatEmission(total)} ({node.unit}) {percent}%
           </span>
         </div>
@@ -84,7 +84,7 @@ export default function HierarchyEmissionCard({ hierarchyData }: Parameter) {
   return (
     <div
       id="HierarchyEmissionCard"
-      className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+      className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6"
     >
       <h4 className="text-xl font-bold text-slate-900">계층별 배출량</h4>
 

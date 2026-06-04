@@ -12,7 +12,7 @@ export default function Layout({
 
       <main className="flex min-h-0 flex-1 overflow-hidden">
         <AppSidebar />
-        {children}
+        <div className="min-w-0 flex-1 overflow-hidden">{children}</div>
       </main>
     </div>
   );

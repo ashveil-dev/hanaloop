@@ -57,32 +57,32 @@ export default function SidebarNavItem({
             <Link href={href} aria-label={alt}>
                 <button
                     type="button"
-                    className={`group flex w-full cursor-pointer items-center gap-4 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg md:flex-col md:justify-center md:gap-3 ${styles.hover} ${
+                    className={`group flex w-full cursor-pointer items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:bg-slate-50 md:flex-col md:justify-center md:gap-2 md:border-transparent md:bg-transparent md:p-2 md:shadow-none md:hover:-translate-y-0.5 md:hover:bg-white md:hover:shadow-md ${styles.hover} ${
                         isActive ? styles.active : ""
                     }`}
                 >
                     <div
-                        className={`relative flex h-6 w-6 items-center justify-center rounded-2xl transition-colors ${
+                        className={`relative flex h-6 w-6 shrink-0 items-center justify-center rounded-2xl transition-colors md:h-8 md:w-8 ${
                             isActive ? "bg-white" : "group-hover:bg-white"
                         }`}
                     >
                         {isActive ? (
-                            <Icon active className="h-[34px] w-[34px]" />
+                            <Icon active className="h-8 w-8 md:h-[34px] md:w-[34px]" />
                         ) : (
                             <>
                                 <Icon
                                     active={false}
-                                    className="h-[34px] w-[34px] transition-opacity group-hover:opacity-0"
+                                    className="h-8 w-8 transition-opacity group-hover:opacity-0 md:h-[34px] md:w-[34px]"
                                 />
                                 <Icon
                                     active
-                                    className="absolute h-[34px] w-[34px] opacity-0 transition-opacity group-hover:opacity-100"
+                                    className="absolute h-8 w-8 opacity-0 transition-opacity group-hover:opacity-100 md:h-[34px] md:w-[34px]"
                                 />
                             </>
                         )}
                     </div>
 
-                    <div className="text-left md:hidden">
+                    <div className="min-w-0 text-left md:hidden">
                         <h4 className="font-semibold text-slate-800">{title}</h4>
                         <p className="mt-1 text-xs text-slate-400">{description}</p>
                     </div>

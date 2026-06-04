@@ -27,14 +27,14 @@ export default function ScopeTrendLineChart({ data, unit }: Props) {
     return (
         <div
             id="ScopeTrendLineChart"
-            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+            className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6"
         >
             <h4 className="text-xl font-bold text-slate-900">Scope별 배출 추이</h4>
-            <p className="mt-1 mb-6 text-sm text-slate-500">
+            <p className="mt-1 mb-4 text-sm text-slate-500 sm:mb-6">
                 최근 6개월 Scope1 / 2 / 3 라인 추이 ({unit})
             </p>
 
-            <div className="h-72 w-full">
+            <div className="h-56 w-full sm:h-72">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />

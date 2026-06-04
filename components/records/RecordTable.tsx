@@ -6,6 +6,7 @@ import type { EmissionRecord } from "@/lib/client/types/emissionRecords";
 import type { Group } from "@/lib/client/types/groups";
 import { formatEmission } from "@/lib/shared/calculateEmission";
 import Pagination from "@/components/layout/Pagination";
+import MobileListCard from "@/components/layout/MobileListCard";
 import TableDataToolbar from "@/components/layout/TableDataToolbar";
 import type { FilterFieldDef } from "@/components/layout/notion/NotionFilterPanel";
 import type { SortFieldDef } from "@/components/layout/notion/NotionSortPanel";
@@ -171,9 +172,9 @@ export default function RecordTable({
     return (
         <div
             id="record-list"
-            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+            className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6"
         >
-            <h4 className="text-2xl font-bold text-slate-900">레코드 목록</h4>
+            <h4 className="text-lg font-bold text-slate-900 sm:text-2xl">레코드 목록</h4>
             <p className="mt-2 text-sm text-slate-500">
                 활동량 × 배출 계수로 환산된 CO2e 배출량을 확인할 수 있습니다.
             </p>
@@ -196,100 +197,153 @@ export default function RecordTable({
                 />
             </div>
 
-            <div className="overflow-hidden rounded-2xl border border-slate-200">
-                <div className="overflow-x-auto">
-                    <table className="w-full min-w-[1100px] text-left text-sm">
-                        <thead className="bg-slate-50 text-slate-500">
-                            <tr>
-                                <th className="px-5 py-4 text-center font-medium">ID</th>
-                                <th className="px-5 py-4 text-center font-medium">그룹명</th>
-                                <th className="px-5 py-4 text-center font-medium">배출 계수</th>
-                                <th className="px-5 py-4 text-center font-medium">Scope</th>
-                                <th className="px-5 py-4 text-center font-medium">활동량</th>
-                                <th className="px-5 py-4 text-center font-medium">환산 배출량</th>
-                                <th className="px-5 py-4 text-center font-medium">기록 날짜</th>
-                                <th className="px-5 py-4 text-center font-medium">관리</th>
-                            </tr>
-                        </thead>
+            {records.length === 0 && (
+                <div className="py-10 text-center text-slate-400">등록된 배출 레코드가 없습니다.</div>
+            )}
 
-                        <tbody className="divide-y divide-slate-100">
-                            {paginatedItems.map((record) => (
-                                <tr key={record.id} className="bg-white text-center">
-                                    <td className="px-5 py-4 text-slate-500">{record.id}</td>
-                                    <td className="max-w-50 px-5 py-4 font-semibold">
-                                        <div className="break-words whitespace-normal text-slate-900">
-                                            {groupNameById.get(record.groupId) ?? ""}
+            {records.length > 0 && processedRecords.length === 0 && (
+                <div className="py-10 text-center text-slate-400">조건에 맞는 레코드가 없습니다.</div>
+            )}
+
+            {processedRecords.length > 0 && (
+                <>
+                    <div className="space-y-3 md:hidden">
+                        {paginatedItems.map((record) => (
+                            <MobileListCard key={record.id}>
+                                <div className="space-y-3">
+                                    <div className="flex items-start justify-between gap-2">
+                                        <div className="min-w-0">
+                                            <p className="font-semibold text-slate-900">
+                                                {groupNameById.get(record.groupId) ?? ""}
+                                            </p>
+                                            <p className="mt-1 text-sm text-slate-600">
+                                                {record.emissionFactor.name}
+                                            </p>
                                         </div>
-                                    </td>
-                                    <td className="px-5 py-4 text-slate-700">
-                                        {record.emissionFactor.name}
-                                    </td>
-                                    <td className="px-5 py-4">
                                         <span
                                             className={clsx(
-                                                "rounded-full border px-3 py-1 text-xs font-semibold",
+                                                "shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-semibold",
                                                 scopeStyle[record.scopeType]
                                             )}
                                         >
                                             {record.scopeType}
                                         </span>
-                                    </td>
-                                    <td className="px-5 py-4 font-semibold text-slate-900">
-                                        {Number(record.amount).toLocaleString()} {record.unit}
-                                    </td>
-                                    <td className="px-5 py-4 font-bold text-teal-700">
-                                        {formatEmission(record.calculatedEmission)}{" "}
-                                        {record.emissionFactor.outputUnit}
-                                    </td>
-                                    <td className="px-5 py-4 text-slate-500">
-                                        {record.recordedAt}
-                                    </td>
-                                    <td className="px-5 py-4">
-                                        <div className="flex justify-center gap-2">
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-500">
+                                        <div>
+                                            <p className="text-slate-400">활동량</p>
+                                            <p className="mt-0.5 font-semibold text-slate-800">
+                                                {Number(record.amount).toLocaleString()} {record.unit}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p className="text-slate-400">환산 배출량</p>
+                                            <p className="mt-0.5 font-bold text-teal-700">
+                                                {formatEmission(record.calculatedEmission)}{" "}
+                                                {record.emissionFactor.outputUnit}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between gap-2 border-t border-slate-200/80 pt-3">
+                                        <span className="text-xs text-slate-400">
+                                            ID {record.id} · {record.recordedAt}
+                                        </span>
+                                        <div className="flex gap-2">
                                             <button
                                                 type="button"
                                                 onClick={() => onEdit(record)}
-                                                className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                                                className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
                                             >
                                                 수정
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => onDelete(record.id)}
-                                                className="cursor-pointer rounded-xl bg-rose-50 px-3 py-2 text-sm font-medium text-rose-600 hover:bg-rose-100"
+                                                className="cursor-pointer rounded-xl bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-100"
                                             >
                                                 삭제
                                             </button>
                                         </div>
-                                    </td>
-                                </tr>
-                            ))}
+                                    </div>
+                                </div>
+                            </MobileListCard>
+                        ))}
+                    </div>
 
-                            {records.length === 0 && (
-                                <tr>
-                                    <td
-                                        colSpan={8}
-                                        className="px-5 py-10 text-center text-slate-400"
-                                    >
-                                        등록된 배출 레코드가 없습니다.
-                                    </td>
-                                </tr>
-                            )}
+                    <div className="hidden overflow-hidden rounded-2xl border border-slate-200 md:block">
+                        <div className="overflow-x-auto">
+                            <table className="w-full min-w-[900px] text-left text-sm lg:min-w-[1100px]">
+                                <thead className="bg-slate-50 text-slate-500">
+                                    <tr>
+                                        <th className="hidden px-5 py-4 text-center font-medium lg:table-cell">ID</th>
+                                        <th className="px-5 py-4 text-center font-medium">그룹명</th>
+                                        <th className="px-5 py-4 text-center font-medium">배출 계수</th>
+                                        <th className="px-5 py-4 text-center font-medium">Scope</th>
+                                        <th className="hidden px-5 py-4 text-center font-medium xl:table-cell">활동량</th>
+                                        <th className="px-5 py-4 text-center font-medium">환산 배출량</th>
+                                        <th className="px-5 py-4 text-center font-medium">기록 날짜</th>
+                                        <th className="px-5 py-4 text-center font-medium">관리</th>
+                                    </tr>
+                                </thead>
 
-                            {records.length > 0 && processedRecords.length === 0 && (
-                                <tr>
-                                    <td
-                                        colSpan={8}
-                                        className="px-5 py-10 text-center text-slate-400"
-                                    >
-                                        조건에 맞는 레코드가 없습니다.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                <tbody className="divide-y divide-slate-100">
+                                    {paginatedItems.map((record) => (
+                                        <tr key={record.id} className="bg-white text-center">
+                                            <td className="hidden px-5 py-4 text-slate-500 lg:table-cell">{record.id}</td>
+                                            <td className="max-w-50 px-5 py-4 font-semibold">
+                                                <div className="break-words whitespace-normal text-slate-900">
+                                                    {groupNameById.get(record.groupId) ?? ""}
+                                                </div>
+                                            </td>
+                                            <td className="px-5 py-4 text-slate-700">
+                                                {record.emissionFactor.name}
+                                            </td>
+                                            <td className="px-5 py-4">
+                                                <span
+                                                    className={clsx(
+                                                        "rounded-full border px-3 py-1 text-xs font-semibold",
+                                                        scopeStyle[record.scopeType]
+                                                    )}
+                                                >
+                                                    {record.scopeType}
+                                                </span>
+                                            </td>
+                                            <td className="hidden px-5 py-4 font-semibold text-slate-900 xl:table-cell">
+                                                {Number(record.amount).toLocaleString()} {record.unit}
+                                            </td>
+                                            <td className="px-5 py-4 font-bold text-teal-700">
+                                                {formatEmission(record.calculatedEmission)}{" "}
+                                                {record.emissionFactor.outputUnit}
+                                            </td>
+                                            <td className="px-5 py-4 text-slate-500">
+                                                {record.recordedAt}
+                                            </td>
+                                            <td className="px-5 py-4">
+                                                <div className="flex justify-center gap-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => onEdit(record)}
+                                                        className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                                                    >
+                                                        수정
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => onDelete(record.id)}
+                                                        className="cursor-pointer rounded-xl bg-rose-50 px-3 py-2 text-sm font-medium text-rose-600 hover:bg-rose-100"
+                                                    >
+                                                        삭제
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </>
+            )}
 
             <Pagination
                 page={page}

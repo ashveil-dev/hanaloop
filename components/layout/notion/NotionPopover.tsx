@@ -46,7 +46,7 @@ export default function NotionPopover({ trigger, children, align = "left" }: Pro
 
             {open && (
                 <div
-                    className={`absolute top-[calc(100%+6px)] z-50 min-w-[300px] rounded-lg border border-slate-200/80 bg-white p-3 shadow-[0_8px_30px_rgba(15,23,42,0.12)] ${
+                    className={`absolute top-[calc(100%+6px)] z-50 w-[min(100vw-2rem,300px)] rounded-lg border border-slate-200/80 bg-white p-3 shadow-[0_8px_30px_rgba(15,23,42,0.12)] ${
                         align === "right" ? "right-0" : "left-0"
                     }`}
                 >

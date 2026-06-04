@@ -34,19 +34,19 @@ export default function ScopePieChart({ scope1, scope2, scope3, unit }: Props) {
     return (
         <div
             id="ScopePieChart"
-            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+            className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6"
         >
             <h4 className="text-xl font-bold text-slate-900">Scope별 배출 비중</h4>
-            <p className="mt-1 mb-6 text-sm text-slate-500">
+            <p className="mt-1 mb-4 text-sm text-slate-500 sm:mb-6">
                 직접 / 전력 / 간접 배출 구성 ({unit})
             </p>
 
             {total === 0 ? (
-                <div className="flex h-72 items-center justify-center text-sm text-slate-400">
+                <div className="flex h-56 items-center justify-center text-sm text-slate-400 sm:h-72">
                     표시할 배출 데이터가 없습니다.
                 </div>
             ) : (
-                <div className="h-72 w-full">
+                <div className="h-56 w-full sm:h-72">
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie

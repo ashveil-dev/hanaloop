@@ -22,7 +22,7 @@ export default function RootLayout({
         <Providers>
           <ModalRoot />
           <Layout>{children}</Layout>
-          <Toaster richColors position="top-right" />
+          <Toaster richColors position="top-center" />
         </Providers>
       </body>
     </html>

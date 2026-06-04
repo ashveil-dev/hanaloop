@@ -1,6 +1,7 @@
-"use client"
+"use client";
 
-import { clsx } from "clsx"
+import { useEffect } from "react";
+import { clsx } from "clsx";
 import SidebarNavItem from "./SidebarNavItem";
 import { useMenuStore } from "@/stores/useMenuStore";
 import DashboardIcon from "@/components/icons/sidebar/DashboardIcon";
@@ -47,18 +48,43 @@ export default function AppSidebar() {
     const open = useMenuStore((state) => state.open);
     const closeMenu = useMenuStore((state) => state.closeMenu);
 
+    useEffect(() => {
+        if (!open) return;
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [open]);
+
     return (
-        <aside className={clsx("fixed top-0 w-full h-full overflow-auto bg-white shrink-0 md:static md:flex md:w-auto md:flex-row md:bg-transparent",
-            open ? "block" : "hidden"
-        )}>
-            <div className="block h-20 w-full md:hidden" />
-            <nav className="w-full px-4 py-6 md:shrink-0 md:px-3">
-                <ul className="flex flex-col gap-4">
-                    {navItems.map((item) => (
-                        <SidebarNavItem key={item.title} onClick={closeMenu} {...item} />
-                    ))}
-                </ul>
-            </nav>
-        </aside >
+        <>
+            {open && (
+                <button
+                    type="button"
+                    aria-label="메뉴 닫기"
+                    onClick={closeMenu}
+                    className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-[1px] md:hidden"
+                />
+            )}
+
+            <aside
+                className={clsx(
+                    "fixed inset-y-0 left-0 z-50 flex w-[min(100%,18rem)] flex-col overflow-y-auto border-r border-slate-200 bg-white shadow-xl transition-transform duration-200 md:static md:z-auto md:w-20 md:shrink-0 md:translate-x-0 md:border-r-0 md:bg-transparent md:shadow-none",
+                    open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+                )}
+            >
+                <div className="h-16 shrink-0 md:h-20" />
+                <nav className="w-full px-4 py-4 md:px-2 md:py-3">
+                    <ul className="flex flex-col gap-3 md:gap-4">
+                        {navItems.map((item) => (
+                            <SidebarNavItem key={item.title} onClick={closeMenu} {...item} />
+                        ))}
+                    </ul>
+                </nav>
+            </aside>
+        </>
     );
 }

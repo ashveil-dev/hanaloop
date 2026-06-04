@@ -13,6 +13,7 @@ import type { EmissionFactor } from "@/lib/client/types/emissionFactors";
 import { ApiError } from "@/lib/client/errors/ApiError";
 import FactorModal from "@/components/emission-factors/FactorModal";
 import FactorTable from "@/components/emission-factors/FactorTable";
+import PageHeaderActions from "@/components/layout/PageHeaderActions";
 import { FactorFormSchema, type FactorFormType } from "@/components/emission-factors/FactorForm";
 import LoadingSpinner from "@/components/layout/LoadingSpinner";
 import TableSkeleton from "@/components/layout/TableSkeleton";
@@ -112,28 +113,28 @@ export default function FactorMain() {
 
     return (
         <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 md:p-8">
-            <header className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                <div>
+            <header className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-end md:justify-between">
+                <div className="min-w-0">
                     <p className="text-sm font-medium text-amber-600">Emission Factors</p>
-                    <h3 className="mt-2 text-3xl font-bold text-slate-900">배출 계수</h3>
+                    <h3 className="mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">배출 계수</h3>
                     <p className="mt-2 text-sm text-slate-500">
                         활동량에 곱해 CO2e 환산 배출량을 계산합니다. (예: 전기 0.456 kgCO2e/kWh)
                     </p>
                 </div>
-                <div className="flex gap-2">
+                <PageHeaderActions>
                     <button
                         onClick={openCreateModal}
-                        className="cursor-pointer rounded-xl border border-amber-600 bg-white px-5 py-3 text-sm font-semibold text-amber-600 shadow-sm transition hover:bg-amber-50"
+                        className="cursor-pointer rounded-xl border border-amber-600 bg-white px-5 py-3 text-sm font-semibold text-amber-600 shadow-sm transition hover:bg-amber-50 sm:flex-1 md:flex-none"
                     >
                         배출 계수 생성
                     </button>
                     <button
                         onClick={() => factorsQuery.refetch()}
-                        className="cursor-pointer rounded-xl bg-amber-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-700"
+                        className="cursor-pointer rounded-xl bg-amber-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-700 sm:flex-1 md:flex-none"
                     >
                         새로고침
                     </button>
-                </div>
+                </PageHeaderActions>
             </header>
 
             <FactorModal

@@ -17,7 +17,7 @@ export default function StatCard({
 }: StatCardProps) {
     return (
         <div
-            className={`rounded-3xl border p-6 shadow-sm ${dark
+            className={`rounded-3xl border p-4 shadow-sm sm:p-6 ${dark
                     ? "border-slate-800 bg-slate-900"
                     : "border-slate-200 bg-white"
                 }`}
@@ -26,7 +26,7 @@ export default function StatCard({
                 {label}
             </p>
 
-            <h4 className={`mt-3 text-3xl font-bold ${dark ? "text-white" : "text-slate-900"}`}>
+            <h4 className={`mt-2 text-2xl font-bold sm:mt-3 sm:text-3xl ${dark ? "text-white" : "text-slate-900"}`}>
                 {value}
                 {unit && (
                     <span className="ml-2 text-sm font-medium text-slate-400">

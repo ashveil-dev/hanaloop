@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { Group } from "@/lib/client/types/groups";
 import Pagination from "@/components/layout/Pagination";
+import MobileListCard from "@/components/layout/MobileListCard";
 import TableDataToolbar from "@/components/layout/TableDataToolbar";
 import type { FilterFieldDef } from "@/components/layout/notion/NotionFilterPanel";
 import type { SortFieldDef } from "@/components/layout/notion/NotionSortPanel";
@@ -115,9 +116,9 @@ export default function GroupTable({ groups, onEdit, onDelete }: Props) {
     };
 
     return (
-        <div id="group-list" className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div id="group-list" className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
             <div className="mb-4">
-                <h4 className="text-xl font-bold text-slate-900">그룹 목록</h4>
+                <h4 className="text-lg font-bold text-slate-900 sm:text-xl">그룹 목록</h4>
                 <p className="mt-1 text-sm text-slate-500">
                     생성된 그룹을 검색·필터·정렬하고 수정하거나 삭제할 수 있습니다.
                 </p>
@@ -139,35 +140,30 @@ export default function GroupTable({ groups, onEdit, onDelete }: Props) {
                 accent="cyan"
             />
 
-            <div className="overflow-hidden rounded-2xl border border-slate-200">
-                <table className="w-full text-left text-sm">
-                    <thead className="bg-slate-50 text-slate-500">
-                        <tr>
-                            <th className="px-5 py-4 font-medium">ID</th>
-                            <th className="px-5 py-4 font-medium">그룹명</th>
-                            <th className="px-5 py-4 font-medium">상위 그룹</th>
-                            <th className="px-5 py-4 font-medium">생성 날짜</th>
-                            <th className="px-5 py-4 text-center font-medium">관리</th>
-                        </tr>
-                    </thead>
+            {totalCount === 0 && (
+                <div className="py-12 text-center text-slate-400">생성된 그룹이 없습니다.</div>
+            )}
 
-                    <tbody className="divide-y divide-slate-100">
+            {totalCount > 0 && processedGroups.length === 0 && (
+                <div className="py-12 text-center text-slate-400">조건에 맞는 그룹이 없습니다.</div>
+            )}
+
+            {processedGroups.length > 0 && (
+                <>
+                    <div className="space-y-3 md:hidden">
                         {paginatedItems.map((group) => (
-                            <tr key={group.id} className="transition hover:bg-slate-50">
-                                <td className="px-5 py-4 text-slate-500">{group.id}</td>
-                                <td className="max-w-50 px-5 py-4">
-                                    <div className="wrap-break-word whitespace-normal font-semibold text-slate-900">
-                                        {group.name}
+                            <MobileListCard key={group.id}>
+                                <div className="flex items-start justify-between gap-3">
+                                    <div className="min-w-0">
+                                        <p className="font-semibold text-slate-900">{group.name}</p>
+                                        <p className="mt-1 text-xs text-slate-500">
+                                            ID {group.id} · {getParentName(group.parentId)}
+                                        </p>
+                                        <p className="mt-1 text-xs text-slate-400">
+                                            {new Date(group.createdAt).toLocaleDateString().slice(0, -1)}
+                                        </p>
                                     </div>
-                                </td>
-                                <td className="px-5 py-4 text-slate-500">
-                                    {getParentName(group.parentId)}
-                                </td>
-                                <td className="px-5 py-4 text-slate-500">
-                                    {new Date(group.createdAt).toLocaleDateString().slice(0, -1)}
-                                </td>
-                                <td className="px-5 py-4">
-                                    <div className="flex justify-center gap-2">
+                                    <div className="flex shrink-0 gap-2">
                                         <button
                                             type="button"
                                             onClick={() => onEdit(group)}
@@ -183,28 +179,63 @@ export default function GroupTable({ groups, onEdit, onDelete }: Props) {
                                             삭제
                                         </button>
                                     </div>
-                                </td>
-                            </tr>
+                                </div>
+                            </MobileListCard>
                         ))}
+                    </div>
 
-                        {totalCount === 0 && (
-                            <tr>
-                                <td colSpan={5} className="px-5 py-12 text-center text-slate-400">
-                                    생성된 그룹이 없습니다.
-                                </td>
-                            </tr>
-                        )}
+                    <div className="hidden overflow-hidden rounded-2xl border border-slate-200 md:block">
+                        <table className="w-full text-left text-sm">
+                            <thead className="bg-slate-50 text-slate-500">
+                                <tr>
+                                    <th className="px-5 py-4 font-medium">ID</th>
+                                    <th className="px-5 py-4 font-medium">그룹명</th>
+                                    <th className="px-5 py-4 font-medium">상위 그룹</th>
+                                    <th className="px-5 py-4 font-medium">생성 날짜</th>
+                                    <th className="px-5 py-4 text-center font-medium">관리</th>
+                                </tr>
+                            </thead>
 
-                        {totalCount > 0 && processedGroups.length === 0 && (
-                            <tr>
-                                <td colSpan={5} className="px-5 py-12 text-center text-slate-400">
-                                    조건에 맞는 그룹이 없습니다.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                            <tbody className="divide-y divide-slate-100">
+                                {paginatedItems.map((group) => (
+                                    <tr key={group.id} className="transition hover:bg-slate-50">
+                                        <td className="px-5 py-4 text-slate-500">{group.id}</td>
+                                        <td className="max-w-50 px-5 py-4">
+                                            <div className="wrap-break-word whitespace-normal font-semibold text-slate-900">
+                                                {group.name}
+                                            </div>
+                                        </td>
+                                        <td className="px-5 py-4 text-slate-500">
+                                            {getParentName(group.parentId)}
+                                        </td>
+                                        <td className="px-5 py-4 text-slate-500">
+                                            {new Date(group.createdAt).toLocaleDateString().slice(0, -1)}
+                                        </td>
+                                        <td className="px-5 py-4">
+                                            <div className="flex justify-center gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => onEdit(group)}
+                                                    className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                                                >
+                                                    수정
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => onDelete(group.id)}
+                                                    className="cursor-pointer rounded-xl bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-100"
+                                                >
+                                                    삭제
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </>
+            )}
 
             <Pagination
                 page={page}

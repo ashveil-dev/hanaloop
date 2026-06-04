@@ -54,7 +54,7 @@ export default function TableDataToolbar({
         sort.field !== sortFields[0]?.key || sort.direction !== "desc";
 
     return (
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-wrap items-center gap-2">
                 <NotionPopover
                     trigger={({ open, onToggle }) => (
@@ -102,13 +102,15 @@ export default function TableDataToolbar({
                 </span>
             </div>
 
-            <TableSearchBar
-                variant="toolbar"
-                value={search}
-                onChange={onSearchChange}
-                placeholder={searchPlaceholder}
-                accent={accent}
-            />
+            <div className="w-full lg:w-auto lg:shrink-0">
+                <TableSearchBar
+                    variant="toolbar"
+                    value={search}
+                    onChange={onSearchChange}
+                    placeholder={searchPlaceholder}
+                    accent={accent}
+                />
+            </div>
         </div>
     );
 }

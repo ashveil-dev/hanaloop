@@ -41,7 +41,7 @@ export default function TableSearchBar({
                 className={clsx(
                     "outline-none transition focus:ring-2",
                     variant === "toolbar"
-                        ? "w-full min-w-[200px] max-w-[280px] rounded-md border border-slate-200 bg-white py-1.5 pl-8 pr-3 text-sm text-slate-700 placeholder:text-slate-400 hover:border-slate-300 focus:bg-white"
+                        ? "w-full rounded-md border border-slate-200 bg-white py-1.5 pl-8 pr-3 text-sm text-slate-700 placeholder:text-slate-400 hover:border-slate-300 focus:bg-white lg:max-w-[280px]"
                         : "w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm focus:bg-white focus:ring-4",
                     accentStyles[accent]
                 )}

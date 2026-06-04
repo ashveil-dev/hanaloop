@@ -18,7 +18,7 @@ export default function RecordCard({
     return (
         <div
             className={clsx(
-                "rounded-3xl p-6 shadow-sm",
+                "rounded-3xl p-4 shadow-sm sm:p-6",
                 dark
                     ? "bg-slate-950 text-white"
                     : "border border-slate-200 bg-white"
@@ -28,7 +28,7 @@ export default function RecordCard({
                 {title}
             </p>
 
-            <h4 className={clsx("mt-3 text-3xl font-bold", dark ? "text-white" : "text-slate-900")}>
+            <h4 className={clsx("mt-2 text-2xl font-bold sm:mt-3 sm:text-3xl", dark ? "text-white" : "text-slate-900")}>
                 {value}
             </h4>
 

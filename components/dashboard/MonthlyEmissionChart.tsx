@@ -28,9 +28,9 @@ export default function MonthlyEmissionChart({ data, unit }: Props) {
     return (
         <div
             id="MonthlyEmissionChart"
-            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+            className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6"
         >
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                     <h4 className="text-xl font-bold text-slate-900">
                         월별 탄소 배출량
@@ -54,7 +54,7 @@ export default function MonthlyEmissionChart({ data, unit }: Props) {
                 )}
             </div>
 
-            <div className="h-72 w-full">
+            <div className="h-56 w-full sm:h-72">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
@@ -68,7 +68,7 @@ export default function MonthlyEmissionChart({ data, unit }: Props) {
                             tick={{ fill: "#94a3b8", fontSize: 12 }}
                             axisLine={false}
                             tickLine={false}
-                            width={48}
+                            width={40}
                         />
                         <Tooltip
                             contentStyle={{

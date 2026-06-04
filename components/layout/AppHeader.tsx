@@ -1,47 +1,69 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useMenuStore } from "@/stores/useMenuStore";
 
+function MenuIcon() {
+    return (
+        <svg className="h-5 w-5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+    );
+}
+
 export default function AppHeader() {
-  const toggleMenu = useMenuStore(state => state.toggleMenu)
+    const toggleMenu = useMenuStore((state) => state.toggleMenu);
 
-  const onMenuClick = () => {
-    toggleMenu();
-  }
+    return (
+        <header className="sticky top-0 z-30 w-full border-b border-slate-200/80 bg-white/90 font-suit backdrop-blur-xl">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-emerald-400/60 to-transparent" />
 
-  return (
-    <header className="sticky top-0 z-30 w-full border-b border-slate-200/70 bg-white/80 backdrop-blur-xl font-suit">
-      <div className="flex h-16 items-center justify-between px-4 md:h-20 md:px-8">
-        <Link href="/" className="group flex min-w-0 items-center gap-2.5 md:gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/20 transition-transform group-hover:scale-105 md:h-12 md:w-12">
-            <Image src="/icons/logo.png" width={34} height={34} alt="logo" />
-          </div>
+            <div className="flex h-16 items-center justify-between px-4 md:h-[4.5rem] md:px-8">
+                <Link
+                    href="/"
+                    className="group flex min-w-0 items-center gap-3 transition-opacity hover:opacity-90"
+                >
+                    <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-200/80 transition group-hover:shadow-md group-hover:ring-emerald-200/80 md:h-11 md:w-11">
+                        <Image
+                            src="/icons/hanaloop.png"
+                            width={44}
+                            height={44}
+                            alt="hanaloop"
+                            className="h-full w-full object-contain p-0.5"
+                            priority
+                        />
+                    </div>
 
-          <div className="min-w-0">
-            <h1 className="truncate text-base font-bold tracking-tight text-slate-900 md:text-2xl">
-              하나 대시보드
-            </h1>
-            <p className="hidden text-sm text-slate-500 md:block">
-              Carbon Neutrality Compliance Platform
-            </p>
-          </div>
-        </Link>
+                    <div className="min-w-0 leading-tight">
+                        <h1 className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-lg font-bold tracking-tight text-transparent md:text-xl">
+                            hanaloop
+                        </h1>
+                        <p className="hidden truncate text-xs text-slate-400 md:block">
+                            Carbon emission intelligence
+                        </p>
+                    </div>
+                </Link>
 
-        <div className="flex shrink-0 items-center gap-2 md:gap-3">
-          <div className="hidden items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 lg:flex">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            <span className="text-sm font-medium text-emerald-700">
-              Live Monitoring
-            </span>
-          </div>
+                <div className="flex shrink-0 items-center gap-2 md:gap-3">
+                    <div className="hidden items-center gap-2 rounded-full border border-slate-200/80 bg-slate-50/80 px-3.5 py-1.5 lg:flex">
+                        <span className="relative flex h-2 w-2">
+                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+                            <span className="relative inline-flex h-2 w-2 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500" />
+                        </span>
+                        <span className="text-xs font-medium text-slate-600">Live</span>
+                    </div>
 
-          <button onClick={onMenuClick} className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:bg-slate-50 md:hidden cursor-pointer">
-            <Image src="/images/menu.png" width={24} height={24} alt="Menu" />
-          </button>
-        </div>
-      </div>
-    </header>
-  );
+                    <button
+                        type="button"
+                        onClick={toggleMenu}
+                        aria-label="메뉴 열기"
+                        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-slate-200/80 bg-white text-slate-600 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50/50 md:hidden"
+                    >
+                        <MenuIcon />
+                    </button>
+                </div>
+            </div>
+        </header>
+    );
 }

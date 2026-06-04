@@ -6,8 +6,8 @@ import ModalRoot from "@/components/layout/ModalRoot";
 import Layout from "@/components/layout";
 
 export const metadata: Metadata = {
-  title: "Hana Dashboard",
-  description: "Dashboard for managing carbon emissions",
+  title: "hanaloop",
+  description: "Carbon emission intelligence platform",
 };
 
 export default function RootLayout({
@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="w-full h-full font-pretendard">
-      <link rel="icon" href="/icons/logo.png" type="image/png" sizes="32x32" />
+      <link rel="icon" href="/icons/hanaloop.png" type="image/png" sizes="32x32" />
       <body className="min-w-full h-full min-h-full">
         <Providers>
           <ModalRoot />

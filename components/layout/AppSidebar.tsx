@@ -76,9 +76,9 @@ export default function AppSidebar() {
                     open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
                 )}
             >
-                <div className="h-16 shrink-0 md:h-20" />
-                <nav className="w-full px-4 py-4 md:px-2 md:py-3">
-                    <ul className="flex flex-col gap-3 md:gap-4">
+                <div className="h-16 shrink-0 md:hidden" />
+                <nav className="w-full px-4 py-4 md:px-2 md:pt-6 md:pb-3">
+                    <ul className="flex flex-col gap-3 md:gap-3">
                         {navItems.map((item) => (
                             <SidebarNavItem key={item.title} onClick={closeMenu} {...item} />
                         ))}

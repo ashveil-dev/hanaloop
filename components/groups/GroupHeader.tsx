@@ -7,9 +7,9 @@ export default function GroupHeader({ onRefresh, onCreate }: Props) {
     return (
         <header className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-                <p className="text-sm font-medium text-cyan-600">Group Management</p>
+                <p className="text-sm font-medium text-cyan-600">Group</p>
                 <h3 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-                    그룹 관리
+                    그룹
                 </h3>
                 <p className="mt-2 text-sm text-slate-500">
                     탄소 배출 데이터를 조직 계층 단위로 관리하세요.
